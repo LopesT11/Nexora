@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="pt-PT" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0b1715">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Nexora">
+  <meta name="format-detection" content="telephone=no">
+  <title>Nexora</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="stylesheet" href="style.css?v=13.0.0">
+</head>
+<body>
+  <div class="app-shell" id="app">
+    <header class="topbar">
+      <button class="brand-name" data-page="home" aria-label="Ir para o início">Nexora</button>
+      <div class="top-actions">
+        <button class="round-btn theme-toggle" id="themeToggle" type="button" aria-label="Alternar entre modo claro e escuro" title="Modo claro/escuro">
+          <svg class="bulb-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M9 18h6M10 22h4M8.2 14.6A6 6 0 1 1 15.8 14.6c-.9.7-1.4 1.5-1.5 2.4H9.7c-.1-.9-.6-1.7-1.5-2.4Z"/>
+            <path d="M12 1V0M4.2 4.2l-.7-.7M19.8 4.2l.7-.7M1 12H0M24 12h-1"/>
+          </svg>
+        </button>
+        <button class="round-btn accent top-add" data-open="txDialog" aria-label="Adicionar movimento" title="Adicionar movimento">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <!-- INÍCIO -->
+      <section class="page active" id="page-home">
+        <section class="wealth-card reveal">
+          <div class="wealth-glow"></div>
+          <svg class="wealth-chart" viewBox="0 0 720 280" preserveAspectRatio="none" aria-hidden="true">
+            <defs>
+              <linearGradient id="wealthChartFill" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="currentColor" stop-opacity=".20"/>
+                <stop offset="1" stop-color="currentColor" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <path class="wealth-chart-fill" d="M0 238 C95 244 126 212 200 218 C282 226 318 246 388 206 C452 168 474 102 530 120 C588 139 609 189 720 34 L720 280 L0 280 Z"/>
+            <path class="wealth-chart-line" d="M0 238 C95 244 126 212 200 218 C282 226 318 246 388 206 C452 168 474 102 530 120 C588 139 609 189 720 34"/>
+            <circle class="wealth-chart-point" cx="530" cy="120" r="5"/>
+            <path class="wealth-chart-wave" d="M0 256 C98 260 138 228 210 234 C286 241 328 260 396 222 C459 187 488 133 543 150 C601 168 624 207 720 76"/>
+            <path class="wealth-chart-wave" d="M0 270 C101 272 142 244 216 250 C291 256 335 274 403 239 C466 207 497 162 552 178 C608 194 642 226 720 119"/>
+          </svg>
+          <div class="wealth-copy">
+            <span class="card-kicker">Património total</span>
+            <strong id="totalWealth">0,00 €</strong>
+          </div>
+          <div class="wealth-actions">
+            <span class="status-chip" id="wealthChange">Sem alterações este mês</span>
+            <button class="glass-btn" data-open="balancesDialog">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"/></svg>
+              Atualizar saldos
+            </button>
+          </div>
+        </section>
+
+        <section class="quick-list reveal delay-1" aria-label="Saldos principais">
+          <button class="quick-card" data-open="balancesDialog">
+            <span class="quick-icon current"><svg viewBox="0 0 24 24"><path d="M3 7h18v12H3zM3 10h18M7 15h3"/></svg></span>
+            <span><small>Conta corrente</small><strong id="homeCurrent">0,00 €</strong></span>
+            <svg class="chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+          </button>
+          <button class="quick-card" data-page="wealth">
+            <span class="quick-icon saving"><svg viewBox="0 0 24 24"><path d="M5 10c0-3 2.7-5 6.5-5 4.3 0 7.5 2.4 7.5 6.2 0 2.7-1.4 4.5-3.5 5.6V20h-3v-2H9v2H6v-3.4A6.8 6.8 0 0 1 3 11h2Zm9-1h.01"/></svg></span>
+            <span><small>Poupança</small><strong id="homeSavings">0,00 €</strong></span>
+            <svg class="chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+          </button>
+          <button class="quick-card" data-page="wealth">
+            <span class="quick-icon investing"><svg viewBox="0 0 24 24"><path d="M4 18 9 13l3 3 7-9M15 7h4v4"/></svg></span>
+            <span><small>Investimentos</small><strong id="homeInvestments">0,00 €</strong></span>
+            <svg class="chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+          </button>
+          <button class="quick-card" data-page="expenses">
+            <span class="quick-icon expenses"><svg viewBox="0 0 24 24"><path d="M4 19V9m5 10V5m5 14v-7m5 7V3"/></svg></span>
+            <span><small>Despesas</small><strong id="monthExpenses">0,00 €</strong></span>
+            <svg class="chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+          </button>
+        </section>
+
+        <section class="section-block uniform-card reveal delay-2">
+          <div class="section-heading">
+            <div><span class="eyebrow">Resumo mensal</span><h2>Este mês</h2></div>
+            <button class="text-btn" data-page="expenses">Ver análise</button>
+          </div>
+          <div class="stat-grid home-stats">
+            <article class="stat-card">
+              <span class="stat-icon income"><svg viewBox="0 0 24 24"><path d="M12 4v14m0 0-5-5m5 5 5-5"/></svg></span>
+              <div><small>Receitas</small><strong class="positive" id="monthIncome">0,00 €</strong></div>
+            </article>
+            <article class="stat-card">
+              <span class="stat-icon expense"><svg viewBox="0 0 24 24"><path d="M12 20V6m0 0-5 5m5-5 5 5"/></svg></span>
+              <div><small>Despesas</small><strong class="negative" id="monthExpensesSummary">0,00 €</strong></div>
+            </article>
+            <article class="stat-card">
+              <span class="stat-icon neutral"><svg viewBox="0 0 24 24"><path d="M3 7h18v12H3zM3 10h18M7 15h3"/></svg></span>
+              <div><small>Restante do mês</small><strong id="monthBalance">0,00 €</strong></div>
+            </article>
+            <article class="stat-card">
+              <span class="stat-icon neutral"><svg viewBox="0 0 24 24"><path d="M6 3v3M18 3v3M4 8h16v12H4z"/></svg></span>
+              <div><small>Despesas anuais</small><strong id="yearExpenses">0,00 €</strong></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="home-stack">
+          <article class="goal-card uniform-card reveal">
+            <div class="goal-head">
+              <span class="goal-icon mint"><svg viewBox="0 0 24 24"><path d="M5 10c0-3 2.7-5 6.5-5 4.3 0 7.5 2.4 7.5 6.2 0 2.7-1.4 4.5-3.5 5.6V20h-3v-2H9v2H6v-3.4A6.8 6.8 0 0 1 3 11h2Z"/></svg></span>
+              <button class="text-btn" data-open="savingsGoalDialog">Editar</button>
+            </div>
+            <span class="eyebrow">Meta anual</span><h3>Poupança</h3>
+            <div class="progress"><span id="savingsProgress"></span></div>
+            <div class="progress-labels three-points">
+              <div><strong id="savingsNow">0,00 €</strong><small>Guardado</small></div>
+              <div><strong id="savingsPct">0%</strong><small>Progresso</small></div>
+              <div><strong id="savingsGoalLabel">0,00 €</strong><small>Meta</small></div>
+            </div>
+          </article>
+
+          <article class="goal-card uniform-card reveal delay-1">
+            <div class="goal-head">
+              <span class="goal-icon amber"><svg viewBox="0 0 24 24"><path d="m5 16-1 2v2h2v-2h12v2h2v-2l-1-2-2-7H7l-2 7Zm2.5-5h9l1 4h-11l1-4Z"/></svg></span>
+              <button class="text-btn" data-open="carGoalDialog">Editar</button>
+            </div>
+            <span class="eyebrow">Amortização</span><h3>Fundo carro</h3>
+            <div class="progress amber"><span id="carFundProgress"></span></div>
+            <div class="progress-labels three-points">
+              <div><strong id="carFundNow">0,00 €</strong><small>Guardado</small></div>
+              <div><strong id="carFundPct">0%</strong><small>Progresso</small></div>
+              <div><strong id="carFundGoalLabel">0,00 €</strong><small>Meta</small></div>
+            </div>
+          </article>
+
+          <section class="section-block uniform-card recent-card reveal">
+            <div class="section-heading"><div><span class="eyebrow">Movimentos</span><h2>Histórico recente</h2></div><button class="text-btn" data-open="txDialog">Adicionar</button></div>
+            <div class="transaction-list" id="txList"></div>
+          </section>
+        </section>
+      </section>
+
+      <!-- DESPESAS -->
+      <section class="page" id="page-expenses">
+        <section class="page-header reveal">
+          <div><span class="eyebrow">Análise financeira</span><h1>Despesas</h1><p>Percebe para onde está a ir o teu dinheiro.</p></div>
+        </section>
+
+        <section class="filter-bar reveal delay-1">
+          <label for="expenseMonthSelect">Período</label>
+          <select id="expenseMonthSelect" aria-label="Escolher mês"></select>
+        </section>
+
+        <section class="stat-grid page-stats reveal delay-2">
+          <article class="stat-card">
+            <span class="stat-icon total"><svg viewBox="0 0 24 24"><path d="M3 7h18v12H3zM3 10h18M7 15h3"/></svg></span>
+            <div><small>Total do mês</small><strong id="expenseTotal">0,00 €</strong><span id="expenseVsLast" class="metric-tag neutral">Sem comparação</span></div>
+          </article>
+          <article class="stat-card">
+            <span class="stat-icon average"><svg viewBox="0 0 24 24"><path d="M6 3v3M18 3v3M4 8h16v12H4z"/></svg></span>
+            <div><small>Média diária</small><strong id="expenseDailyAvg">0,00 €</strong><span class="metric-sub">por dia com registos</span></div>
+          </article>
+          <article class="stat-card">
+            <span class="stat-icon forecast"><svg viewBox="0 0 24 24"><path d="M4 18 9 13l3 3 7-9M15 7h4v4"/></svg></span>
+            <div><small>Previsão</small><strong id="expenseForecast">0,00 €</strong><span class="metric-sub">até ao fim do mês</span></div>
+          </article>
+          <article class="stat-card">
+            <span class="stat-icon ratio"><svg viewBox="0 0 24 24"><path d="M12 12V3a9 9 0 1 1-9 9h9Zm0 0h9"/></svg></span>
+            <div><small>Gastos vs ganhos</small><strong id="expenseIncomeRatio">0%</strong><span id="expenseIncomeRatioSub" class="metric-sub">dos ganhos do mês</span></div>
+          </article>
+        </section>
+
+        <section class="analytics-grid">
+          <article class="chart-card reveal">
+            <div class="card-heading"><div><span class="eyebrow">Distribuição</span><h2>Por categoria</h2></div></div>
+            <div class="donut-wrap">
+              <canvas id="expenseDonut" width="320" height="320" aria-label="Gráfico circular de despesas"></canvas>
+              <div class="donut-center"><small>Total</small><strong id="expenseDonutTotal">0,00 €</strong></div>
+            </div>
+            <div class="legend" id="expenseLegend"></div>
+          </article>
+
+          <article class="chart-card reveal delay-1">
+            <div class="card-heading"><div><span class="eyebrow">Evolução</span><h2>Últimos 6 meses</h2></div></div>
+            <div class="bar-chart-wrap"><canvas id="expenseBars" width="720" height="360" aria-label="Gráfico de despesas mensais"></canvas></div>
+            <div class="chart-foot"><span id="expenseSixMonthAvg">Média: 0,00 €</span><span id="expenseBestMonth">Melhor mês: —</span></div>
+          </article>
+        </section>
+
+        <section class="section-block reveal">
+          <div class="section-heading"><div><span class="eyebrow">Detalhe</span><h2>Categorias</h2></div></div>
+          <div class="category-list" id="categoryBreakdown"></div>
+        </section>
+
+        <section class="section-block reveal">
+          <div class="section-heading"><div><span class="eyebrow">Movimentos</span><h2>Despesas do período</h2></div></div>
+          <div class="transaction-list" id="expenseList"></div>
+        </section>
+      </section>
+
+      <!-- PATRIMÓNIO -->
+      <section class="page" id="page-wealth">
+        <section class="page-header reveal">
+          <div><span class="eyebrow">Poupança e investimento</span><h1>Património</h1><p>Objetivos, rendimentos e distribuição num só lugar.</p></div>
+          <button class="secondary-btn compact-action" data-open="balancesDialog"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg>Atualizar</button>
+        </section>
+
+        <section class="stat-grid page-stats reveal delay-1">
+          <article class="stat-card"><span class="stat-icon current"><svg viewBox="0 0 24 24"><path d="M3 7h18v12H3zM3 10h18M7 15h3"/></svg></span><div><small>Conta corrente</small><strong id="sCurrent">0,00 €</strong><span class="metric-sub">disponível</span></div></article>
+          <article class="stat-card"><span class="stat-icon saving"><svg viewBox="0 0 24 24"><path d="M5 10c0-3 2.7-5 6.5-5 4.3 0 7.5 2.4 7.5 6.2 0 2.7-1.4 4.5-3.5 5.6V20h-3v-2H9v2H6v-3.4A6.8 6.8 0 0 1 3 11h2Z"/></svg></span><div><small>Poupança</small><strong id="sSavings">0,00 €</strong><span class="metric-sub">reserva</span></div></article>
+          <article class="stat-card"><span class="stat-icon investing"><svg viewBox="0 0 24 24"><path d="M4 18 9 13l3 3 7-9M15 7h4v4"/></svg></span><div><small>Investimentos</small><strong id="sInvestments">0,00 €</strong><span class="metric-sub">capital investido</span></div></article>
+          <article class="stat-card"><span class="stat-icon yield"><svg viewBox="0 0 24 24"><path d="M12 3v18M17 7.5c0-1.9-2.2-3-5-3s-5 1.1-5 3 2.2 3 5 3 5 1.1 5 3-2.2 3-5 3-5-1.1-5-3"/></svg></span><div><small>Rendimento diário</small><strong id="sDailyYield">0,00 €</strong><span class="metric-sub">estimado</span></div></article>
+        </section>
+
+        <section class="analytics-grid">
+          <article class="goal-card large reveal">
+            <div class="section-heading"><div><span class="eyebrow">Meta anual</span><h2>Poupança</h2></div><button class="text-btn" data-open="savingsGoalDialog">Editar meta</button></div>
+            <div class="big-progress-number"><strong id="savingsPagePct">0%</strong><span>concluído</span></div>
+            <div class="progress tall"><span id="savingsPageProgress"></span></div>
+            <div class="progress-labels"><strong id="savingsPageNow">0,00 €</strong><small id="savingsPageRemaining">Faltam 0,00 €</small><small id="savingsPageGoal">0,00 €</small></div>
+          </article>
+
+          <article class="chart-card reveal delay-1">
+            <div class="card-heading"><div><span class="eyebrow">Distribuição</span><h2>Onde está o dinheiro</h2></div></div>
+            <div class="donut-wrap small">
+              <canvas id="allocationDonut" width="280" height="280" aria-label="Distribuição do património"></canvas>
+              <div class="donut-center"><small>Total</small><strong id="allocationTotal">0,00 €</strong></div>
+            </div>
+            <div class="legend" id="allocationLegend"></div>
+          </article>
+        </section>
+
+        <section class="section-block reveal">
+          <div class="section-heading"><div><span class="eyebrow">Rendimentos estimados</span><h2>Juros estimados</h2></div><button class="text-btn" data-open="rateDialog">Editar taxa</button></div>
+          <div class="rate-banner"><span>Taxa anual</span><strong id="annualRateLabel">0,00%</strong></div>
+          <div class="yield-cards">
+            <article><span>Hoje</span><strong id="yieldDaily">0,00 €</strong><small>estimado por dia</small></article>
+            <article><span>Este mês</span><strong id="yieldMonthly">0,00 €</strong><small>estimado por mês</small></article>
+            <article><span>Este ano</span><strong id="yieldAnnual">0,00 €</strong><small>estimado por ano</small></article>
+          </div>
+        </section>
+
+        <section class="section-block reveal">
+          <div class="section-heading"><div><span class="eyebrow">Ações rápidas</span><h2>Gerir património</h2></div></div>
+          <div class="action-grid">
+            <button class="action-card" data-tx-type="saving" data-open="txDialog"><span class="quick-icon mint"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span><strong>Adicionar à poupança</strong><small>Transferir da conta corrente</small></button>
+            <button class="action-card" data-tx-type="investment" data-open="txDialog"><span class="quick-icon blue"><svg viewBox="0 0 24 24"><path d="M4 18 9 13l3 3 7-9M15 7h4v4"/></svg></span><strong>Adicionar investimento</strong><small>Registar capital investido</small></button>
+          </div>
+        </section>
+      </section>
+
+      <!-- CARRO -->
+      <section class="page" id="page-car">
+        <section class="page-header reveal">
+          <div><span class="eyebrow">Crédito automóvel</span><h1>O teu carro</h1><p>Acompanha a dívida, prestações e amortizações.</p></div>
+          <button class="secondary-btn compact-action" data-open="loanSettingsDialog"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg>Configurar</button>
+        </section>
+
+        <section class="loan-hero reveal delay-1">
+          <div class="loan-main"><small>Dívida atual</small><strong id="loanBalance">0,00 €</strong><span id="loanPct">0% liquidado</span></div>
+          <div class="loan-ring" id="loanRing"><span id="loanRingPct">0%</span></div>
+          <div class="progress loan"><span id="loanProgress"></span></div>
+          <div class="loan-foot"><span>Pago: <strong id="loanPaidAmount">0,00 €</strong></span><span>Inicial: <strong id="loanInitialAmount">0,00 €</strong></span></div>
+        </section>
+
+        <section class="stat-grid page-stats reveal delay-2">
+          <article class="stat-card"><span class="stat-icon neutral"><svg viewBox="0 0 24 24"><path d="M6 3v3M18 3v3M4 8h16v12H4z"/></svg></span><div><small>Próxima prestação</small><strong id="nextPaymentDate">—</strong><span id="paymentCountdown" class="metric-tag neutral">—</span></div></article>
+          <article class="stat-card"><span class="stat-icon total"><svg viewBox="0 0 24 24"><path d="M12 3v18M17 7.5c0-1.9-2.2-3-5-3s-5 1.1-5 3 2.2 3 5 3 5 1.1 5 3-2.2 3-5 3-5-1.1-5-3"/></svg></span><div><small>Valor mensal</small><strong id="monthlyPayment">0,00 €</strong><span class="metric-sub">prestação prevista</span></div></article>
+          <article class="stat-card"><span class="stat-icon income"><svg viewBox="0 0 24 24"><path d="M12 4v14m0 0-5-5m5 5 5-5"/></svg></span><div><small>Capital</small><strong id="nextCapital">0,00 €</strong><span class="metric-sub">na próxima prestação</span></div></article>
+          <article class="stat-card"><span class="stat-icon expense"><svg viewBox="0 0 24 24"><path d="M12 20V6m0 0-5 5m5-5 5 5"/></svg></span><div><small>Juros + imposto</small><strong id="nextCosts">0,00 €</strong><span class="metric-sub">na próxima prestação</span></div></article>
+        </section>
+
+        <section class="analytics-grid">
+          <article class="goal-card large reveal">
+            <div class="section-heading"><div><span class="eyebrow">Fundo de amortização</span><h2>Objetivo anual</h2></div><button class="text-btn" data-open="carGoalDialog">Editar</button></div>
+            <div class="progress tall amber"><span id="carPageFundProgress"></span></div>
+            <div class="progress-labels"><strong id="carPageFundNow">0,00 €</strong><span id="carPageFundPct">0%</span><small id="carPageFundGoal">0,00 €</small></div>
+            <button class="secondary-btn full" data-open="transferDialog">Transferir da conta corrente</button>
+          </article>
+
+          <article class="chart-card reveal delay-1">
+            <div class="card-heading"><div><span class="eyebrow">Projeção</span><h2>Quando fica pago</h2></div></div>
+            <div class="projection-grid">
+              <div><small>Data estimada</small><strong id="estimatedPayoff">—</strong></div>
+              <div><small>Prestações restantes</small><strong id="remainingPayments">0</strong></div>
+              <div><small>Juros estimados</small><strong id="projectedInterest">0,00 €</strong></div>
+              <div><small>Juros já pagos</small><strong id="loanInterestPaid">0,00 €</strong></div>
+            </div>
+          </article>
+        </section>
+
+        <section class="section-block reveal">
+          <div class="section-heading"><div><span class="eyebrow">Operações</span><h2>Gerir crédito</h2></div></div>
+          <div class="action-grid">
+            <button class="action-card" data-open="paymentDialog"><span class="quick-icon mint"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span><strong>Registar prestação</strong><small>Abater capital mensal</small></button>
+            <button class="action-card" data-open="extraDialog"><span class="quick-icon amber"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span><strong>Amortização extra</strong><small>Reduzir a dívida</small></button>
+            <button class="action-card" data-open="historyDialog"><span class="quick-icon blue"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg></span><strong>Ver histórico</strong><small>Prestações registadas</small></button>
+            <button class="action-card" data-open="loanSettingsDialog"><span class="quick-icon blue"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg></span><strong>Configurar crédito</strong><small>Dados guardados só neste dispositivo</small></button>
+          </div>
+        </section>
+
+        <section class="section-block reveal">
+          <div class="section-heading"><div><span class="eyebrow">Linha temporal</span><h2>Últimos pagamentos</h2></div></div>
+          <div class="timeline" id="loanTimeline"></div>
+        </section>
+      </section>
+
+      <!-- INSIGHTS -->
+      <section class="page" id="page-insights">
+        <section class="page-header reveal">
+          <div><span class="eyebrow">Inteligência financeira</span><h1>Insights</h1><p>Leituras automáticas com base nos teus movimentos.</p></div>
+        </section>
+        <section class="insights-grid reveal delay-1" id="insightsList"></section>
+
+        <section class="section-block reveal">
+          <div class="section-heading"><div><span class="eyebrow">Segurança</span><h2>Cópias dos teus dados</h2></div></div>
+          <p class="muted">Os dados ficam guardados apenas neste dispositivo. Exporta regularmente uma cópia de segurança.</p>
+          <div class="backup-grid">
+            <button id="exportBackup" class="secondary-btn"><svg viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M4 20h16"/></svg>Exportar cópia</button>
+            <label class="secondary-btn file-label"><svg viewBox="0 0 24 24"><path d="M12 21V9M7 14l5-5 5 5M4 4h16"/></svg>Importar cópia<input id="importBackup" type="file" accept="application/json" hidden></label>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="Navegação principal">
+      <button class="active" data-page="home"><svg viewBox="0 0 24 24"><path d="m3 11 9-8 9 8v10h-6v-6H9v6H3z"/></svg><span>Início</span></button>
+      <button data-page="expenses"><svg viewBox="0 0 24 24"><path d="M4 19V9m5 10V5m5 14v-7m5 7V3"/></svg><span>Despesas</span></button>
+      <button class="nav-add" data-open="txDialog" aria-label="Adicionar movimento"><span><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span></button>
+      <button data-page="wealth"><svg viewBox="0 0 24 24"><path d="M4 18 9 13l3 3 7-9M15 7h4v4"/></svg><span>Património</span></button>
+      <button data-page="car"><svg viewBox="0 0 24 24"><path d="m5 16-1 2v2h2v-2h12v2h2v-2l-1-2-2-7H7l-2 7Zm2.5-5h9l1 4h-11l1-4Z"/></svg><span>Carro</span></button>
+      <button data-page="insights"><svg viewBox="0 0 24 24"><path d="M9 18h6M10 22h4M8 14c-1.2-1-2-2.6-2-4.4A6 6 0 0 1 18 9.6c0 1.8-.8 3.4-2 4.4-.7.6-1 1.2-1 2H9c0-.8-.3-1.4-1-2Z"/></svg><span>Insights</span></button>
+    </nav>
+  </div>
+
+  <!-- NOVO MOVIMENTO -->
+  <dialog id="txDialog">
+    <form id="txForm" method="dialog">
+      <div class="dialog-head"><div><span class="eyebrow">Novo registo</span><h2>Adicionar movimento</h2></div><button class="close-btn" type="button" data-close="txDialog" aria-label="Fechar"><span>×</span></button></div>
+      <label>Tipo<select id="txType" required>
+        <option value="income">Receita — entra na conta corrente</option>
+        <option value="expense">Despesa — sai da conta corrente</option>
+        <option value="saving">Poupança — transferir para a poupança</option>
+        <option value="investment">Investimento — transferir para investimentos</option>
+        <option value="carfund">Fundo carro — reservar para amortização</option>
+      </select></label>
+      <label>Descrição<input id="txDesc" type="text" maxlength="80" placeholder="Ex.: Salário, supermercado, combustível…" required></label>
+      <label>Valor (€)<input id="txAmount" type="number" min="0.01" step="0.01" inputmode="decimal" required></label>
+      <label>Data<input id="txDate" type="date" required></label>
+      <label>Categoria<select id="txCategory">
+        <option>Salário</option><option>Alimentação</option><option>Carro</option><option>Combustível</option><option>Casa</option><option>Contas</option><option>Ginásio</option><option>Lazer</option><option>Saúde</option><option>Compras</option><option>Poupança</option><option>Investimentos</option><option>Outros</option>
+      </select></label>
+      <button class="primary-btn full" type="submit">Guardar movimento</button>
+    </form>
+  </dialog>
+
+  <!-- ATUALIZAR SALDOS -->
+  <dialog id="balancesDialog"><form id="balancesForm" method="dialog">
+    <div class="dialog-head"><div><span class="eyebrow">Património</span><h2>Atualizar saldos</h2></div><button class="close-btn" type="button" data-close="balancesDialog" aria-label="Fechar"><span>×</span></button></div>
+    <label>Conta corrente<input id="balanceCurrent" type="number" step="0.01"></label>
+    <label>Poupança<input id="balanceSavings" type="number" step="0.01"></label>
+    <label>Investimentos<input id="balanceInvestments" type="number" step="0.01"></label>
+    <label>Fundo carro<input id="balanceCarFund" type="number" step="0.01"></label>
+    <button class="primary-btn full" type="submit">Guardar saldos</button>
+  </form></dialog>
+
+  <dialog id="rateDialog"><form id="rateForm" method="dialog">
+    <div class="dialog-head"><div><span class="eyebrow">Rendimentos</span><h2>Taxa anual</h2></div><button class="close-btn" type="button" data-close="rateDialog" aria-label="Fechar"><span>×</span></button></div>
+    <label>Taxa anual (%)<input id="annualRateInput" type="number" min="0" max="100" step="0.01" required></label>
+    <button class="primary-btn full" type="submit">Guardar taxa</button>
+  </form></dialog>
+
+  <dialog id="savingsGoalDialog"><form id="savingsGoalForm" method="dialog">
+    <div class="dialog-head"><div><span class="eyebrow">Objetivo</span><h2>Meta de poupança</h2></div><button class="close-btn" type="button" data-close="savingsGoalDialog" aria-label="Fechar"><span>×</span></button></div>
+    <label>Objetivo anual (€)<input id="savingsGoalInput" type="number" min="0" step="0.01" required></label>
+    <button class="primary-btn full" type="submit">Guardar meta</button>
+  </form></dialog>
+
+  <dialog id="carGoalDialog"><form id="carGoalForm" method="dialog">
+    <div class="dialog-head"><div><span class="eyebrow">Objetivo</span><h2>Fundo de amortização</h2></div><button class="close-btn" type="button" data-close="carGoalDialog" aria-label="Fechar"><span>×</span></button></div>
+    <label>Objetivo (€)<input id="carGoalInput" type="number" min="0" step="0.01" required></label>
+    <button class="primary-btn full" type="submit">Guardar meta</button>
+  </form></dialog>
+
+  <dialog id="transferDialog"><form id="transferForm" method="dialog">
+    <div class="dialog-head"><div><span class="eyebrow">Fundo carro</span><h2>Transferir saldo</h2></div><button class="close-btn" type="button" data-close="transferDialog" aria-label="Fechar"><span>×</span></button></div>
+    <p class="muted">O valor sai da conta corrente e fica reservado para amortização.</p>
+    <label>Valor (€)<input id="transferAmount" type="number" min="0.01" step="0.01" required></label>
+    <button class="primary-btn full" type="submit">Transferir</button>
+  </form></dialog>
+
+  <dialog id="loanSettingsDialog"><form id="loanSettingsForm" method="dialog">
+    <div class="dialog-head"><div><span class="eyebrow">Dados privados</span><h2>Configurar crédito</h2></div><button class="close-btn" type="button" data-close="loanSettingsDialog" aria-label="Fechar"><span>×</span></button></div>
+    <p class="muted">Estes valores são guardados apenas no navegador deste dispositivo e não ficam escritos no código público.</p>
+    <label>Valor inicial financiado (€)<input id="loanOriginalInput" type="number" min="0" step="0.01" required></label>
+    <label>Dívida atual (€)<input id="loanBalanceInput" type="number" min="0" step="0.01" required></label>
+    <label>Prestação mensal (€)<input id="loanPaymentInput" type="number" min="0" step="0.01" required></label>
+    <label>TAN anual (%)<input id="loanRateInput" type="number" min="0" max="100" step="0.01" required></label>
+    <label>Imposto sobre juros (%)<input id="loanStampInput" type="number" min="0" max="100" step="0.01" required></label>
+    <label>Data da próxima prestação<input id="loanNextDateInput" type="date"></label>
+    <button class="primary-btn full" type="submit">Guardar dados do crédito</button>
+  </form></dialog>
+
+  <dialog id="paymentDialog"><form id="paymentForm" method="dialog">
+    <div class="dialog-head"><div><span class="eyebrow">Crédito automóvel</span><h2>Registar prestação</h2></div><button class="close-btn" type="button" data-close="paymentDialog" aria-label="Fechar"><span>×</span></button></div>
+    <p class="muted">A operação calcula automaticamente capital, juros e imposto e atualiza a dívida.</p>
+    <label>Data<input id="paymentDate" type="date" required></label>
+    <label class="check-row"><input id="paymentFromCurrent" type="checkbox" checked><span>Descontar o valor da conta corrente</span></label>
+    <button class="primary-btn full" type="submit">Confirmar prestação</button>
+  </form></dialog>
+
+  <dialog id="extraDialog"><form id="extraForm" method="dialog">
+    <div class="dialog-head"><div><span class="eyebrow">Crédito automóvel</span><h2>Amortização extra</h2></div><button class="close-btn" type="button" data-close="extraDialog" aria-label="Fechar"><span>×</span></button></div>
+    <label>Valor (€)<input id="extraAmount" type="number" min="0.01" step="0.01" required></label>
+    <label>Data<input id="extraDate" type="date" required></label>
+    <label>Origem do valor<select id="extraSource"><option value="carFund">Fundo carro</option><option value="current">Conta corrente</option><option value="external">Não descontar de um saldo</option></select></label>
+    <button class="primary-btn full" type="submit">Registar amortização</button>
+  </form></dialog>
+
+  <dialog id="historyDialog"><form method="dialog">
+    <div class="dialog-head"><div><span class="eyebrow">Crédito automóvel</span><h2>Histórico do crédito</h2></div><button class="close-btn" type="button" data-close="historyDialog" aria-label="Fechar"><span>×</span></button></div>
+    <div class="history-list" id="loanHistory"></div>
+    <button class="secondary-btn full" type="button" data-close="historyDialog">Fechar</button>
+  </form></dialog>
+
+  <script src="app.js?v=13.0.0"></script>
+</body>
+</html>
