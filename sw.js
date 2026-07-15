@@ -1,4 +1,4 @@
-const CACHE = 'nexora-v13.0.0';
+const CACHE = 'nexora-v14.0.0';
 const ASSETS = [
   './',
   './index.html',

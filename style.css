@@ -247,3 +247,62 @@ input,select{height:52px;border-radius:16px}
   .bottom-nav .nav-add>span{width:48px;height:48px;border-radius:16px}
   .bottom-nav button span{max-width:48px}
 }
+
+
+/* =========================================================
+   NEXORA v14 — ícones premium e alinhamento exato
+   ========================================================= */
+.top-actions .round-btn{
+  flex:0 0 auto;
+  padding:0;
+  line-height:0;
+  align-items:center;
+  justify-content:center;
+}
+.round-btn>svg{
+  display:block;
+  position:static;
+  inset:auto;
+  margin:auto;
+  transform:none;
+  transform-origin:center;
+}
+.theme-toggle .bulb-icon{
+  width:25px;
+  height:25px;
+  overflow:visible;
+  stroke-width:1.9;
+}
+.quick-icon svg,
+.goal-icon svg,
+.stat-icon svg{
+  stroke-width:2.05;
+}
+.quick-icon{
+  overflow:hidden;
+  background:linear-gradient(145deg,var(--soft),color-mix(in srgb,var(--soft) 78%,var(--brand) 22%));
+}
+.quick-icon svg{
+  display:block;
+  margin:auto;
+}
+.bottom-nav button:not(.nav-add) svg{
+  width:21px;
+  height:21px;
+  stroke-width:2.05;
+  display:block;
+  overflow:visible;
+  transition:transform .18s ease,filter .18s ease;
+}
+.bottom-nav button:not(.nav-add):active svg{
+  transform:scale(.92);
+}
+.bottom-nav button.active svg{
+  filter:drop-shadow(0 0 5px color-mix(in srgb,var(--brand) 45%,transparent));
+}
+.bottom-nav .nav-add svg{
+  stroke-width:1.85;
+}
+@supports not (background:color-mix(in srgb,white,black)){
+  .quick-icon{background:var(--soft)}
+}
