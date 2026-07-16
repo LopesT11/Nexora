@@ -6,30 +6,20 @@
   <meta name="theme-color" content="#0b1715">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Nexora">
+  <meta name="apple-mobile-web-app-title" content="DEALER$">
   <meta name="format-detection" content="telephone=no">
-  <title>Nexora</title>
+  <title>DEALER$</title>
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icon-192.png">
-  <link rel="stylesheet" href="style.css?v=14.0.0">
+  <link rel="stylesheet" href="style.css?v=4.0.0">
 </head>
 <body>
   <div class="app-shell" id="app">
     <header class="topbar">
-      <button class="brand-name" data-page="home" aria-label="Ir para o início">Nexora</button>
-      <div class="top-actions">
-        <button class="round-btn theme-toggle" id="themeToggle" type="button" aria-label="Alternar entre modo claro e escuro" title="Modo claro/escuro">
-          <svg class="bulb-icon" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M9 18h6"/>
-            <path d="M10 21h4"/>
-            <path d="M8.4 14.8A6 6 0 1 1 15.6 14.8c-.9.7-1.4 1.5-1.5 2.2H9.9c-.1-.7-.6-1.5-1.5-2.2Z"/>
-            <path d="M12 2V1M4.9 4.9l-.8-.8M19.1 4.9l.8-.8M3 11H2M22 11h-1"/>
-          </svg>
-        </button>
-        <button class="round-btn accent top-add" data-open="txDialog" aria-label="Adicionar movimento" title="Adicionar movimento">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
-        </button>
-      </div>
+      <button class="brand-name" data-page="home" aria-label="Ir para o início">DEALER$</button>
+      <button class="round-btn accent top-add" data-open="txDialog" aria-label="Adicionar movimento" title="Adicionar movimento">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+      </button>
     </header>
 
     <main>
@@ -37,19 +27,6 @@
       <section class="page active" id="page-home">
         <section class="wealth-card reveal">
           <div class="wealth-glow"></div>
-          <svg class="wealth-chart" viewBox="0 0 720 280" preserveAspectRatio="none" aria-hidden="true">
-            <defs>
-              <linearGradient id="wealthChartFill" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0" stop-color="currentColor" stop-opacity=".20"/>
-                <stop offset="1" stop-color="currentColor" stop-opacity="0"/>
-              </linearGradient>
-            </defs>
-            <path class="wealth-chart-fill" d="M0 238 C95 244 126 212 200 218 C282 226 318 246 388 206 C452 168 474 102 530 120 C588 139 609 189 720 34 L720 280 L0 280 Z"/>
-            <path class="wealth-chart-line" d="M0 238 C95 244 126 212 200 218 C282 226 318 246 388 206 C452 168 474 102 530 120 C588 139 609 189 720 34"/>
-            <circle class="wealth-chart-point" cx="530" cy="120" r="5"/>
-            <path class="wealth-chart-wave" d="M0 256 C98 260 138 228 210 234 C286 241 328 260 396 222 C459 187 488 133 543 150 C601 168 624 207 720 76"/>
-            <path class="wealth-chart-wave" d="M0 270 C101 272 142 244 216 250 C291 256 335 274 403 239 C466 207 497 162 552 178 C608 194 642 226 720 119"/>
-          </svg>
           <div class="wealth-copy">
             <span class="card-kicker">Património total</span>
             <strong id="totalWealth">0,00 €</strong>
@@ -65,22 +42,22 @@
 
         <section class="quick-list reveal delay-1" aria-label="Saldos principais">
           <button class="quick-card" data-open="balancesDialog">
-            <span class="quick-icon current"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 6H18a2 2 0 0 1 2 2v11H4a2 2 0 0 1-2-2V8.5A2.5 2.5 0 0 1 4.5 6Z"/><path d="M2.5 9H20"/><path d="M15.5 12.5H20v3h-4.5a1.5 1.5 0 0 1 0-3Z"/></svg></span>
+            <span class="quick-icon current"><svg viewBox="0 0 24 24"><path d="M3 7h18v12H3zM3 10h18M7 15h3"/></svg></span>
             <span><small>Conta corrente</small><strong id="homeCurrent">0,00 €</strong></span>
             <svg class="chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
           </button>
           <button class="quick-card" data-page="wealth">
-            <span class="quick-icon saving"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4h8l-2 3h-4L8 4Z"/><path d="M9.5 7h5"/><path d="M9 7c-3.1 1.9-5 5-5 8.5C4 19 6.8 21 12 21s8-2 8-5.5C20 12 18.1 8.9 15 7"/><circle cx="12" cy="15" r="2.2"/></svg></span>
+            <span class="quick-icon saving"><svg viewBox="0 0 24 24"><path d="M5 10c0-3 2.7-5 6.5-5 4.3 0 7.5 2.4 7.5 6.2 0 2.7-1.4 4.5-3.5 5.6V20h-3v-2H9v2H6v-3.4A6.8 6.8 0 0 1 3 11h2Zm9-1h.01"/></svg></span>
             <span><small>Poupança</small><strong id="homeSavings">0,00 €</strong></span>
             <svg class="chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
           </button>
           <button class="quick-card" data-page="wealth">
-            <span class="quick-icon investing"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 17 5-5 3 3 7-8"/><path d="M15 7h4v4"/><circle cx="4" cy="17" r=".7"/><circle cx="9" cy="12" r=".7"/><circle cx="12" cy="15" r=".7"/></svg></span>
+            <span class="quick-icon investing"><svg viewBox="0 0 24 24"><path d="M4 18 9 13l3 3 7-9M15 7h4v4"/></svg></span>
             <span><small>Investimentos</small><strong id="homeInvestments">0,00 €</strong></span>
             <svg class="chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
           </button>
           <button class="quick-card" data-page="expenses">
-            <span class="quick-icon expenses"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19v-7M10 19V7M15 19v-9M20 19V4"/><path d="M3 21h19"/></svg></span>
+            <span class="quick-icon expenses"><svg viewBox="0 0 24 24"><path d="M4 19V9m5 10V5m5 14v-7m5 7V3"/></svg></span>
             <span><small>Despesas</small><strong id="monthExpenses">0,00 €</strong></span>
             <svg class="chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
           </button>
@@ -114,7 +91,7 @@
         <section class="home-stack">
           <article class="goal-card uniform-card reveal">
             <div class="goal-head">
-              <span class="goal-icon mint"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4h8l-2 3h-4L8 4Z"/><path d="M9.5 7h5"/><path d="M9 7c-3.1 1.9-5 5-5 8.5C4 19 6.8 21 12 21s8-2 8-5.5C20 12 18.1 8.9 15 7"/><circle cx="12" cy="15" r="2.2"/></svg></span>
+              <span class="goal-icon mint"><svg viewBox="0 0 24 24"><path d="M5 10c0-3 2.7-5 6.5-5 4.3 0 7.5 2.4 7.5 6.2 0 2.7-1.4 4.5-3.5 5.6V20h-3v-2H9v2H6v-3.4A6.8 6.8 0 0 1 3 11h2Z"/></svg></span>
               <button class="text-btn" data-open="savingsGoalDialog">Editar</button>
             </div>
             <span class="eyebrow">Meta anual</span><h3>Poupança</h3>
@@ -214,7 +191,7 @@
 
         <section class="stat-grid page-stats reveal delay-1">
           <article class="stat-card"><span class="stat-icon current"><svg viewBox="0 0 24 24"><path d="M3 7h18v12H3zM3 10h18M7 15h3"/></svg></span><div><small>Conta corrente</small><strong id="sCurrent">0,00 €</strong><span class="metric-sub">disponível</span></div></article>
-          <article class="stat-card"><span class="stat-icon saving"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4h8l-2 3h-4L8 4Z"/><path d="M9.5 7h5"/><path d="M9 7c-3.1 1.9-5 5-5 8.5C4 19 6.8 21 12 21s8-2 8-5.5C20 12 18.1 8.9 15 7"/><circle cx="12" cy="15" r="2.2"/></svg></span><div><small>Poupança</small><strong id="sSavings">0,00 €</strong><span class="metric-sub">reserva</span></div></article>
+          <article class="stat-card"><span class="stat-icon saving"><svg viewBox="0 0 24 24"><path d="M5 10c0-3 2.7-5 6.5-5 4.3 0 7.5 2.4 7.5 6.2 0 2.7-1.4 4.5-3.5 5.6V20h-3v-2H9v2H6v-3.4A6.8 6.8 0 0 1 3 11h2Z"/></svg></span><div><small>Poupança</small><strong id="sSavings">0,00 €</strong><span class="metric-sub">reserva</span></div></article>
           <article class="stat-card"><span class="stat-icon investing"><svg viewBox="0 0 24 24"><path d="M4 18 9 13l3 3 7-9M15 7h4v4"/></svg></span><div><small>Investimentos</small><strong id="sInvestments">0,00 €</strong><span class="metric-sub">capital investido</span></div></article>
           <article class="stat-card"><span class="stat-icon yield"><svg viewBox="0 0 24 24"><path d="M12 3v18M17 7.5c0-1.9-2.2-3-5-3s-5 1.1-5 3 2.2 3 5 3 5 1.1 5 3-2.2 3-5 3-5-1.1-5-3"/></svg></span><div><small>Rendimento diário</small><strong id="sDailyYield">0,00 €</strong><span class="metric-sub">estimado</span></div></article>
         </section>
@@ -238,8 +215,8 @@
         </section>
 
         <section class="section-block reveal">
-          <div class="section-heading"><div><span class="eyebrow">Rendimentos estimados</span><h2>Juros estimados</h2></div><button class="text-btn" data-open="rateDialog">Editar taxa</button></div>
-          <div class="rate-banner"><span>Taxa anual</span><strong id="annualRateLabel">0,00%</strong></div>
+          <div class="section-heading"><div><span class="eyebrow">Rendimentos estimados</span><h2>Trade Republic</h2></div><button class="text-btn" data-open="rateDialog">Editar taxa</button></div>
+          <div class="rate-banner"><span>Taxa anual</span><strong id="annualRateLabel">3,00%</strong></div>
           <div class="yield-cards">
             <article><span>Hoje</span><strong id="yieldDaily">0,00 €</strong><small>estimado por dia</small></article>
             <article><span>Este mês</span><strong id="yieldMonthly">0,00 €</strong><small>estimado por mês</small></article>
@@ -259,8 +236,8 @@
       <!-- CARRO -->
       <section class="page" id="page-car">
         <section class="page-header reveal">
-          <div><span class="eyebrow">Crédito automóvel</span><h1>O teu carro</h1><p>Acompanha a dívida, prestações e amortizações.</p></div>
-          <button class="secondary-btn compact-action" data-open="loanSettingsDialog"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg>Configurar</button>
+          <div><span class="eyebrow">Crédito automóvel</span><h1>Audi A6</h1><p>Acompanha a dívida, prestações e amortizações.</p></div>
+          <button class="secondary-btn compact-action" data-open="paymentDialog"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>Prestação</button>
         </section>
 
         <section class="loan-hero reveal delay-1">
@@ -298,11 +275,10 @@
 
         <section class="section-block reveal">
           <div class="section-heading"><div><span class="eyebrow">Operações</span><h2>Gerir crédito</h2></div></div>
-          <div class="action-grid">
+          <div class="action-grid three">
             <button class="action-card" data-open="paymentDialog"><span class="quick-icon mint"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span><strong>Registar prestação</strong><small>Abater capital mensal</small></button>
             <button class="action-card" data-open="extraDialog"><span class="quick-icon amber"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span><strong>Amortização extra</strong><small>Reduzir a dívida</small></button>
             <button class="action-card" data-open="historyDialog"><span class="quick-icon blue"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg></span><strong>Ver histórico</strong><small>Prestações registadas</small></button>
-            <button class="action-card" data-open="loanSettingsDialog"><span class="quick-icon blue"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg></span><strong>Configurar crédito</strong><small>Dados guardados só neste dispositivo</small></button>
           </div>
         </section>
 
@@ -331,12 +307,12 @@
     </main>
 
     <nav class="bottom-nav" aria-label="Navegação principal">
-      <button class="active" data-page="home"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 11 9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg><span>Início</span></button>
-      <button data-page="expenses"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19v-7M10 19V7M15 19v-9M20 19V4"/><path d="M3 21h19"/></svg><span>Despesas</span></button>
-      <button class="nav-add" data-open="txDialog" aria-label="Adicionar movimento"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span></button>
-      <button data-page="wealth"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 17 5-5 3 3 7-8"/><path d="M15 7h4v4"/><circle cx="4" cy="17" r=".7"/><circle cx="9" cy="12" r=".7"/><circle cx="12" cy="15" r=".7"/></svg><span>Património</span></button>
-      <button data-page="car"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 16 4 18v2h2v-2h12v2h2v-2l-1-2-2-7H7l-2 7Z"/><path d="M6.5 14h11M8 11h8"/><circle cx="7.5" cy="16.5" r=".8"/><circle cx="16.5" cy="16.5" r=".8"/></svg><span>Carro</span></button>
-      <button data-page="insights"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 21h4"/><path d="M8.4 14.8A6 6 0 1 1 15.6 14.8c-.9.7-1.4 1.5-1.5 2.2H9.9c-.1-.7-.6-1.5-1.5-2.2Z"/><path d="M12 2V1M4.9 4.9l-.8-.8M19.1 4.9l.8-.8"/></svg><span>Insights</span></button>
+      <button class="active" data-page="home"><svg viewBox="0 0 24 24"><path d="m3 11 9-8 9 8v10h-6v-6H9v6H3z"/></svg><span>Início</span></button>
+      <button data-page="expenses"><svg viewBox="0 0 24 24"><path d="M4 19V9m5 10V5m5 14v-7m5 7V3"/></svg><span>Despesas</span></button>
+      <button class="nav-add" data-open="txDialog" aria-label="Adicionar movimento"><span><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span></button>
+      <button data-page="wealth"><svg viewBox="0 0 24 24"><path d="M4 18 9 13l3 3 7-9M15 7h4v4"/></svg><span>Património</span></button>
+      <button data-page="car"><svg viewBox="0 0 24 24"><path d="m5 16-1 2v2h2v-2h12v2h2v-2l-1-2-2-7H7l-2 7Zm2.5-5h9l1 4h-11l1-4Z"/></svg><span>Carro</span></button>
+      <button data-page="insights"><svg viewBox="0 0 24 24"><path d="M9 18h6M10 22h4M8 14c-1.2-1-2-2.6-2-4.4A6 6 0 0 1 18 9.6c0 1.8-.8 3.4-2 4.4-.7.6-1 1.2-1 2H9c0-.8-.3-1.4-1-2Z"/></svg><span>Insights</span></button>
     </nav>
   </div>
 
@@ -379,13 +355,13 @@
 
   <dialog id="savingsGoalDialog"><form id="savingsGoalForm" method="dialog">
     <div class="dialog-head"><div><span class="eyebrow">Objetivo</span><h2>Meta de poupança</h2></div><button class="close-btn" type="button" data-close="savingsGoalDialog" aria-label="Fechar"><span>×</span></button></div>
-    <label>Objetivo anual (€)<input id="savingsGoalInput" type="number" min="0" step="0.01" required></label>
+    <label>Objetivo anual (€)<input id="savingsGoalInput" type="number" min="1" step="0.01" required></label>
     <button class="primary-btn full" type="submit">Guardar meta</button>
   </form></dialog>
 
   <dialog id="carGoalDialog"><form id="carGoalForm" method="dialog">
     <div class="dialog-head"><div><span class="eyebrow">Objetivo</span><h2>Fundo de amortização</h2></div><button class="close-btn" type="button" data-close="carGoalDialog" aria-label="Fechar"><span>×</span></button></div>
-    <label>Objetivo (€)<input id="carGoalInput" type="number" min="0" step="0.01" required></label>
+    <label>Objetivo (€)<input id="carGoalInput" type="number" min="1" step="0.01" required></label>
     <button class="primary-btn full" type="submit">Guardar meta</button>
   </form></dialog>
 
@@ -394,18 +370,6 @@
     <p class="muted">O valor sai da conta corrente e fica reservado para amortização.</p>
     <label>Valor (€)<input id="transferAmount" type="number" min="0.01" step="0.01" required></label>
     <button class="primary-btn full" type="submit">Transferir</button>
-  </form></dialog>
-
-  <dialog id="loanSettingsDialog"><form id="loanSettingsForm" method="dialog">
-    <div class="dialog-head"><div><span class="eyebrow">Dados privados</span><h2>Configurar crédito</h2></div><button class="close-btn" type="button" data-close="loanSettingsDialog" aria-label="Fechar"><span>×</span></button></div>
-    <p class="muted">Estes valores são guardados apenas no navegador deste dispositivo e não ficam escritos no código público.</p>
-    <label>Valor inicial financiado (€)<input id="loanOriginalInput" type="number" min="0" step="0.01" required></label>
-    <label>Dívida atual (€)<input id="loanBalanceInput" type="number" min="0" step="0.01" required></label>
-    <label>Prestação mensal (€)<input id="loanPaymentInput" type="number" min="0" step="0.01" required></label>
-    <label>TAN anual (%)<input id="loanRateInput" type="number" min="0" max="100" step="0.01" required></label>
-    <label>Imposto sobre juros (%)<input id="loanStampInput" type="number" min="0" max="100" step="0.01" required></label>
-    <label>Data da próxima prestação<input id="loanNextDateInput" type="date"></label>
-    <button class="primary-btn full" type="submit">Guardar dados do crédito</button>
   </form></dialog>
 
   <dialog id="paymentDialog"><form id="paymentForm" method="dialog">
@@ -425,11 +389,11 @@
   </form></dialog>
 
   <dialog id="historyDialog"><form method="dialog">
-    <div class="dialog-head"><div><span class="eyebrow">Crédito automóvel</span><h2>Histórico do crédito</h2></div><button class="close-btn" type="button" data-close="historyDialog" aria-label="Fechar"><span>×</span></button></div>
+    <div class="dialog-head"><div><span class="eyebrow">Audi A6</span><h2>Histórico do crédito</h2></div><button class="close-btn" type="button" data-close="historyDialog" aria-label="Fechar"><span>×</span></button></div>
     <div class="history-list" id="loanHistory"></div>
     <button class="secondary-btn full" type="button" data-close="historyDialog">Fechar</button>
   </form></dialog>
 
-  <script src="app.js?v=14.0.0"></script>
+  <script src="app.js?v=4.0.0"></script>
 </body>
 </html>
