@@ -19,20 +19,20 @@ const escapeHtml = value => {
 };
 
 const CATEGORY_META = {
-  'Alimentação': { icon: '🛒', color: '#12a594' },
-  'Carro': { icon: '🚘', color: '#e29432' },
-  'Combustível': { icon: '⛽', color: '#d56552' },
-  'Casa': { icon: '🏠', color: '#5b83d6' },
-  'Contas': { icon: '🧾', color: '#7e65cf' },
-  'Ginásio': { icon: '🏋️', color: '#4aa96c' },
-  'Lazer': { icon: '🎮', color: '#e15b8f' },
-  'Saúde': { icon: '🩺', color: '#47a3c7' },
-  'Compras': { icon: '🛍️', color: '#9a71c5' },
-  'Amortização': { icon: '📉', color: '#bf7b2b' },
-  'Salário': { icon: '💼', color: '#1a9259' },
-  'Poupança': { icon: '💰', color: '#0f988a' },
-  'Investimentos': { icon: '📈', color: '#397bd8' },
-  'Outros': { icon: '•••', color: '#84918e' }
+  'Alimentação': { icon: '<svg viewBox="0 0 24 24"><path d="M3 5h2l2.2 10.2a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.5L21 8H6"/><circle cx="10" cy="20" r="1"/><circle cx="18" cy="20" r="1"/></svg>', color: '#12a594' },
+  'Carro': { icon: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 14 6.8 7.8A2 2 0 0 1 8.7 6.5h6.6a2 2 0 0 1 1.9 1.3l2.3 6.2"/><path d="M3 14.5h18v4.2a1.3 1.3 0 0 1-1.3 1.3H4.3A1.3 1.3 0 0 1 3 18.7v-4.2Z"/><path d="M6 14.5h12M7 10h10M6.5 18h.01M17.5 18h.01"/></svg>', color: '#e29432' },
+  'Combustível': { icon: '<svg viewBox="0 0 24 24"><path d="M5 21V4a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v17M4 21h12M8 7h4v4H8z"/><path d="M15 8h2l2 2v7a2 2 0 0 0 2 2V9l-2-2"/></svg>', color: '#d56552' },
+  'Casa': { icon: '<svg viewBox="0 0 24 24"><path d="m3 11 9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-9Z"/></svg>', color: '#5b83d6' },
+  'Contas': { icon: '<svg viewBox="0 0 24 24"><path d="M6 3h12v18l-2-1.5-2 1.5-2-1.5-2 1.5-2-1.5L6 21V3Z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>', color: '#7e65cf' },
+  'Ginásio': { icon: '<svg viewBox="0 0 24 24"><path d="M7 7v10M17 7v10M4 9v6M20 9v6M7 12h10"/></svg>', color: '#4aa96c' },
+  'Lazer': { icon: '<svg viewBox="0 0 24 24"><path d="M7 8h10a4 4 0 0 1 3.8 5.2l-1.4 4.2a2 2 0 0 1-3.1 1l-2.1-1.7H9.8l-2.1 1.7a2 2 0 0 1-3.1-1l-1.4-4.2A4 4 0 0 1 7 8Z"/><path d="M8 11v4M6 13h4M16 12h.01M18 14h.01"/></svg>', color: '#e15b8f' },
+  'Saúde': { icon: '<svg viewBox="0 0 24 24"><path d="M12 21s-8-4.7-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 6.3-8 11-8 11Z"/><path d="M8 12h2l1-2 2 4 1-2h2"/></svg>', color: '#47a3c7' },
+  'Compras': { icon: '<svg viewBox="0 0 24 24"><path d="M5 8h14l-1 13H6L5 8Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/></svg>', color: '#9a71c5' },
+  'Amortização': { icon: '<svg viewBox="0 0 24 24"><path d="M4 6h16v12H4z"/><path d="M7 14l3-3 3 2 4-5M15 8h2v2"/></svg>', color: '#bf7b2b' },
+  'Salário': { icon: '<svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M8 6V4h8v2M3 11h18M10 15h4"/></svg>', color: '#1a9259' },
+  'Poupança': { icon: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10.5c0-3.1 2.8-5.4 7-5.4 1.4 0 2.7.3 3.8.8L19 4.5v4.1c.8.8 1.2 1.8 1.2 3 0 2.1-1.3 3.8-3.3 4.8V20h-3v-2.4H9.5V20h-3v-3.2A6.6 6.6 0 0 1 4 12H2.5v-2H5Z"/><circle cx="14.2" cy="9.2" r=".7" fill="currentColor" stroke="none"/><path d="M8.5 6.2C8 4.6 8.9 3 10.4 3c1.1 0 2 .7 2.3 1.7"/><circle cx="17.5" cy="3.5" r="2.2"/><path d="M17.5 2.4v2.2M16.4 3.5h2.2"/></svg>', color: '#0f988a' },
+  'Investimentos': { icon: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18.5h16M5.5 16l4-4 3 2.5L19 7"/><path d="M15 7h4v4"/><path d="M6 18.5v-3M10 18.5v-5M14 18.5v-2.5M18 18.5v-8"/></svg>', color: '#397bd8' },
+  'Outros': { icon: '<svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>', color: '#84918e' }
 };
 const FALLBACK_COLORS = ['#12a594', '#e29432', '#5b83d6', '#e15b8f', '#7e65cf', '#d56552', '#4aa96c', '#47a3c7'];
 
@@ -541,13 +541,14 @@ function renderInsights() {
       : `Gastaste <strong>${Math.abs(diff).toFixed(0)}% mais</strong> do que no mês anterior.`;
   }
 
+  const totalBalance = sumBalances();
   const cards = [
-    { color: 'mint', icon: '◎', title: 'Objetivo de poupança', text: `Já concluíste <strong>${pctText(savingsPct)}</strong> da meta anual. Faltam ${euro(savingsRemaining)} — cerca de ${euro(monthlyNeeded)} por mês até dezembro.` },
-    { color: current.expense <= previous.expense ? 'mint' : 'rose', icon: '↕', title: 'Ritmo de despesas', text: spendingText },
-    { color: 'amber', icon: '🚘', title: 'Crédito automóvel', text: projection.count ? `Ao ritmo atual, o carro ficará pago em <strong>${datePT(projection.payoffDate, { month: 'long', year: 'numeric' })}</strong>, após cerca de ${projection.count} prestações.` : 'O crédito está liquidado ou precisa de dados atualizados.' },
-    { color: 'blue', icon: '↗', title: 'Rendimento estimado', text: `Os investimentos estão a gerar aproximadamente <strong>${euro(dailyYield)} por dia</strong> e ${euro(dailyYield * 365)} por ano à taxa atual.` },
-    { color: 'rose', icon: '◔', title: 'Maior categoria', text: top[1] ? `A categoria com mais gastos este mês é <strong>${escapeHtml(top[0])}</strong>, com ${euro(top[1])}.` : 'Ainda não existem despesas registadas neste mês.' },
-    { color: current.balance >= 0 ? 'mint' : 'rose', icon: '≋', title: 'Saldo mensal', text: current.balance >= 0 ? `As receitas superam as despesas em <strong>${euro(current.balance)}</strong> este mês.` : `As despesas superam as receitas em <strong>${euro(Math.abs(current.balance))}</strong> este mês.` }
+    { color: 'mint', icon: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7.5h15.5A1.5 1.5 0 0 1 21 9v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h12"/><path d="M3 8h15M15 12h6v4h-6a2 2 0 0 1 0-4Z"/><circle cx="17.5" cy="14" r=".6" fill="currentColor" stroke="none"/></svg>', title: 'Saldo total', text: `O teu saldo total atual é <strong>${euro(totalBalance)}</strong>, somando conta corrente, poupança, investimentos e fundo do carro.` },
+    { color: 'mint', icon: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10.5c0-3.1 2.8-5.4 7-5.4 1.4 0 2.7.3 3.8.8L19 4.5v4.1c.8.8 1.2 1.8 1.2 3 0 2.1-1.3 3.8-3.3 4.8V20h-3v-2.4H9.5V20h-3v-3.2A6.6 6.6 0 0 1 4 12H2.5v-2H5Z"/><circle cx="14.2" cy="9.2" r=".7" fill="currentColor" stroke="none"/><path d="M8.5 6.2C8 4.6 8.9 3 10.4 3c1.1 0 2 .7 2.3 1.7"/><circle cx="17.5" cy="3.5" r="2.2"/><path d="M17.5 2.4v2.2M16.4 3.5h2.2"/></svg>', title: 'Objetivo de poupança', text: `Já concluíste <strong>${pctText(savingsPct)}</strong> da meta anual. Faltam ${euro(savingsRemaining)} — cerca de ${euro(monthlyNeeded)} por mês até dezembro.` },
+    { color: current.expense <= previous.expense ? 'mint' : 'rose', icon: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V11M9.3 20V6M14.7 20v-8M20 20V3"/><path d="M2.5 20h19"/></svg>', title: 'Ritmo de despesas', text: spendingText },
+    { color: 'amber', icon: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 14 6.8 7.8A2 2 0 0 1 8.7 6.5h6.6a2 2 0 0 1 1.9 1.3l2.3 6.2"/><path d="M3 14.5h18v4.2a1.3 1.3 0 0 1-1.3 1.3H4.3A1.3 1.3 0 0 1 3 18.7v-4.2Z"/><path d="M6 14.5h12M7 10h10M6.5 18h.01M17.5 18h.01"/></svg>', title: 'Crédito automóvel', text: projection.count ? `Ao ritmo atual, o carro ficará pago em <strong>${datePT(projection.payoffDate, { month: 'long', year: 'numeric' })}</strong>, após cerca de ${projection.count} prestações.` : 'O crédito está liquidado ou precisa de dados atualizados.' },
+    { color: 'blue', icon: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18.5h16M5.5 16l4-4 3 2.5L19 7"/><path d="M15 7h4v4"/><path d="M6 18.5v-3M10 18.5v-5M14 18.5v-2.5M18 18.5v-8"/></svg>', title: 'Rendimento estimado', text: `Os investimentos estão a gerar aproximadamente <strong>${euro(dailyYield)} por dia</strong> e ${euro(dailyYield * 365)} por ano à taxa atual.` },
+    { color: 'rose', icon: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 3a9 9 0 1 0 9 9h-9V3Z"/><path d="M14 3.5A8.5 8.5 0 0 1 20.5 10H14V3.5Z"/></svg>', title: 'Maior categoria', text: top[1] ? `A categoria com mais gastos este mês é <strong>${escapeHtml(top[0])}</strong>, com ${euro(top[1])}.` : 'Ainda não existem despesas registadas neste mês.' }
   ];
 
   target.innerHTML = cards.map(card => `<article class="insight-card"><span class="insight-icon ${card.color}">${card.icon}</span><h3>${card.title}</h3><p>${card.text}</p></article>`).join('');
