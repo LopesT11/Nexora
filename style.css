@@ -275,28 +275,31 @@ input,select{height:52px;border-radius:16px}
 }
 
 
-/* DEALER$ v17 — ícones premium e alinhamento final */
+/* DEALER$ v18 — ícones consistentes e correções móveis */
+button,a,input,select,textarea{-webkit-tap-highlight-color:transparent}
+.close-btn,.close-btn:focus,.close-btn:focus-visible,.close-btn:active{outline:0 !important;box-shadow:none !important;-webkit-appearance:none}
+
 .topbar{align-items:center !important}
 .top-actions{display:grid !important;grid-template-columns:46px 46px;align-items:center !important;gap:9px !important}
 .top-actions .round-btn{width:46px !important;height:46px !important;min-width:46px !important;min-height:46px !important;border-radius:15px !important;margin:0 !important;padding:0 !important;display:grid !important;place-items:center !important;align-self:center !important;transform:none !important}
-.top-actions .round-btn svg{width:24px !important;height:24px !important}
+.top-actions .round-btn svg{width:23px !important;height:23px !important}
 .top-actions .theme-toggle,.top-actions .top-add{position:static !important;top:auto !important;right:auto !important}
 
-.quick-icon,.goal-icon,.stat-icon,.insight-icon,.tx-icon,.cat-icon{position:relative;overflow:hidden;isolation:isolate;background:linear-gradient(145deg,color-mix(in srgb,currentColor 17%,var(--card-2)),var(--card-2)) !important;border:1px solid color-mix(in srgb,currentColor 25%,var(--line)) !important;box-shadow:inset 0 1px 0 rgba(255,255,255,.09),0 8px 18px rgba(0,0,0,.10)}
-.quick-icon::before,.goal-icon::before,.stat-icon::before,.insight-icon::before,.tx-icon::before,.cat-icon::before{content:"";position:absolute;inset:1px;border-radius:inherit;background:radial-gradient(circle at 25% 18%,rgba(255,255,255,.14),transparent 44%);z-index:-1;pointer-events:none}
-.quick-icon svg,.goal-icon svg,.stat-icon svg,.insight-icon svg,.tx-icon svg,.cat-icon svg{width:27px;height:27px;filter:drop-shadow(0 3px 6px color-mix(in srgb,currentColor 28%,transparent));stroke-width:1.8}
-.quick-icon.current,.stat-icon.current{color:#36d7ca}.quick-icon.saving,.stat-icon.saving,.goal-icon.mint{color:#45dfcf}.quick-icon.investing,.stat-icon.investing,.quick-icon.blue{color:#4b91ff}.quick-icon.expenses,.stat-icon.expense,.insight-icon.rose{color:#ff5f76}.goal-icon.amber,.quick-icon.amber,.stat-icon.yield,.insight-icon.amber{color:#ffad32}.insight-icon.blue{color:#4b91ff}.insight-icon.mint{color:#45dfcf}
-.tx-icon,.cat-icon{display:grid;place-items:center}.tx-icon svg,.cat-icon svg{width:21px;height:21px}
-.insight-icon{display:grid !important;place-items:center !important;font-size:0 !important}.insight-icon svg{width:25px;height:25px}
+.quick-icon,.goal-icon,.stat-icon,.insight-icon,.tx-icon,.cat-icon{position:relative;overflow:hidden;isolation:isolate;background:color-mix(in srgb,currentColor 9%,var(--card-2)) !important;border:1px solid color-mix(in srgb,currentColor 26%,var(--line)) !important;box-shadow:inset 0 1px 0 rgba(255,255,255,.07)}
+.quick-icon svg,.goal-icon svg,.stat-icon svg,.insight-icon svg,.tx-icon svg,.cat-icon svg{fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;stroke-width:1.75;vector-effect:non-scaling-stroke}
+.quick-icon svg,.goal-icon svg,.stat-icon svg{width:27px;height:27px}
+.tx-icon,.cat-icon,.insight-icon{display:grid !important;place-items:center !important;font-size:0 !important}
+.tx-icon svg,.cat-icon svg{width:21px;height:21px}.insight-icon svg{width:25px;height:25px}
+.quick-icon.current,.stat-icon.current{color:#38d8cb}.quick-icon.saving,.stat-icon.saving,.goal-icon.mint{color:#47ddcf}.quick-icon.investing,.stat-icon.investing,.quick-icon.blue{color:#5793ff}.quick-icon.expenses,.stat-icon.expense,.insight-icon.rose{color:#ff6278}.goal-icon.amber,.quick-icon.amber,.stat-icon.yield,.insight-icon.amber{color:#ffb13c}.insight-icon.blue{color:#5793ff}.insight-icon.mint{color:#47ddcf}
 .action-card .quick-icon{display:grid;place-items:center}
 
-.bottom-nav button svg{stroke-width:1.85;filter:drop-shadow(0 2px 4px rgba(0,0,0,.14))}
-.bottom-nav button.active svg{filter:drop-shadow(0 0 7px color-mix(in srgb,var(--brand) 55%,transparent))}
+.bottom-nav button svg{fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;stroke-width:1.8;filter:none}
+.bottom-nav button.active svg{filter:drop-shadow(0 0 5px color-mix(in srgb,var(--brand) 45%,transparent))}
 .bottom-nav .nav-add>span{display:grid !important;place-items:center !important}
-.bottom-nav .nav-add>span svg{width:26px !important;height:26px !important;stroke-width:1.8}
+.bottom-nav .nav-add>span svg{width:25px !important;height:25px !important;stroke-width:1.9}
 
 @media(max-width:390px){
   .top-actions{grid-template-columns:43px 43px;gap:7px !important}
   .top-actions .round-btn{width:43px !important;height:43px !important;min-width:43px !important;min-height:43px !important}
-  .top-actions .round-btn svg{width:23px !important;height:23px !important}
+  .top-actions .round-btn svg{width:22px !important;height:22px !important}
 }

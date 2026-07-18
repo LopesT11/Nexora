@@ -18,21 +18,52 @@ const escapeHtml = value => {
   return div.innerHTML;
 };
 
+const ICONS = Object.freeze({
+  wallet: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h12"/><path d="M3 8h15"/><path d="M15 12h6v4h-6a2 2 0 1 1 0-4Z"/><circle cx="17.5" cy="14" r=".7" fill="currentColor" stroke="none"/></svg>`,
+  vault: `<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="12" cy="12" r="4"/><path d="M12 8v2M16 12h-2M12 16v-2M8 12h2M7 20v1M17 20v1"/></svg>`,
+  trend: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19h16"/><path d="M5 16l4-4 3 2 7-8"/><path d="M15 6h4v4"/><path d="M7 19v-2M11 19v-4M15 19v-6M19 19V9"/></svg>`,
+  receipt: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18l-2-1.5-2 1.5-2-1.5-2 1.5-2-1.5L6 21V3Z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>`,
+  calendar: `<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4M17 3v4M3 10h18"/><path d="M7 14h3M14 14h3M7 18h3"/></svg>`,
+  pie: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 3a9 9 0 1 0 9 9h-9V3Z"/><path d="M14 3.5A8.5 8.5 0 0 1 20.5 10H14V3.5Z"/></svg>`,
+  coins_down: `<svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="9.5" cy="6" rx="5.5" ry="2.5"/><path d="M4 6v4c0 1.4 2.5 2.5 5.5 2.5S15 11.4 15 10V6M4 10v4c0 1.4 2.5 2.5 5.5 2.5 1.5 0 2.8-.3 3.8-.7"/><path d="M18 11v8M15.5 16.5 18 19l2.5-2.5"/></svg>`,
+  coins: `<svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v5c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 11v5c0 1.7 3.1 3 7 3s7-1.3 7-3v-5"/></svg>`,
+  key: `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="15" r="4"/><path d="m11 12 8-8M15 8l2 2M17 6l2 2"/></svg>`,
+  home: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 11 9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-9Z"/><path d="M8 10.5h8"/></svg>`,
+  sparkles: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 1.2 3.3L16.5 7.5l-3.3 1.2L12 12l-1.2-3.3-3.3-1.2 3.3-1.2L12 3Z"/><path d="m18.5 13 0.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8.8-2.2Z"/><path d="m5.5 14 .8 2.2 2.2.8-2.2.8L5.5 20l-.8-2.2-2.2-.8 2.2-.8.8-2.2Z"/></svg>`,
+  plus: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>`,
+  arrow_down_circle: `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M8.5 13.5 12 17l3.5-3.5"/></svg>`,
+  arrow_up_circle: `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 17V7M8.5 10.5 12 7l3.5 3.5"/></svg>`,
+  calendar_check: `<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4M17 3v4M3 10h18"/><path d="m8 15 2 2 5-5"/></svg>`,
+  list: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/></svg>`,
+  sliders: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h8M16 7h4M4 12h3M11 12h9M4 17h10M18 17h2"/><circle cx="14" cy="7" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="16" cy="17" r="2"/></svg>`,
+  plus_circle: `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>`,
+  basket: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h16l-1.5 10h-13L4 9Z"/><path d="m8 9 4-5 4 5M9 13v3M15 13v3"/></svg>`,
+  droplet: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3s6 6.1 6 11a6 6 0 0 1-12 0c0-4.9 6-11 6-11Z"/><path d="M9.5 15.5c.6 1.1 1.4 1.6 2.5 1.6"/></svg>`,
+  dumbbell: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7v10M17 7v10M4 9v6M20 9v6M7 12h10"/></svg>`,
+  gamepad: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 8h10a4 4 0 0 1 3.8 5.2l-1.4 4.2a2 2 0 0 1-3.1 1l-2.1-1.7H9.8l-2.1 1.7a2 2 0 0 1-3.1-1l-1.4-4.2A4 4 0 0 1 7 8Z"/><path d="M8 11v4M6 13h4M16 12h.01M18 14h.01"/></svg>`,
+  heart: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-8-4.7-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 6.3-8 11-8 11Z"/><path d="M8 12h2l1-2 2 4 1-2h2"/></svg>`,
+  bag: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 13H6L5 8Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/></svg>`,
+  briefcase: `<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M8 6V4h8v2M3 11h18M10 15h4"/></svg>`,
+  dots: `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>`,
+  check_wallet: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h12"/><path d="M3 8h15M8 14l2 2 4-4"/></svg>`,
+  clock_calendar: `<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4M17 3v4M3 10h18"/><circle cx="14.5" cy="15.5" r="3.5"/><path d="M14.5 13.5v2.2l1.4.8"/></svg>`
+});
+
 const CATEGORY_META = {
-  'Alimentação': { icon: '<svg viewBox="0 0 24 24"><path d="M3 5h2l2.2 10.2a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.5L21 8H6"/><circle cx="10" cy="20" r="1"/><circle cx="18" cy="20" r="1"/></svg>', color: '#12a594' },
-  'Carro': { icon: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 14 6.8 7.8A2 2 0 0 1 8.7 6.5h6.6a2 2 0 0 1 1.9 1.3l2.3 6.2"/><path d="M3 14.5h18v4.2a1.3 1.3 0 0 1-1.3 1.3H4.3A1.3 1.3 0 0 1 3 18.7v-4.2Z"/><path d="M6 14.5h12M7 10h10M6.5 18h.01M17.5 18h.01"/></svg>', color: '#e29432' },
-  'Combustível': { icon: '<svg viewBox="0 0 24 24"><path d="M5 21V4a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v17M4 21h12M8 7h4v4H8z"/><path d="M15 8h2l2 2v7a2 2 0 0 0 2 2V9l-2-2"/></svg>', color: '#d56552' },
-  'Casa': { icon: '<svg viewBox="0 0 24 24"><path d="m3 11 9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-9Z"/></svg>', color: '#5b83d6' },
-  'Contas': { icon: '<svg viewBox="0 0 24 24"><path d="M6 3h12v18l-2-1.5-2 1.5-2-1.5-2 1.5-2-1.5L6 21V3Z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>', color: '#7e65cf' },
-  'Ginásio': { icon: '<svg viewBox="0 0 24 24"><path d="M7 7v10M17 7v10M4 9v6M20 9v6M7 12h10"/></svg>', color: '#4aa96c' },
-  'Lazer': { icon: '<svg viewBox="0 0 24 24"><path d="M7 8h10a4 4 0 0 1 3.8 5.2l-1.4 4.2a2 2 0 0 1-3.1 1l-2.1-1.7H9.8l-2.1 1.7a2 2 0 0 1-3.1-1l-1.4-4.2A4 4 0 0 1 7 8Z"/><path d="M8 11v4M6 13h4M16 12h.01M18 14h.01"/></svg>', color: '#e15b8f' },
-  'Saúde': { icon: '<svg viewBox="0 0 24 24"><path d="M12 21s-8-4.7-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 6.3-8 11-8 11Z"/><path d="M8 12h2l1-2 2 4 1-2h2"/></svg>', color: '#47a3c7' },
-  'Compras': { icon: '<svg viewBox="0 0 24 24"><path d="M5 8h14l-1 13H6L5 8Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/></svg>', color: '#9a71c5' },
-  'Amortização': { icon: '<svg viewBox="0 0 24 24"><path d="M4 6h16v12H4z"/><path d="M7 14l3-3 3 2 4-5M15 8h2v2"/></svg>', color: '#bf7b2b' },
-  'Salário': { icon: '<svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M8 6V4h8v2M3 11h18M10 15h4"/></svg>', color: '#1a9259' },
-  'Poupança': { icon: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10.5c0-3.1 2.8-5.4 7-5.4 1.4 0 2.7.3 3.8.8L19 4.5v4.1c.8.8 1.2 1.8 1.2 3 0 2.1-1.3 3.8-3.3 4.8V20h-3v-2.4H9.5V20h-3v-3.2A6.6 6.6 0 0 1 4 12H2.5v-2H5Z"/><circle cx="14.2" cy="9.2" r=".7" fill="currentColor" stroke="none"/><path d="M8.5 6.2C8 4.6 8.9 3 10.4 3c1.1 0 2 .7 2.3 1.7"/><circle cx="17.5" cy="3.5" r="2.2"/><path d="M17.5 2.4v2.2M16.4 3.5h2.2"/></svg>', color: '#0f988a' },
-  'Investimentos': { icon: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18.5h16M5.5 16l4-4 3 2.5L19 7"/><path d="M15 7h4v4"/><path d="M6 18.5v-3M10 18.5v-5M14 18.5v-2.5M18 18.5v-8"/></svg>', color: '#397bd8' },
-  'Outros': { icon: '<svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>', color: '#84918e' }
+  'Alimentação': { icon: ICONS.basket, color: '#12a594' },
+  'Carro': { icon: ICONS.key, color: '#e29432' },
+  'Combustível': { icon: ICONS.droplet, color: '#d56552' },
+  'Casa': { icon: ICONS.home, color: '#5b83d6' },
+  'Contas': { icon: ICONS.receipt, color: '#7e65cf' },
+  'Ginásio': { icon: ICONS.dumbbell, color: '#4aa96c' },
+  'Lazer': { icon: ICONS.gamepad, color: '#e15b8f' },
+  'Saúde': { icon: ICONS.heart, color: '#47a3c7' },
+  'Compras': { icon: ICONS.bag, color: '#9a71c5' },
+  'Amortização': { icon: ICONS.coins_down, color: '#bf7b2b' },
+  'Salário': { icon: ICONS.briefcase, color: '#1a9259' },
+  'Poupança': { icon: ICONS.vault, color: '#0f988a' },
+  'Investimentos': { icon: ICONS.trend, color: '#397bd8' },
+  'Outros': { icon: ICONS.dots, color: '#84918e' }
 };
 const FALLBACK_COLORS = ['#12a594', '#e29432', '#5b83d6', '#e15b8f', '#7e65cf', '#d56552', '#4aa96c', '#47a3c7'];
 
@@ -196,7 +227,7 @@ function netFlowForMonth(monthKey) {
 }
 
 function categoryMeta(category, index = 0) {
-  return CATEGORY_META[category] || { icon: '•', color: FALLBACK_COLORS[index % FALLBACK_COLORS.length] };
+  return CATEGORY_META[category] || { icon: ICONS.dots, color: FALLBACK_COLORS[index % FALLBACK_COLORS.length] };
 }
 
 function renderTransactions() {
@@ -487,7 +518,7 @@ function renderAllocationChart() {
     'Fundo carro': '#e29432'
   };
   entries.forEach(([name], index) => {
-    CATEGORY_META[name] = { icon: '•', color: colors[name] || FALLBACK_COLORS[index] };
+    CATEGORY_META[name] = { icon: ICONS.dots, color: colors[name] || FALLBACK_COLORS[index] };
   });
   const total = sumBalances();
   drawDonut($('allocationDonut'), entries, total);
@@ -543,12 +574,12 @@ function renderInsights() {
 
   const totalBalance = sumBalances();
   const cards = [
-    { color: 'mint', icon: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7.5h15.5A1.5 1.5 0 0 1 21 9v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h12"/><path d="M3 8h15M15 12h6v4h-6a2 2 0 0 1 0-4Z"/><circle cx="17.5" cy="14" r=".6" fill="currentColor" stroke="none"/></svg>', title: 'Saldo total', text: `O teu saldo total atual é <strong>${euro(totalBalance)}</strong>, somando conta corrente, poupança, investimentos e fundo do carro.` },
-    { color: 'mint', icon: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10.5c0-3.1 2.8-5.4 7-5.4 1.4 0 2.7.3 3.8.8L19 4.5v4.1c.8.8 1.2 1.8 1.2 3 0 2.1-1.3 3.8-3.3 4.8V20h-3v-2.4H9.5V20h-3v-3.2A6.6 6.6 0 0 1 4 12H2.5v-2H5Z"/><circle cx="14.2" cy="9.2" r=".7" fill="currentColor" stroke="none"/><path d="M8.5 6.2C8 4.6 8.9 3 10.4 3c1.1 0 2 .7 2.3 1.7"/><circle cx="17.5" cy="3.5" r="2.2"/><path d="M17.5 2.4v2.2M16.4 3.5h2.2"/></svg>', title: 'Objetivo de poupança', text: `Já concluíste <strong>${pctText(savingsPct)}</strong> da meta anual. Faltam ${euro(savingsRemaining)} — cerca de ${euro(monthlyNeeded)} por mês até dezembro.` },
-    { color: current.expense <= previous.expense ? 'mint' : 'rose', icon: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V11M9.3 20V6M14.7 20v-8M20 20V3"/><path d="M2.5 20h19"/></svg>', title: 'Ritmo de despesas', text: spendingText },
-    { color: 'amber', icon: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 14 6.8 7.8A2 2 0 0 1 8.7 6.5h6.6a2 2 0 0 1 1.9 1.3l2.3 6.2"/><path d="M3 14.5h18v4.2a1.3 1.3 0 0 1-1.3 1.3H4.3A1.3 1.3 0 0 1 3 18.7v-4.2Z"/><path d="M6 14.5h12M7 10h10M6.5 18h.01M17.5 18h.01"/></svg>', title: 'Crédito automóvel', text: projection.count ? `Ao ritmo atual, o carro ficará pago em <strong>${datePT(projection.payoffDate, { month: 'long', year: 'numeric' })}</strong>, após cerca de ${projection.count} prestações.` : 'O crédito está liquidado ou precisa de dados atualizados.' },
-    { color: 'blue', icon: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18.5h16M5.5 16l4-4 3 2.5L19 7"/><path d="M15 7h4v4"/><path d="M6 18.5v-3M10 18.5v-5M14 18.5v-2.5M18 18.5v-8"/></svg>', title: 'Rendimento estimado', text: `Os investimentos estão a gerar aproximadamente <strong>${euro(dailyYield)} por dia</strong> e ${euro(dailyYield * 365)} por ano à taxa atual.` },
-    { color: 'rose', icon: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 3a9 9 0 1 0 9 9h-9V3Z"/><path d="M14 3.5A8.5 8.5 0 0 1 20.5 10H14V3.5Z"/></svg>', title: 'Maior categoria', text: top[1] ? `A categoria com mais gastos este mês é <strong>${escapeHtml(top[0])}</strong>, com ${euro(top[1])}.` : 'Ainda não existem despesas registadas neste mês.' }
+    { color: 'mint', icon: ICONS.wallet, title: 'Saldo total', text: `O teu saldo total atual é <strong>${euro(totalBalance)}</strong>, somando conta corrente, poupança, investimentos e fundo do carro.` },
+    { color: 'mint', icon: ICONS.vault, title: 'Objetivo de poupança', text: `Já concluíste <strong>${pctText(savingsPct)}</strong> da meta anual. Faltam ${euro(savingsRemaining)} — cerca de ${euro(monthlyNeeded)} por mês até dezembro.` },
+    { color: current.expense <= previous.expense ? 'mint' : 'rose', icon: ICONS.receipt, title: 'Ritmo de despesas', text: spendingText },
+    { color: 'amber', icon: ICONS.coins_down, title: 'Crédito automóvel', text: projection.count ? `Ao ritmo atual, o carro ficará pago em <strong>${datePT(projection.payoffDate, { month: 'long', year: 'numeric' })}</strong>, após cerca de ${projection.count} prestações.` : 'O crédito está liquidado ou precisa de dados atualizados.' },
+    { color: 'blue', icon: ICONS.trend, title: 'Rendimento estimado', text: `Os investimentos estão a gerar aproximadamente <strong>${euro(dailyYield)} por dia</strong> e ${euro(dailyYield * 365)} por ano à taxa atual.` },
+    { color: 'rose', icon: ICONS.pie, title: 'Maior categoria', text: top[1] ? `A categoria com mais gastos este mês é <strong>${escapeHtml(top[0])}</strong>, com ${euro(top[1])}.` : 'Ainda não existem despesas registadas neste mês.' }
   ];
 
   target.innerHTML = cards.map(card => `<article class="insight-card"><span class="insight-icon ${card.color}">${card.icon}</span><h3>${card.title}</h3><p>${card.text}</p></article>`).join('');
