@@ -155,3 +155,121 @@ label{display:block;font-size:14px;font-weight:800;margin:16px 0;color:var(--tex
   .wealth-actions{grid-template-columns:1fr 1fr}.status-chip,.glass-btn{min-height:50px;font-size:10.5px;padding:8px 6px}.stat-card{padding:14px}.stat-icon{width:48px;height:48px}.stat-icon svg{width:24px;height:24px}.three-points strong{font-size:14px}.three-points small{font-size:10px}.loan-main strong{font-size:34px}.loan-ring{width:75px;height:75px}.loan-ring:after{width:56px;height:56px}.bottom-nav button span{max-width:45px}.bottom-nav .nav-add>span{width:50px;height:50px}.topbar{padding-left:16px;padding-right:16px}
 }
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+
+
+/* =========================================================
+   NEXORA NATURAL v12 — ajuste final para iPhone
+   ========================================================= */
+.top-actions{display:flex;align-items:center;gap:10px}
+.theme-toggle{background:var(--card);color:var(--text)}
+.theme-toggle .bulb-icon{width:25px;height:25px}
+[data-theme="light"] .theme-toggle{background:#fff;color:#182523}
+[data-theme="dark"] .theme-toggle{background:rgba(16,35,31,.96);color:#f5fbfa}
+
+/* Cabeçalho equilibrado */
+.topbar{padding-top:calc(15px + env(safe-area-inset-top));padding-bottom:11px}
+.brand-name{font-size:clamp(28px,7vw,34px)}
+.round-btn{width:48px;height:48px;border-radius:16px;box-shadow:none}
+.round-btn.accent{box-shadow:0 8px 20px rgba(8,125,114,.20)}
+
+/* Cartão principal mais baixo, natural e ilustrativo */
+.wealth-card{min-height:238px;padding:24px 24px 20px;border-radius:30px;background:linear-gradient(135deg,#07544f 0%,#08766d 58%,#10988d 100%);box-shadow:0 16px 42px rgba(0,46,43,.20)}
+[data-theme="light"] .wealth-card{background:linear-gradient(135deg,#0b756d 0%,#0d9589 60%,#2cbcaf 100%)}
+.wealth-glow{width:280px;height:280px;right:-90px;top:-150px;opacity:.65}
+.wealth-card:after{display:none}
+.wealth-chart{position:absolute;inset:auto 0 0 0;width:100%;height:72%;z-index:0;color:#58d9cc;opacity:.82;pointer-events:none}
+.wealth-chart-fill{fill:url(#wealthChartFill);stroke:none}
+.wealth-chart-line{fill:none;stroke:currentColor;stroke-width:2.4;vector-effect:non-scaling-stroke}
+.wealth-chart-wave{fill:none;stroke:currentColor;stroke-width:1;opacity:.18;vector-effect:non-scaling-stroke}
+.wealth-chart-point{fill:currentColor;stroke:rgba(255,255,255,.58);stroke-width:2}
+.wealth-copy{position:relative;z-index:2}
+.wealth-copy .card-kicker{margin-bottom:10px;font-size:11px}
+.wealth-copy strong{font-size:clamp(43px,12vw,62px)}
+.wealth-actions{position:relative;z-index:2;gap:10px}
+.status-chip,.glass-btn{min-height:48px;border-radius:17px;font-size:12px;padding:9px 10px;background:rgba(255,255,255,.10)}
+
+/* Cartões de saldo mais compactos e iguais */
+.quick-list{gap:11px;margin-top:15px}
+.quick-card{min-height:88px;padding:13px 15px;border-radius:22px;gap:14px;box-shadow:none}
+.quick-icon{width:48px;height:48px;border-radius:16px}
+.quick-icon svg{width:24px;height:24px}
+.quick-card small{font-size:13px;margin-bottom:3px}
+.quick-card strong{font-size:21px}
+.chevron{width:18px;height:18px}
+
+/* Restantes superfícies com menos ar de mockup */
+.section-block,.chart-card,.goal-card,.goal-card.large{box-shadow:none;border-radius:23px;padding:19px}
+.stat-card{box-shadow:none;border-radius:20px}
+.goal-card,.recent-card{min-height:auto}
+
+/* Navegação totalmente uniforme; botão + já não fica levantado */
+main{padding-bottom:calc(98px + env(safe-area-inset-bottom))}
+.bottom-nav{width:min(700px,calc(100% - 16px));bottom:4px;border-radius:24px;padding:7px 5px calc(7px + env(safe-area-inset-bottom));align-items:center;box-shadow:0 -6px 24px rgba(0,0,0,.13)}
+.bottom-nav button{height:52px;justify-content:center;gap:4px;padding:3px 1px;font-size:9.5px}
+.bottom-nav button svg{width:20px;height:20px}
+.bottom-nav .nav-add{height:52px;align-self:center}
+.bottom-nav .nav-add>span{width:52px;height:52px;border-radius:17px;transform:none;box-shadow:0 8px 18px rgba(8,125,114,.22)}
+.bottom-nav .nav-add svg{width:27px;height:27px}
+
+/* Modal mais natural e uniforme */
+dialog{border-radius:25px}
+dialog form{padding:22px}
+.close-btn{width:46px;height:46px;flex-basis:46px;border-radius:15px}
+input,select{height:52px;border-radius:16px}
+
+@media (max-width:620px){
+  .topbar{padding-left:17px;padding-right:17px}
+  main{padding-left:11px;padding-right:11px}
+  .round-btn{width:46px;height:46px;border-radius:15px}
+  .round-btn svg{width:24px;height:24px}
+  .wealth-card{min-height:226px;padding:21px 20px 18px;border-radius:28px}
+  .wealth-copy strong{font-size:clamp(42px,13vw,56px)}
+  .wealth-actions{grid-template-columns:1fr 1fr}
+  .status-chip,.glass-btn{min-height:46px;font-size:11px;padding:8px 7px}
+  .quick-card{min-height:84px;padding:12px 14px;border-radius:21px}
+  .quick-icon{width:46px;height:46px;border-radius:15px}
+  .quick-card strong{font-size:20px}
+  .section-block,.chart-card,.goal-card,.goal-card.large{padding:17px;border-radius:22px}
+  .bottom-nav{width:calc(100% - 10px);bottom:2px;border-radius:22px}
+  .bottom-nav button{font-size:9px}
+}
+
+@media (max-width:390px){
+  .top-actions{gap:7px}
+  .brand-name{font-size:28px}
+  .round-btn{width:43px;height:43px}
+  .wealth-card{min-height:214px;padding:19px 17px 16px}
+  .wealth-actions{gap:7px}
+  .status-chip,.glass-btn{font-size:10px;min-height:44px}
+  .quick-card{min-height:80px;padding:11px 12px}
+  .quick-icon{width:43px;height:43px}
+  .quick-card strong{font-size:19px}
+  .bottom-nav .nav-add>span{width:48px;height:48px;border-radius:16px}
+  .bottom-nav button span{max-width:48px}
+}
+
+/* DEALER$ v14 — correção definitiva da navegação inferior */
+.bottom-nav{
+  align-items:center !important;
+}
+.bottom-nav .nav-add{
+  height:52px !important;
+  align-self:center !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  padding:0 !important;
+  margin:0 !important;
+  transform:none !important;
+}
+.bottom-nav .nav-add>span{
+  width:50px !important;
+  height:50px !important;
+  border-radius:16px !important;
+  transform:none !important;
+  margin:0 !important;
+  position:static !important;
+}
+@media (max-width:390px){
+  .bottom-nav .nav-add>span{width:48px !important;height:48px !important;}
+}

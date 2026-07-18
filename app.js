@@ -1,7 +1,7 @@
 'use strict';
 
-const STORE = 'dealers_data_v1';
-const THEME_STORE = 'dealers_theme';
+const STORE = 'dealers_data_v2';
+const THEME_STORE = 'dealers_theme_v2';
 const memoryStorage = new Map();
 const storageGet = key => { try { return localStorage.getItem(key); } catch { return memoryStorage.get(key) ?? null; } };
 const storageSet = (key, value) => { try { localStorage.setItem(key, value); } catch { memoryStorage.set(key, value); } };
@@ -38,19 +38,19 @@ const FALLBACK_COLORS = ['#12a594', '#e29432', '#5b83d6', '#e15b8f', '#7e65cf', 
 
 function blank() {
   return {
-    version: 4,
+    version: 5,
     balances: { current: 0, savings: 0, investments: 0, carFund: 0 },
-    savingsGoal: 7000,
-    carFundGoal: 2000,
-    annualRate: 3,
+    savingsGoal: 0,
+    carFundGoal: 0,
+    annualRate: 0,
     transactions: [],
     loan: {
-      originalBalance: 18954.21,
-      balance: 17349.41,
-      payment: 318.59,
-      annualRate: 0.10,
-      stampRate: 0.04,
-      nextDate: '2026-08-03',
+      originalBalance: 0,
+      balance: 0,
+      payment: 0,
+      annualRate: 0,
+      stampRate: 0,
+      nextDate: '',
       history: []
     }
   };
@@ -62,7 +62,7 @@ function normalize(data) {
   return {
     ...base,
     ...source,
-    version: 4,
+    version: 5,
     balances: { ...base.balances, ...(source.balances || {}) },
     loan: {
       ...base.loan,
@@ -86,7 +86,7 @@ let selectedExpenseMonth = new Date().toISOString().slice(0, 7);
 let currentPage = 'home';
 
 function save() {
-  vault.version = 4;
+  vault.version = 5;
   storageSet(STORE, JSON.stringify(vault));
 }
 
@@ -114,6 +114,7 @@ function monthLabel(monthKey, format = 'long') {
 }
 
 function addMonths(dateValue, count) {
+  if (!dateValue) return '';
   const date = new Date(`${dateValue}T12:00:00`);
   date.setMonth(date.getMonth() + count);
   return date.toISOString().slice(0, 10);
@@ -150,6 +151,8 @@ function installmentParts(balance = vault.loan.balance, payment = vault.loan.pay
 
 function projectLoan() {
   let balance = Number(vault.loan.balance) || 0;
+  const payment = Number(vault.loan.payment) || 0;
+  if (balance <= 0 || payment <= 0) return { count: 0, payoffDate: '', interestTotal: 0 };
   let count = 0;
   let interestTotal = 0;
   let date = vault.loan.nextDate || todayISO();
@@ -625,11 +628,16 @@ function render() {
   setText('monthlyPayment', euro(vault.loan.payment));
   setText('nextCapital', euro(parts.capital));
   setText('nextCosts', euro(parts.interest + parts.stamp));
-  const daysUntil = Math.ceil((new Date(`${vault.loan.nextDate}T12:00:00`) - new Date()) / 86400000);
   const countdown = $('paymentCountdown');
   if (countdown) {
-    countdown.textContent = daysUntil > 1 ? `Faltam ${daysUntil} dias` : daysUntil === 1 ? 'Falta 1 dia' : daysUntil === 0 ? 'É hoje' : `${Math.abs(daysUntil)} dias em atraso`;
-    countdown.className = `metric-tag ${daysUntil < 0 ? 'up' : 'neutral'}`;
+    if (!vault.loan.nextDate) {
+      countdown.textContent = 'Configura o crédito';
+      countdown.className = 'metric-tag neutral';
+    } else {
+      const daysUntil = Math.ceil((new Date(`${vault.loan.nextDate}T12:00:00`) - new Date()) / 86400000);
+      countdown.textContent = daysUntil > 1 ? `Faltam ${daysUntil} dias` : daysUntil === 1 ? 'Falta 1 dia' : daysUntil === 0 ? 'É hoje' : `${Math.abs(daysUntil)} dias em atraso`;
+      countdown.className = `metric-tag ${daysUntil < 0 ? 'up' : 'neutral'}`;
+    }
   }
 
   const projection = projectLoan();
@@ -646,8 +654,14 @@ function render() {
   if ($('annualRateInput')) $('annualRateInput').value = vault.annualRate;
   if ($('savingsGoalInput')) $('savingsGoalInput').value = vault.savingsGoal;
   if ($('carGoalInput')) $('carGoalInput').value = vault.carFundGoal;
-  if ($('paymentDate')) $('paymentDate').value = vault.loan.nextDate;
+  if ($('paymentDate')) $('paymentDate').value = vault.loan.nextDate || todayISO();
   if ($('extraDate')) $('extraDate').value = todayISO();
+  if ($('loanOriginalInput')) $('loanOriginalInput').value = Number(vault.loan.originalBalance) || 0;
+  if ($('loanBalanceInput')) $('loanBalanceInput').value = Number(vault.loan.balance) || 0;
+  if ($('loanPaymentInput')) $('loanPaymentInput').value = Number(vault.loan.payment) || 0;
+  if ($('loanRateInput')) $('loanRateInput').value = round2((Number(vault.loan.annualRate) || 0) * 100);
+  if ($('loanStampInput')) $('loanStampInput').value = round2((Number(vault.loan.stampRate) || 0) * 100);
+  if ($('loanNextDateInput')) $('loanNextDateInput').value = vault.loan.nextDate || '';
 
   renderTransactions();
   renderExpenseMonthOptions();
@@ -685,7 +699,13 @@ function applyTheme(theme) {
   document.documentElement.dataset.theme = theme;
   storageSet(THEME_STORE, theme);
   const meta = document.querySelector('meta[name="theme-color"]');
-  if (meta) meta.content = theme === 'dark' ? '#0d1716' : '#0b7d72';
+  if (meta) meta.content = theme === 'dark' ? '#081310' : '#f8fbfa';
+  const toggle = $('themeToggle');
+  if (toggle) {
+    const nextTheme = theme === 'dark' ? 'claro' : 'escuro';
+    toggle.setAttribute('aria-label', `Ativar modo ${nextTheme}`);
+    toggle.title = `Ativar modo ${nextTheme}`;
+  }
   requestAnimationFrame(() => {
     renderExpenseCharts();
     renderAllocationChart();
@@ -806,14 +826,14 @@ function init() {
   $('savingsGoalForm').addEventListener('submit', event => {
     if (event.submitter?.value === 'cancel') return;
     event.preventDefault();
-    vault.savingsGoal = Math.max(1, Number($('savingsGoalInput').value) || 7000);
+    vault.savingsGoal = Math.max(0, Number($('savingsGoalInput').value) || 0);
     save(); $('savingsGoalDialog').close(); render();
   });
 
   $('carGoalForm').addEventListener('submit', event => {
     if (event.submitter?.value === 'cancel') return;
     event.preventDefault();
-    vault.carFundGoal = Math.max(1, Number($('carGoalInput').value) || 2000);
+    vault.carFundGoal = Math.max(0, Number($('carGoalInput').value) || 0);
     save(); $('carGoalDialog').close(); render();
   });
 
@@ -829,10 +849,30 @@ function init() {
     save(); event.target.reset(); $('transferDialog').close(); render();
   });
 
+  $('loanSettingsForm').addEventListener('submit', event => {
+    if (event.submitter?.value === 'cancel') return;
+    event.preventDefault();
+    const originalBalance = Math.max(0, Number($('loanOriginalInput').value) || 0);
+    const balance = Math.max(0, Number($('loanBalanceInput').value) || 0);
+    const payment = Math.max(0, Number($('loanPaymentInput').value) || 0);
+    const annualRatePct = Math.max(0, Number($('loanRateInput').value) || 0);
+    const stampRatePct = Math.max(0, Number($('loanStampInput').value) || 0);
+    if (originalBalance > 0 && balance > originalBalance) return alert('A dívida atual não pode ser superior ao valor inicial financiado.');
+    vault.loan.originalBalance = round2(originalBalance);
+    vault.loan.balance = round2(balance);
+    vault.loan.payment = round2(payment);
+    vault.loan.annualRate = annualRatePct / 100;
+    vault.loan.stampRate = stampRatePct / 100;
+    vault.loan.nextDate = $('loanNextDateInput').value || '';
+    save();
+    $('loanSettingsDialog').close();
+    render();
+  });
+
   $('paymentForm').addEventListener('submit', event => {
     if (event.submitter?.value === 'cancel') return;
     event.preventDefault();
-    if (vault.loan.balance <= 0) return alert('O empréstimo já está liquidado.');
+    if (vault.loan.balance <= 0 || vault.loan.payment <= 0) return alert('Configura primeiro os dados do crédito.');
     const parts = installmentParts();
     const fromCurrent = $('paymentFromCurrent').checked;
     if (fromCurrent && parts.total > vault.balances.current) return alert('Saldo insuficiente na conta corrente. Desmarca a opção de desconto ou atualiza o saldo.');
@@ -852,6 +892,7 @@ function init() {
     const amount = Number($('extraAmount').value);
     const source = $('extraSource').value;
     if (!(amount > 0)) return alert('Introduz um valor válido.');
+    if (vault.loan.balance <= 0) return alert('Configura primeiro os dados do crédito.');
     if (amount > vault.loan.balance) return alert('O valor ultrapassa a dívida atual.');
     if (source === 'carFund' && amount > vault.balances.carFund) return alert('O fundo carro não tem saldo suficiente.');
     if (source === 'current' && amount > vault.balances.current) return alert('A conta corrente não tem saldo suficiente.');
@@ -866,7 +907,7 @@ function init() {
   });
 
   $('exportBackup').addEventListener('click', () => {
-    const payload = { app: 'DEALER$', format: 4, data: vault, exported: new Date().toISOString() };
+    const payload = { app: 'DEALER$', format: 5, data: vault, exported: new Date().toISOString() };
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -904,7 +945,7 @@ function init() {
   });
 
   render();
-  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=4.0.0').catch(console.error);
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=13.0.0').catch(console.error);
 }
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
