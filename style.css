@@ -378,3 +378,20 @@ button,input,select,textarea{-webkit-tap-highlight-color:transparent;}
   .bottom-nav button>svg{width:23px!important;height:23px!important;}
   .bottom-nav button[data-page="car"]>svg{width:24px!important;height:24px!important;}
 }
+
+
+/* DEALERS v23 — ícones finais e transferência melhorada */
+.page-header{display:grid!important;grid-template-columns:minmax(0,1fr) auto;align-items:start!important;gap:16px!important;}
+.page-header>div:first-child{min-width:0;}
+.page-header .compact-action{margin:0!important;justify-self:end!important;align-self:start!important;display:grid!important;place-items:center!important;}
+.compact-action svg{display:block!important;}
+.transfer-fields{display:grid!important;grid-template-columns:1fr!important;gap:0!important;align-items:stretch!important;margin-top:6px!important;}
+.transfer-fields label{margin:10px 0 0!important;}
+.transfer-arrow{width:46px;height:46px;margin:12px auto 4px!important;border-radius:15px;background:color-mix(in srgb,var(--brand) 12%,var(--card-2));border:1px solid color-mix(in srgb,var(--brand) 28%,var(--line));display:grid!important;place-items:center!important;color:var(--brand)!important;font-size:0!important;transform:none!important;}
+.transfer-arrow svg{width:22px!important;height:22px!important;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
+.quick-icon.current svg,.goal-icon.mint svg,.quick-icon.saving svg,.stat-icon.saving svg{stroke-width:2.1!important;}
+.quick-icon.current svg{width:26px!important;height:26px!important;}
+.quick-icon.saving svg,.goal-icon.mint svg{width:26px!important;height:26px!important;}
+.goal-icon.amber svg,.bottom-nav button[data-page="car"]>svg{width:25px!important;height:25px!important;stroke-width:2.05!important;}
+.bottom-nav button[data-page="car"]>svg{overflow:visible;}
+@media(max-width:620px){.page-header{grid-template-columns:minmax(0,1fr) 52px!important;} .transfer-arrow{width:44px;height:44px;border-radius:14px;} .transfer-arrow svg{width:21px!important;height:21px!important;}}
