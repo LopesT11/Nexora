@@ -348,3 +348,33 @@ button,input,select,textarea{-webkit-tap-highlight-color:transparent;}
 .bottom-nav button[data-page="car"] svg{width:23px;height:23px;stroke-width:1.95;}
 .bottom-nav button[data-page="car"]{letter-spacing:-.01em;}
 @media (max-width:620px){.page-header .compact-action{margin-top:2px;} .compact-action{width:52px!important;height:52px!important;min-width:52px!important;min-height:52px!important;} }
+
+
+/* DEALERS v22 — sistema de ícones mobile uniforme */
+.quick-icon svg,.goal-icon svg,.stat-icon svg,.insight-icon svg,.tx-icon svg,.cat-icon svg,.bottom-nav button>svg,.compact-action svg{
+  fill:none;
+  stroke:currentColor;
+  stroke-width:2.15;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  vector-effect:non-scaling-stroke;
+  overflow:visible;
+  shape-rendering:geometricPrecision;
+}
+.quick-icon svg,.goal-icon svg,.stat-icon svg{width:28px!important;height:28px!important;}
+.bottom-nav button>svg{width:24px!important;height:24px!important;}
+.bottom-nav button[data-page="car"]>svg{width:25px!important;height:25px!important;}
+.quick-icon,.goal-icon,.stat-icon{overflow:visible!important;}
+.quick-icon.current,.stat-icon.current{color:#47ddd0!important;}
+.quick-icon.saving,.stat-icon.saving,.goal-icon.mint{color:#47ddd0!important;}
+.quick-icon.investing,.stat-icon.investing{color:#5f96ff!important;}
+.quick-icon.expenses,.stat-icon.expense{color:#ff6680!important;}
+.page-header{align-items:flex-start!important;}
+.page-header .compact-action{margin:4px 0 0 auto!important;align-self:flex-start!important;}
+.compact-action{width:52px!important;height:52px!important;min-width:52px!important;min-height:52px!important;border-radius:18px!important;padding:0!important;display:grid!important;place-items:center!important;line-height:0!important;overflow:visible!important;}
+.compact-action svg{width:24px!important;height:24px!important;margin:0!important;transform:none!important;}
+@media(max-width:620px){
+  .quick-icon svg,.goal-icon svg,.stat-icon svg{width:27px!important;height:27px!important;}
+  .bottom-nav button>svg{width:23px!important;height:23px!important;}
+  .bottom-nav button[data-page="car"]>svg{width:24px!important;height:24px!important;}
+}

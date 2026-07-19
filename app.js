@@ -19,39 +19,39 @@ const escapeHtml = value => {
 };
 
 const ICONS = Object.freeze({
-  wallet: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8.5A2.5 2.5 0 0 1 6.5 6H18a2 2 0 0 1 2 2v1"/><path d="M4 8.5V18a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5.5a2 2 0 0 0-2-2h-4a2 2 0 1 1 0-4h6"/><circle cx="16.5" cy="13.5" r=".75" fill="currentColor" stroke="none"/></svg>`,
-  vault: `<svg viewBox="0 0 24 24"><path d="M5 11.5c0-3.1 2.8-5.5 7-5.5 1.4 0 2.7.3 3.8.8L19 5.4v3.8c.8.7 1.2 1.7 1.2 2.8 0 2.1-1.4 3.9-3.5 4.8V20H14v-2.2H9.6V20H6.9v-3.1A6.6 6.6 0 0 1 4 13H2.5v-2H5Z"></path><circle cx="14.5" cy="9.6" fill="currentColor" r=".7" stroke="none"></circle><path d="M8.8 6.6C8.2 5 9 3.6 10.5 3.6c1.1 0 2 .6 2.4 1.6"></path></svg>`,
-  trend: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19h16"/><path d="M5 16l4-4 3 2 7-8"/><path d="M15 6h4v4"/><path d="M7 19v-2M11 19v-4M15 19v-6M19 19V9"/></svg>`,
-  receipt: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18l-2-1.5-2 1.5-2-1.5-2 1.5-2-1.5L6 21V3Z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>`,
-  calendar: `<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4M17 3v4M3 10h18"/><path d="M7 14h3M14 14h3M7 18h3"/></svg>`,
-  pie: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 3a9 9 0 1 0 9 9h-9V3Z"/><path d="M14 3.5A8.5 8.5 0 0 1 20.5 10H14V3.5Z"/></svg>`,
-  coins_down: `<svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="9.5" cy="6" rx="5.5" ry="2.5"/><path d="M4 6v4c0 1.4 2.5 2.5 5.5 2.5S15 11.4 15 10V6M4 10v4c0 1.4 2.5 2.5 5.5 2.5 1.5 0 2.8-.3 3.8-.7"/><path d="M18 11v8M15.5 16.5 18 19l2.5-2.5"/></svg>`,
-  coins: `<svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v5c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 11v5c0 1.7 3.1 3 7 3s7-1.3 7-3v-5"/></svg>`,
-  key: `<svg viewBox="0 0 24 24"><path d="M4.3 14.2 6.4 9a2 2 0 0 1 1.9-1.3h7.4A2 2 0 0 1 17.6 9l2.1 5.2"></path><path d="M3.2 14.2h17.6v3.2a1.7 1.7 0 0 1-1.7 1.7H4.9a1.7 1.7 0 0 1-1.7-1.7v-3.2Z"></path><path d="M7 11.5h10"></path><circle cx="7.4" cy="17.3" r="1.45"></circle><circle cx="16.6" cy="17.3" r="1.45"></circle></svg>`,
-  home: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 11 9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-9Z"/><path d="M8 10.5h8"/></svg>`,
-  sparkles: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 1.2 3.3L16.5 7.5l-3.3 1.2L12 12l-1.2-3.3-3.3-1.2 3.3-1.2L12 3Z"/><path d="m18.5 13 0.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8.8-2.2Z"/><path d="m5.5 14 .8 2.2 2.2.8-2.2.8L5.5 20l-.8-2.2-2.2-.8 2.2-.8.8-2.2Z"/></svg>`,
-  plus: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>`,
-  arrow_down_circle: `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M8.5 13.5 12 17l3.5-3.5"/></svg>`,
-  arrow_up_circle: `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 17V7M8.5 10.5 12 7l3.5 3.5"/></svg>`,
-  calendar_check: `<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4M17 3v4M3 10h18"/><path d="m8 15 2 2 5-5"/></svg>`,
-  list: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/></svg>`,
-  sliders: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h8M16 7h4M4 12h3M11 12h9M4 17h10M18 17h2"/><circle cx="14" cy="7" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="16" cy="17" r="2"/></svg>`,
-  plus_circle: `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>`,
-  basket: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h16l-1.5 10h-13L4 9Z"/><path d="m8 9 4-5 4 5M9 13v3M15 13v3"/></svg>`,
-  droplet: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3s6 6.1 6 11a6 6 0 0 1-12 0c0-4.9 6-11 6-11Z"/><path d="M9.5 15.5c.6 1.1 1.4 1.6 2.5 1.6"/></svg>`,
-  dumbbell: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7v10M17 7v10M4 9v6M20 9v6M7 12h10"/></svg>`,
-  gamepad: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 8h10a4 4 0 0 1 3.8 5.2l-1.4 4.2a2 2 0 0 1-3.1 1l-2.1-1.7H9.8l-2.1 1.7a2 2 0 0 1-3.1-1l-1.4-4.2A4 4 0 0 1 7 8Z"/><path d="M8 11v4M6 13h4M16 12h.01M18 14h.01"/></svg>`,
-  heart: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-8-4.7-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 6.3-8 11-8 11Z"/><path d="M8 12h2l1-2 2 4 1-2h2"/></svg>`,
-  bag: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 13H6L5 8Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/></svg>`,
-  briefcase: `<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M8 6V4h8v2M3 11h18M10 15h4"/></svg>`,
-  dots: `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>`,
-  check_wallet: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h12"/><path d="M3 8h15M8 14l2 2 4-4"/></svg>`,
-  clock_calendar: `<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4M17 3v4M3 10h18"/><circle cx="14.5" cy="15.5" r="3.5"/><path d="M14.5 13.5v2.2l1.4.8"/></svg>`
+  wallet: `<svg aria-hidden="true" viewBox="0 0 24 24"><rect x="3.5" y="6.5" width="17" height="11" rx="2.5"></rect><path d="M3.5 10h17M7 14h4"></path></svg>`,
+  savings: `<svg aria-hidden="true" viewBox="0 0 24 24"><ellipse cx="12" cy="6.5" rx="6" ry="2.5"></ellipse><path d="M6 6.5v5c0 1.4 2.7 2.5 6 2.5s6-1.1 6-2.5v-5M6 11.5v5c0 1.4 2.7 2.5 6 2.5s6-1.1 6-2.5v-5"></path></svg>`,
+  trend: `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 19h16M6 16l4-4 3 2 5-7M15 7h3v3M7 19v-2M11 19v-4M15 19v-6M19 19V9"></path></svg>`,
+  receipt: `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M6 3.5h12v17l-2-1.4-2 1.4-2-1.4-2 1.4-2-1.4-2 1.4v-17Z"></path><path d="M9 8h6M9 12h6M9 16h4"></path></svg>`,
+  calendar: `<svg aria-hidden="true" viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="15" rx="2.5"></rect><path d="M7 3.5v4M17 3.5v4M3.5 10h17"></path><path d="m8 15 2 2 5-5"></path></svg>`,
+  pie: `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M11 3.5a8.5 8.5 0 1 0 8.5 8.5H11V3.5Z"></path><path d="M14 3.8A7.8 7.8 0 0 1 20.2 10H14V3.8Z"></path></svg>`,
+  coins_down: `<svg aria-hidden="true" viewBox="0 0 24 24"><ellipse cx="9.5" cy="7" rx="4.5" ry="2"></ellipse><path d="M5 7v4c0 1.1 2 2 4.5 2s4.5-.9 4.5-2V7M5 11v4c0 1.1 2 2 4.5 2 1.2 0 2.3-.2 3.1-.5"></path><path d="M18 11v8m-3-3 3 3 3-3"></path></svg>`,
+  coins: `<svg aria-hidden="true" viewBox="0 0 24 24"><ellipse cx="12" cy="6.5" rx="6" ry="2.5"></ellipse><path d="M6 6.5v5c0 1.4 2.7 2.5 6 2.5s6-1.1 6-2.5v-5M6 11.5v5c0 1.4 2.7 2.5 6 2.5s6-1.1 6-2.5v-5"></path></svg>`,
+  car: `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5.2 14 6.8 9.4A2.1 2.1 0 0 1 8.8 8h6.4a2.1 2.1 0 0 1 2 1.4l1.6 4.6"></path><path d="M4 14h16v3a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-3Z"></path><path d="M7.5 12h9"></path><circle cx="7.5" cy="18" r="1.25" fill="currentColor" stroke="none"></circle><circle cx="16.5" cy="18" r="1.25" fill="currentColor" stroke="none"></circle></svg>`,
+  home: `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="m3.5 11 8.5-7.5 8.5 7.5v8.5a1.5 1.5 0 0 1-1.5 1.5h-4.5v-6h-5v6H5a1.5 1.5 0 0 1-1.5-1.5V11Z"></path></svg>`,
+  sparkles: `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="m12 3 1.1 3.1L16.2 7.2l-3.1 1.1L12 11.5l-1.1-3.2-3.1-1.1 3.1-1.1L12 3Z"></path><path d="m18.2 13.2.8 2.1 2.1.8-2.1.8-.8 2.1-.8-2.1-2.1-.8 2.1-.8.8-2.1ZM5.2 14.3l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7.7-1.8Z"></path></svg>`,
+  plus: `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"></path></svg>`,
+  arrow_down_circle: `<svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v10M8.5 13.5 12 17l3.5-3.5"></path></svg>`,
+  arrow_up_circle: `<svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 17V7M8.5 10.5 12 7l3.5 3.5"></path></svg>`,
+  calendar_check: `<svg aria-hidden="true" viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="15" rx="2.5"></rect><path d="M7 3.5v4M17 3.5v4M3.5 10h17"></path><path d="m8 15 2 2 5-5"></path></svg>`,
+  list: `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M8 6h12M8 12h12M8 18h12"></path><circle cx="4" cy="6" r="1"></circle><circle cx="4" cy="12" r="1"></circle><circle cx="4" cy="18" r="1"></circle></svg>`,
+  sliders: `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 7h7M15 7h5M4 12h3M11 12h9M4 17h10M18 17h2"></path><circle cx="13" cy="7" r="2"></circle><circle cx="9" cy="12" r="2"></circle><circle cx="16" cy="17" r="2"></circle></svg>`,
+  plus_circle: `<svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v8M8 12h8"></path></svg>`,
+  basket: `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 9h16l-1.5 10h-13L4 9Z"></path><path d="m8 9 4-5 4 5M9 13v3M15 13v3"></path></svg>`,
+  droplet: `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 21V4.5A1.5 1.5 0 0 1 6.5 3h7A1.5 1.5 0 0 1 15 4.5V21M4 21h12M8 7h4v4H8z"></path><path d="M15 8h2l2 2v7a2 2 0 0 0 2 2V9l-2-2"></path></svg>`,
+  dumbbell: `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 7v10M17 7v10M4 9v6M20 9v6M7 12h10"></path></svg>`,
+  gamepad: `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 8h10a4 4 0 0 1 3.8 5.2l-1.4 4.2a2 2 0 0 1-3.1 1l-2.1-1.7H9.8l-2.1 1.7a2 2 0 0 1-3.1-1l-1.4-4.2A4 4 0 0 1 7 8Z"></path><path d="M8 11v4M6 13h4M16 12h.01M18 14h.01"></path></svg>`,
+  heart: `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 21s-8-4.7-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 6.3-8 11-8 11Z"></path><path d="M8 12h2l1-2 2 4 1-2h2"></path></svg>`,
+  bag: `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 8h14l-1 13H6L5 8Z"></path><path d="M9 9V6a3 3 0 0 1 6 0v3"></path></svg>`,
+  briefcase: `<svg aria-hidden="true" viewBox="0 0 24 24"><rect x="3.5" y="6.5" width="17" height="12" rx="2.5"></rect><path d="M8 6.5V4.5h8v2M3.5 11h17M10 14.5h4"></path></svg>`,
+  dots: `<svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5"></circle><circle cx="12" cy="12" r="1.5"></circle><circle cx="19" cy="12" r="1.5"></circle></svg>`,
+  check_wallet: `<svg aria-hidden="true" viewBox="0 0 24 24"><rect x="3.5" y="6.5" width="17" height="11" rx="2.5"></rect><path d="M3.5 10h17M7 14h4"></path></svg>`,
+  clock_calendar: `<svg aria-hidden="true" viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="15" rx="2.5"></rect><path d="M7 3.5v4M17 3.5v4M3.5 10h17"></path><path d="m8 15 2 2 5-5"></path></svg>`,
 });
 
 const CATEGORY_META = {
   'Alimentação': { icon: ICONS.basket, color: '#12a594' },
-  'Carro': { icon: ICONS.key, color: '#e29432' },
+  'Carro': { icon: ICONS.car, color: '#e29432' },
   'Combustível': { icon: ICONS.droplet, color: '#d56552' },
   'Casa': { icon: ICONS.home, color: '#5b83d6' },
   'Contas': { icon: ICONS.receipt, color: '#7e65cf' },
@@ -61,7 +61,7 @@ const CATEGORY_META = {
   'Compras': { icon: ICONS.bag, color: '#9a71c5' },
   'Amortização': { icon: ICONS.coins_down, color: '#bf7b2b' },
   'Salário': { icon: ICONS.briefcase, color: '#1a9259' },
-  'Poupança': { icon: ICONS.vault, color: '#0f988a' },
+  'Poupança': { icon: ICONS.savings, color: '#0f988a' },
   'Investimentos': { icon: ICONS.trend, color: '#397bd8' },
   'Outros': { icon: ICONS.dots, color: '#84918e' }
 };
@@ -589,7 +589,7 @@ function renderInsights() {
   const totalBalance = sumBalances();
   const cards = [
     { color: 'mint', icon: ICONS.wallet, title: 'Saldo total', text: `O teu saldo total atual é <strong>${euro(totalBalance)}</strong>, somando conta corrente, poupança, investimentos e fundo do carro.` },
-    { color: 'mint', icon: ICONS.vault, title: 'Objetivo de poupança', text: `Já concluíste <strong>${pctText(savingsPct)}</strong> da meta anual. Faltam ${euro(savingsRemaining)} — cerca de ${euro(monthlyNeeded)} por mês até dezembro.` },
+    { color: 'mint', icon: ICONS.savings, title: 'Objetivo de poupança', text: `Já concluíste <strong>${pctText(savingsPct)}</strong> da meta anual. Faltam ${euro(savingsRemaining)} — cerca de ${euro(monthlyNeeded)} por mês até dezembro.` },
     { color: current.expense <= previous.expense ? 'mint' : 'rose', icon: ICONS.receipt, title: 'Ritmo de despesas', text: spendingText },
     { color: 'amber', icon: ICONS.coins_down, title: 'Crédito automóvel', text: projection.count ? `Ao ritmo atual, o carro ficará pago em <strong>${datePT(projection.payoffDate, { month: 'long', year: 'numeric' })}</strong>, após cerca de ${projection.count} prestações.` : 'O crédito está liquidado ou precisa de dados atualizados.' },
     { color: 'blue', icon: ICONS.trend, title: 'Rendimento estimado', text: `Os investimentos estão a gerar aproximadamente <strong>${euro(dailyYield)} por dia</strong> e ${euro(dailyYield * 365)} por ano à taxa atual.` },
@@ -1020,7 +1020,7 @@ function init() {
   });
 
   render();
-  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=20.0.0').catch(console.error);
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=22.0.0').catch(console.error);
 }
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
