@@ -19,34 +19,34 @@ const escapeHtml = value => {
 };
 
 const ICONS = Object.freeze({
-  wallet: `<svg class="app-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-wallet" xlink:href="#i-wallet"></use></svg>`,
-  savings: `<svg class="app-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-safe" xlink:href="#i-safe"></use></svg>`,
-  trend: `<svg class="app-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-trend" xlink:href="#i-trend"></use></svg>`,
-  receipt: `<svg class="app-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-receipt" xlink:href="#i-receipt"></use></svg>`,
-  calendar: `<svg class="app-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-calendar" xlink:href="#i-calendar"></use></svg>`,
-  pie: `<svg class="app-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-pie" xlink:href="#i-pie"></use></svg>`,
-  coins_down: `<svg class="app-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-coins-down" xlink:href="#i-coins-down"></use></svg>`,
-  coins: `<svg class="app-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-coins" xlink:href="#i-coins"></use></svg>`,
-  car: `<svg class="app-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-car" xlink:href="#i-car"></use></svg>`,
-  home: `<svg class="app-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-home" xlink:href="#i-home"></use></svg>`,
-  sparkles: `<svg class="app-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-sparkles" xlink:href="#i-sparkles"></use></svg>`,
-  plus: `<svg class="app-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-plus" xlink:href="#i-plus"></use></svg>`,
-  arrow_down_circle: `<svg class="app-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-income" xlink:href="#i-income"></use></svg>`,
-  arrow_up_circle: `<svg class="app-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-expense" xlink:href="#i-expense"></use></svg>`,
-  calendar_check: `<svg class="app-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-calendar-check" xlink:href="#i-calendar-check"></use></svg>`,
-  list: `<svg class="app-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-list" xlink:href="#i-list"></use></svg>`,
-  sliders: `<svg class="app-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-sliders" xlink:href="#i-sliders"></use></svg>`,
-  plus_circle: `<svg class="app-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-plus-circle" xlink:href="#i-plus-circle"></use></svg>`,
-  basket: `<svg class="app-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-basket" xlink:href="#i-basket"></use></svg>`,
-  droplet: `<svg class="app-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-fuel" xlink:href="#i-fuel"></use></svg>`,
-  dumbbell: `<svg class="app-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-dumbbell" xlink:href="#i-dumbbell"></use></svg>`,
-  gamepad: `<svg class="app-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-gamepad" xlink:href="#i-gamepad"></use></svg>`,
-  heart: `<svg class="app-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-heart" xlink:href="#i-heart"></use></svg>`,
-  bag: `<svg class="app-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-bag" xlink:href="#i-bag"></use></svg>`,
-  briefcase: `<svg class="app-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-briefcase" xlink:href="#i-briefcase"></use></svg>`,
-  dots: `<svg class="app-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-dots" xlink:href="#i-dots"></use></svg>`,
-  check_wallet: `<svg class="app-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-wallet-check" xlink:href="#i-wallet-check"></use></svg>`,
-  clock_calendar: `<svg class="app-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-calendar-clock" xlink:href="#i-calendar-clock"></use></svg>`,
+  wallet: `<svg aria-hidden="true" viewBox="0 0 24 24"><rect x="3.5" y="6.5" width="17" height="11" rx="2.75"></rect><path d="M16 10.25h4.5v3.5H16a1.75 1.75 0 0 1 0-3.5Z"></path><path d="M7.25 10h3.25"></path><circle cx="16.8" cy="12" r=".8" fill="currentColor" stroke="none"></circle></svg>`,
+  savings: `<svg aria-hidden="true" viewBox="0 0 24 24"><rect x="4" y="4.5" width="16" height="15" rx="3"></rect><circle cx="12" cy="12" r="3.25"></circle><path d="M12 9.8v4.4M9.8 12h4.4"></path><path d="M16.5 8.3h.01"></path></svg>`,
+  trend: `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 19h16M6 16l4-4 3 2 5-7M15 7h3v3M7 19v-2M11 19v-4M15 19v-6M19 19V9"></path></svg>`,
+  receipt: `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M6 3.5h12v17l-2-1.4-2 1.4-2-1.4-2 1.4-2-1.4-2 1.4v-17Z"></path><path d="M9 8h6M9 12h6M9 16h4"></path></svg>`,
+  calendar: `<svg aria-hidden="true" viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="15" rx="2.5"></rect><path d="M7 3.5v4M17 3.5v4M3.5 10h17"></path><path d="m8 15 2 2 5-5"></path></svg>`,
+  pie: `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M11 3.5a8.5 8.5 0 1 0 8.5 8.5H11V3.5Z"></path><path d="M14 3.8A7.8 7.8 0 0 1 20.2 10H14V3.8Z"></path></svg>`,
+  coins_down: `<svg aria-hidden="true" viewBox="0 0 24 24"><ellipse cx="9.5" cy="7" rx="4.5" ry="2"></ellipse><path d="M5 7v4c0 1.1 2 2 4.5 2s4.5-.9 4.5-2V7M5 11v4c0 1.1 2 2 4.5 2 1.2 0 2.3-.2 3.1-.5"></path><path d="M18 11v8m-3-3 3 3 3-3"></path></svg>`,
+  coins: `<svg aria-hidden="true" viewBox="0 0 24 24"><ellipse cx="12" cy="6.5" rx="6" ry="2.5"></ellipse><path d="M6 6.5v5c0 1.4 2.7 2.5 6 2.5s6-1.1 6-2.5v-5M6 11.5v5c0 1.4 2.7 2.5 6 2.5s6-1.1 6-2.5v-5"></path></svg>`,
+  car: `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M6.2 15.2 7.7 10.7A2.15 2.15 0 0 1 9.75 9.2h4.5a2.15 2.15 0 0 1 2.05 1.5l1.5 4.5"></path><path d="M4.75 15.2h14.5a1.75 1.75 0 0 1 1.75 1.75v.3A1.75 1.75 0 0 1 19.25 19H4.75A1.75 1.75 0 0 1 3 17.25v-.3a1.75 1.75 0 0 1 1.75-1.75Z"></path><path d="M8.2 12.5h7.6"></path><circle cx="7.75" cy="17.25" r="1.35"></circle><circle cx="16.25" cy="17.25" r="1.35"></circle></svg>`,
+  home: `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="m3.5 11 8.5-7.5 8.5 7.5v8.5a1.5 1.5 0 0 1-1.5 1.5h-4.5v-6h-5v6H5a1.5 1.5 0 0 1-1.5-1.5V11Z"></path></svg>`,
+  sparkles: `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="m12 3 1.1 3.1L16.2 7.2l-3.1 1.1L12 11.5l-1.1-3.2-3.1-1.1 3.1-1.1L12 3Z"></path><path d="m18.2 13.2.8 2.1 2.1.8-2.1.8-.8 2.1-.8-2.1-2.1-.8 2.1-.8.8-2.1ZM5.2 14.3l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7.7-1.8Z"></path></svg>`,
+  plus: `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"></path></svg>`,
+  arrow_down_circle: `<svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v10M8.5 13.5 12 17l3.5-3.5"></path></svg>`,
+  arrow_up_circle: `<svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 17V7M8.5 10.5 12 7l3.5 3.5"></path></svg>`,
+  calendar_check: `<svg aria-hidden="true" viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="15" rx="2.5"></rect><path d="M7 3.5v4M17 3.5v4M3.5 10h17"></path><path d="m8 15 2 2 5-5"></path></svg>`,
+  list: `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M8 6h12M8 12h12M8 18h12"></path><circle cx="4" cy="6" r="1"></circle><circle cx="4" cy="12" r="1"></circle><circle cx="4" cy="18" r="1"></circle></svg>`,
+  sliders: `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 7h7M15 7h5M4 12h3M11 12h9M4 17h10M18 17h2"></path><circle cx="13" cy="7" r="2"></circle><circle cx="9" cy="12" r="2"></circle><circle cx="16" cy="17" r="2"></circle></svg>`,
+  plus_circle: `<svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v8M8 12h8"></path></svg>`,
+  basket: `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 9h16l-1.5 10h-13L4 9Z"></path><path d="m8 9 4-5 4 5M9 13v3M15 13v3"></path></svg>`,
+  droplet: `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 21V4.5A1.5 1.5 0 0 1 6.5 3h7A1.5 1.5 0 0 1 15 4.5V21M4 21h12M8 7h4v4H8z"></path><path d="M15 8h2l2 2v7a2 2 0 0 0 2 2V9l-2-2"></path></svg>`,
+  dumbbell: `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 7v10M17 7v10M4 9v6M20 9v6M7 12h10"></path></svg>`,
+  gamepad: `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 8h10a4 4 0 0 1 3.8 5.2l-1.4 4.2a2 2 0 0 1-3.1 1l-2.1-1.7H9.8l-2.1 1.7a2 2 0 0 1-3.1-1l-1.4-4.2A4 4 0 0 1 7 8Z"></path><path d="M8 11v4M6 13h4M16 12h.01M18 14h.01"></path></svg>`,
+  heart: `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 21s-8-4.7-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 6.3-8 11-8 11Z"></path><path d="M8 12h2l1-2 2 4 1-2h2"></path></svg>`,
+  bag: `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 8h14l-1 13H6L5 8Z"></path><path d="M9 9V6a3 3 0 0 1 6 0v3"></path></svg>`,
+  briefcase: `<svg aria-hidden="true" viewBox="0 0 24 24"><rect x="3.5" y="6.5" width="17" height="12" rx="2.5"></rect><path d="M8 6.5V4.5h8v2M3.5 11h17M10 14.5h4"></path></svg>`,
+  dots: `<svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5"></circle><circle cx="12" cy="12" r="1.5"></circle><circle cx="19" cy="12" r="1.5"></circle></svg>`,
+  check_wallet: `<svg aria-hidden="true" viewBox="0 0 24 24"><rect x="3.5" y="6.5" width="17" height="11" rx="2.5"></rect><path d="M3.5 10h17M7 14h4"></path></svg>`,
+  clock_calendar: `<svg aria-hidden="true" viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="15" rx="2.5"></rect><path d="M7 3.5v4M17 3.5v4M3.5 10h17"></path><path d="m8 15 2 2 5-5"></path></svg>`,
 });
 
 const CATEGORY_META = {
@@ -1020,7 +1020,7 @@ function init() {
   });
 
   render();
-  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=24.0.0').catch(console.error);
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=22.0.0').catch(console.error);
 }
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
