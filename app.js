@@ -19,15 +19,15 @@ const escapeHtml = value => {
 };
 
 const ICONS = Object.freeze({
-  wallet: `<svg aria-hidden="true" viewBox="0 0 24 24"><rect x="3.5" y="6.5" width="17" height="11" rx="2.75"></rect><path d="M16 10.25h4.5v3.5H16a1.75 1.75 0 0 1 0-3.5Z"></path><path d="M7.25 10h3.25"></path><circle cx="16.8" cy="12" r=".8" fill="currentColor" stroke="none"></circle></svg>`,
-  savings: `<svg aria-hidden="true" viewBox="0 0 24 24"><rect x="4" y="4.5" width="16" height="15" rx="3"></rect><circle cx="12" cy="12" r="3.25"></circle><path d="M12 9.8v4.4M9.8 12h4.4"></path><path d="M16.5 8.3h.01"></path></svg>`,
+  wallet: `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5.25 7.25V6.9A2.4 2.4 0 0 1 7.65 4.5h9.1a2.1 2.1 0 0 1 2.1 2.1v.65"></path><rect x="3.5" y="7.25" width="17" height="10.75" rx="2.8"></rect><path d="M15.15 10.7h5.35v3.85h-5.35a1.92 1.92 0 0 1 0-3.85Z"></path><path d="M7.1 10.15h3.6"></path><circle cx="16.95" cy="12.62" r="0.9" fill="currentColor" stroke="none"></circle></svg>` ,
+  savings: `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M19.1 11.1c0-1.55-.86-2.94-2.2-3.68V6.35H15c-.94-.48-2.03-.75-3.2-.75-3.56 0-6.45 2.41-6.45 5.38 0 1 .34 1.95.93 2.74H4.95a1.05 1.05 0 1 0 0 2.1h2.16c.75.76 1.75 1.33 2.9 1.63v1.25h1.95v-1h4.1v1h1.95v-1.45c1.28-.93 2.09-2.41 2.09-4.15Z"></path><circle cx="14.25" cy="10.3" r="0.78" fill="currentColor" stroke="none"></circle><path d="M17.95 7.15c.2-.92 1-1.66 1.97-1.81"></path><path d="M10.35 11.2h2.95"></path><path d="M11.82 9.72v2.95"></path></svg>` ,
   trend: `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 19h16M6 16l4-4 3 2 5-7M15 7h3v3M7 19v-2M11 19v-4M15 19v-6M19 19V9"></path></svg>`,
   receipt: `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M6 3.5h12v17l-2-1.4-2 1.4-2-1.4-2 1.4-2-1.4-2 1.4v-17Z"></path><path d="M9 8h6M9 12h6M9 16h4"></path></svg>`,
   calendar: `<svg aria-hidden="true" viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="15" rx="2.5"></rect><path d="M7 3.5v4M17 3.5v4M3.5 10h17"></path><path d="m8 15 2 2 5-5"></path></svg>`,
   pie: `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M11 3.5a8.5 8.5 0 1 0 8.5 8.5H11V3.5Z"></path><path d="M14 3.8A7.8 7.8 0 0 1 20.2 10H14V3.8Z"></path></svg>`,
   coins_down: `<svg aria-hidden="true" viewBox="0 0 24 24"><ellipse cx="9.5" cy="7" rx="4.5" ry="2"></ellipse><path d="M5 7v4c0 1.1 2 2 4.5 2s4.5-.9 4.5-2V7M5 11v4c0 1.1 2 2 4.5 2 1.2 0 2.3-.2 3.1-.5"></path><path d="M18 11v8m-3-3 3 3 3-3"></path></svg>`,
   coins: `<svg aria-hidden="true" viewBox="0 0 24 24"><ellipse cx="12" cy="6.5" rx="6" ry="2.5"></ellipse><path d="M6 6.5v5c0 1.4 2.7 2.5 6 2.5s6-1.1 6-2.5v-5M6 11.5v5c0 1.4 2.7 2.5 6 2.5s6-1.1 6-2.5v-5"></path></svg>`,
-  car: `<svg aria-hidden="true" class="audi-rings" viewBox="0 0 24 24"><circle cx="5.7" cy="12" r="3.6"></circle><circle cx="9.9" cy="12" r="3.6"></circle><circle cx="14.1" cy="12" r="3.6"></circle><circle cx="18.3" cy="12" r="3.6"></circle></svg>`,
+  car: `<svg aria-hidden="true" class="audi-rings" viewBox="0 0 52 20"><circle cx="8" cy="10" r="6.6"></circle><circle cx="20" cy="10" r="6.6"></circle><circle cx="32" cy="10" r="6.6"></circle><circle cx="44" cy="10" r="6.6"></circle></svg>` ,
   home: `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="m3.5 11 8.5-7.5 8.5 7.5v8.5a1.5 1.5 0 0 1-1.5 1.5h-4.5v-6h-5v6H5a1.5 1.5 0 0 1-1.5-1.5V11Z"></path></svg>`,
   sparkles: `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="m12 3 1.1 3.1L16.2 7.2l-3.1 1.1L12 11.5l-1.1-3.2-3.1-1.1 3.1-1.1L12 3Z"></path><path d="m18.2 13.2.8 2.1 2.1.8-2.1.8-.8 2.1-.8-2.1-2.1-.8 2.1-.8.8-2.1ZM5.2 14.3l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7.7-1.8Z"></path></svg>`,
   plus: `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"></path></svg>`,
@@ -1020,7 +1020,7 @@ function init() {
   });
 
   render();
-  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=23.1.0').catch(console.error);
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=23.2.0').catch(console.error);
 }
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
