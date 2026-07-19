@@ -19,15 +19,15 @@ const escapeHtml = value => {
 };
 
 const ICONS = Object.freeze({
-  wallet: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h12"/><path d="M3 8h15"/><path d="M15 12h6v4h-6a2 2 0 1 1 0-4Z"/><circle cx="17.5" cy="14" r=".7" fill="currentColor" stroke="none"/></svg>`,
-  vault: `<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="12" cy="12" r="4"/><path d="M12 8v2M16 12h-2M12 16v-2M8 12h2M7 20v1M17 20v1"/></svg>`,
+  wallet: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8.5A2.5 2.5 0 0 1 6.5 6H18a2 2 0 0 1 2 2v1"/><path d="M4 8.5V18a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5.5a2 2 0 0 0-2-2h-4a2 2 0 1 1 0-4h6"/><circle cx="16.5" cy="13.5" r=".75" fill="currentColor" stroke="none"/></svg>`,
+  vault: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 11c0-3.2 2.8-5.6 7.1-5.6 1.4 0 2.8.3 3.9.8l2.7-1.3v3.9c1 .8 1.5 1.9 1.5 3.2 0 2.2-1.5 4.1-3.7 5V20h-2.8v-2H9.6v2H6.8v-3A6.6 6.6 0 0 1 4.1 13H2.5v-2H5Z"/><circle cx="14.4" cy="9.5" r=".7" fill="currentColor" stroke="none"/><path d="M8.7 6.4C8.1 4.8 9 3.3 10.6 3.3c1.1 0 2 .6 2.4 1.6"/><circle cx="17.8" cy="3.9" r="2.1"/><path d="M17.8 2.9v2M16.8 3.9h2"/></svg>`,
   trend: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19h16"/><path d="M5 16l4-4 3 2 7-8"/><path d="M15 6h4v4"/><path d="M7 19v-2M11 19v-4M15 19v-6M19 19V9"/></svg>`,
   receipt: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18l-2-1.5-2 1.5-2-1.5-2 1.5-2-1.5L6 21V3Z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>`,
   calendar: `<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4M17 3v4M3 10h18"/><path d="M7 14h3M14 14h3M7 18h3"/></svg>`,
   pie: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 3a9 9 0 1 0 9 9h-9V3Z"/><path d="M14 3.5A8.5 8.5 0 0 1 20.5 10H14V3.5Z"/></svg>`,
   coins_down: `<svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="9.5" cy="6" rx="5.5" ry="2.5"/><path d="M4 6v4c0 1.4 2.5 2.5 5.5 2.5S15 11.4 15 10V6M4 10v4c0 1.4 2.5 2.5 5.5 2.5 1.5 0 2.8-.3 3.8-.7"/><path d="M18 11v8M15.5 16.5 18 19l2.5-2.5"/></svg>`,
   coins: `<svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v5c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 11v5c0 1.7 3.1 3 7 3s7-1.3 7-3v-5"/></svg>`,
-  key: `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="15" r="4"/><path d="m11 12 8-8M15 8l2 2M17 6l2 2"/></svg>`,
+  key: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 14.5 6.8 8.8A2 2 0 0 1 8.7 7.5h6.6a2 2 0 0 1 1.9 1.3l2.3 5.7"/><path d="M3 14.5h18v3.6A1.4 1.4 0 0 1 19.6 19.5H4.4A1.4 1.4 0 0 1 3 18.1v-3.6Z"/><path d="M7 11.5h10"/><circle cx="7.5" cy="17" r=".8" fill="currentColor" stroke="none"/><circle cx="16.5" cy="17" r=".8" fill="currentColor" stroke="none"/></svg>`,
   home: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 11 9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-9Z"/><path d="M8 10.5h8"/></svg>`,
   sparkles: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 1.2 3.3L16.5 7.5l-3.3 1.2L12 12l-1.2-3.3-3.3-1.2 3.3-1.2L12 3Z"/><path d="m18.5 13 0.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8.8-2.2Z"/><path d="m5.5 14 .8 2.2 2.2.8-2.2.8L5.5 20l-.8-2.2-2.2-.8 2.2-.8.8-2.2Z"/></svg>`,
   plus: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>`,
@@ -977,7 +977,7 @@ function init() {
   });
 
   render();
-  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=13.0.0').catch(console.error);
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=19.0.0').catch(console.error);
 }
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);

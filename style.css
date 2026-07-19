@@ -303,3 +303,15 @@ button,a,input,select,textarea{-webkit-tap-highlight-color:transparent}
   .top-actions .round-btn{width:43px !important;height:43px !important;min-width:43px !important;min-height:43px !important}
   .top-actions .round-btn svg{width:22px !important;height:22px !important}
 }
+
+
+/* v19 refinements */
+button,input,select,textarea{-webkit-tap-highlight-color:transparent;}
+.close-btn,.close-btn *{outline:none !important;}
+.close-btn{appearance:none;-webkit-appearance:none;box-shadow:none !important;transform:none !important;}
+.close-btn:focus,.close-btn:focus-visible,.close-btn:active{outline:none !important;box-shadow:none !important;border-color:var(--line) !important;}
+.close-btn::-moz-focus-inner{border:0;}
+.page-header{align-items:flex-start;}
+.compact-action{display:grid;place-items:center;align-self:flex-start;line-height:0;overflow:hidden;}
+.compact-action svg{display:block;margin:0 auto;flex:0 0 auto;}
+@media (max-width:720px){.page-header{align-items:flex-start;} .compact-action{align-self:flex-start;margin-top:4px;}}
