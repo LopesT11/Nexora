@@ -395,3 +395,22 @@ button,input,select,textarea{-webkit-tap-highlight-color:transparent;}
 .goal-icon.amber svg,.bottom-nav button[data-page="car"]>svg{width:25px!important;height:25px!important;stroke-width:2.05!important;}
 .bottom-nav button[data-page="car"]>svg{overflow:visible;}
 @media(max-width:620px){.page-header{grid-template-columns:minmax(0,1fr) 52px!important;} .transfer-arrow{width:44px;height:44px;border-radius:14px;} .transfer-arrow svg{width:21px!important;height:21px!important;}}
+
+
+/* DEALER$ v23.1 — símbolo Audi em todos os locais do carro */
+.audi-rings{
+  fill:none!important;
+  stroke:currentColor!important;
+  stroke-width:1.55!important;
+  stroke-linecap:round!important;
+  stroke-linejoin:round!important;
+  overflow:visible!important;
+  shape-rendering:geometricPrecision;
+}
+.goal-icon.amber .audi-rings{width:31px!important;height:31px!important;}
+.bottom-nav button[data-page="car"]>.audi-rings{width:29px!important;height:29px!important;stroke-width:1.45!important;}
+.tx-icon .audi-rings,.cat-icon .audi-rings{width:24px!important;height:24px!important;stroke-width:1.45!important;}
+@media(max-width:390px){
+  .goal-icon.amber .audi-rings{width:29px!important;height:29px!important;}
+  .bottom-nav button[data-page="car"]>.audi-rings{width:27px!important;height:27px!important;}
+}
