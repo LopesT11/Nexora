@@ -315,3 +315,22 @@ button,input,select,textarea{-webkit-tap-highlight-color:transparent;}
 .compact-action{display:grid;place-items:center;align-self:flex-start;line-height:0;overflow:hidden;}
 .compact-action svg{display:block;margin:0 auto;flex:0 0 auto;}
 @media (max-width:720px){.page-header{align-items:flex-start;} .compact-action{align-self:flex-start;margin-top:4px;}}
+
+
+/* v20 — transferências simples e ícones mobile */
+.transfer-fields{display:grid;grid-template-columns:minmax(0,1fr) 34px minmax(0,1fr);gap:8px;align-items:end;margin-top:4px}
+.transfer-fields label{min-width:0;margin-top:10px}
+.transfer-fields select{padding-left:13px;padding-right:30px;white-space:nowrap;text-overflow:ellipsis}
+.transfer-arrow{height:56px;display:grid;place-items:center;color:var(--brand);font-size:24px;font-weight:900;margin-bottom:0}
+.tx-amount.transfer{color:var(--brand)}
+.page-header{align-items:center!important}
+.compact-action{width:52px!important;height:52px!important;min-width:52px!important;min-height:52px!important;flex:0 0 52px!important;align-self:center!important;margin:0!important;padding:0!important;display:grid!important;place-items:center!important}
+.compact-action svg{width:23px!important;height:23px!important;margin:0!important;display:block!important}
+.quick-icon.saving svg,.stat-icon.saving svg,.goal-icon.mint svg{stroke-width:1.9}
+.bottom-nav button[data-page="car"] svg{width:23px;height:23px;stroke-width:1.9}
+.goal-icon.amber svg{stroke-width:1.85}
+@media(max-width:420px){
+  .transfer-fields{grid-template-columns:1fr;gap:0}
+  .transfer-arrow{height:26px;transform:rotate(90deg);font-size:20px}
+  .transfer-fields label{margin:8px 0}
+}
