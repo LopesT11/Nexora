@@ -840,7 +840,7 @@ function initTheme() {
 function init() {
   initTheme();
   document.body.dataset.currentPage = currentPage;
-  $('txDate').value = todayISO();
+  if ($('txDate')) $('txDate').value = todayISO();
   setTransferPreset('expense');
 
   document.querySelectorAll('[data-page]').forEach(button => {
@@ -876,14 +876,14 @@ function init() {
   });
 
   $('themeToggle')?.addEventListener('click', () => applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'));
-  $('txFrom').addEventListener('change', updateCategoryForTransfer);
-  $('txTo').addEventListener('change', updateCategoryForTransfer);
-  $('expenseMonthSelect').addEventListener('change', event => {
+  $('txFrom')?.addEventListener('change', updateCategoryForTransfer);
+  $('txTo')?.addEventListener('change', updateCategoryForTransfer);
+  $('expenseMonthSelect')?.addEventListener('change', event => {
     selectedExpenseMonth = event.target.value;
     renderExpenses();
   });
 
-  $('txForm').addEventListener('submit', event => {
+  $('txForm')?.addEventListener('submit', event => {
     if (event.submitter?.value === 'cancel') return;
     event.preventDefault();
     const amount = Number($('txAmount').value);
@@ -916,13 +916,13 @@ function init() {
     });
     save();
     event.target.reset();
-    $('txDate').value = todayISO();
+    if ($('txDate')) $('txDate').value = todayISO();
     setTransferPreset('expense');
     $('txDialog').close();
     render();
   });
 
-  $('balancesForm').addEventListener('submit', event => {
+  $('balancesForm')?.addEventListener('submit', event => {
     if (event.submitter?.value === 'cancel') return;
     event.preventDefault();
     vault.balances = {
@@ -934,28 +934,28 @@ function init() {
     save(); $('balancesDialog').close(); render();
   });
 
-  $('rateForm').addEventListener('submit', event => {
+  $('rateForm')?.addEventListener('submit', event => {
     if (event.submitter?.value === 'cancel') return;
     event.preventDefault();
     vault.annualRate = Number($('annualRateInput').value) || 0;
     save(); $('rateDialog').close(); render();
   });
 
-  $('savingsGoalForm').addEventListener('submit', event => {
+  $('savingsGoalForm')?.addEventListener('submit', event => {
     if (event.submitter?.value === 'cancel') return;
     event.preventDefault();
     vault.savingsGoal = Math.max(0, Number($('savingsGoalInput').value) || 0);
     save(); $('savingsGoalDialog').close(); render();
   });
 
-  $('carGoalForm').addEventListener('submit', event => {
+  $('carGoalForm')?.addEventListener('submit', event => {
     if (event.submitter?.value === 'cancel') return;
     event.preventDefault();
     vault.carFundGoal = Math.max(0, Number($('carGoalInput').value) || 0);
     save(); $('carGoalDialog').close(); render();
   });
 
-  $('transferForm').addEventListener('submit', event => {
+  $('transferForm')?.addEventListener('submit', event => {
     if (event.submitter?.value === 'cancel') return;
     event.preventDefault();
     const amount = Number($('transferAmount').value);
@@ -967,7 +967,7 @@ function init() {
     save(); event.target.reset(); $('transferDialog').close(); render();
   });
 
-  $('loanSettingsForm').addEventListener('submit', event => {
+  $('loanSettingsForm')?.addEventListener('submit', event => {
     if (event.submitter?.value === 'cancel') return;
     event.preventDefault();
     const originalBalance = Math.max(0, Number($('loanOriginalInput').value) || 0);
@@ -987,7 +987,7 @@ function init() {
     render();
   });
 
-  $('paymentForm').addEventListener('submit', event => {
+  $('paymentForm')?.addEventListener('submit', event => {
     if (event.submitter?.value === 'cancel') return;
     event.preventDefault();
     if (vault.loan.balance <= 0 || vault.loan.payment <= 0) return alert('Configura primeiro os dados do crédito.');
@@ -1004,7 +1004,7 @@ function init() {
     save(); $('paymentDialog').close(); render();
   });
 
-  $('extraForm').addEventListener('submit', event => {
+  $('extraForm')?.addEventListener('submit', event => {
     if (event.submitter?.value === 'cancel') return;
     event.preventDefault();
     const amount = Number($('extraAmount').value);
@@ -1024,7 +1024,7 @@ function init() {
     save(); event.target.reset(); $('extraDate').value = todayISO(); $('extraDialog').close(); render();
   });
 
-  $('exportBackup').addEventListener('click', () => {
+  $('exportBackup')?.addEventListener('click', () => {
     const payload = { app: 'DEALER$', format: 5, data: vault, exported: new Date().toISOString() };
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -1035,7 +1035,7 @@ function init() {
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   });
 
-  $('importBackup').addEventListener('change', async event => {
+  $('importBackup')?.addEventListener('change', async event => {
     const file = event.target.files?.[0];
     if (!file) return;
     try {
@@ -1063,8 +1063,24 @@ function init() {
   });
 
   render();
-  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=23.5.0').catch(console.error);
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=23.6.0').catch(console.error);
 }
 
-if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
-else init();
+function bootApp() {
+  try {
+    init();
+  } catch (error) {
+    console.error('DEALER$ startup error:', error);
+    const shell = document.getElementById('app');
+    if (shell) {
+      shell.classList.add('app-startup-error');
+      const notice = document.createElement('div');
+      notice.className = 'startup-error-notice';
+      notice.innerHTML = '<strong>Não foi possível iniciar a aplicação.</strong><span>Atualiza a página. Se continuar, substitui novamente todos os ficheiros do ZIP.</span>';
+      document.body.prepend(notice);
+    }
+  }
+}
+
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bootApp);
+else bootApp();
