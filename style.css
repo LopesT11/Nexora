@@ -418,3 +418,41 @@ button,input,select,textarea{-webkit-tap-highlight-color:transparent;}
 
 
 .bottom-nav button[data-page="car"] span{max-width:52px!important;}
+
+
+/* DEALER$ v23.3 — correspondência visual ao mockup aprovado */
+.wallet-mark,.pig-mark,.audi-rings{display:block;overflow:visible;shape-rendering:geometricPrecision;flex:none}
+.wallet-mark,.pig-mark{fill:none!important;stroke:currentColor!important;stroke-linecap:round!important;stroke-linejoin:round!important;stroke-width:1.9!important}
+.quick-icon.current .wallet-mark,.stat-icon.current .wallet-mark{width:31px!important;height:31px!important}
+.quick-icon.saving .pig-mark,.stat-icon.saving .pig-mark,.goal-icon.mint .pig-mark,.quick-icon.mint .pig-mark{width:31px!important;height:31px!important}
+.quick-icon.current,.quick-icon.saving{width:58px!important;height:58px!important;border-radius:18px!important}
+.audi-rings{fill:none!important;stroke:currentColor!important;stroke-width:1.7!important;stroke-linecap:round!important;stroke-linejoin:round!important;vector-effect:non-scaling-stroke}
+.goal-icon.amber .audi-rings{width:43px!important;height:20px!important}
+.bottom-nav button[data-page="car"]>.audi-rings{width:38px!important;height:18px!important;stroke-width:1.65!important;margin-bottom:1px}
+.bottom-nav button[data-page="car"] span{max-width:56px!important}
+.tx-icon .audi-rings,.cat-icon .audi-rings{width:31px!important;height:15px!important;stroke-width:1.6!important}
+.savings-visual-card{position:relative!important;overflow:hidden!important;min-height:230px;background:linear-gradient(135deg,#065d50 0%,#087b68 56%,#0e8e77 100%)!important;color:#fff!important;border-color:rgba(91,231,202,.22)!important;padding-right:126px!important}
+.savings-visual-card:after{content:"";position:absolute;inset:auto -55px -80px auto;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(89,236,205,.14),transparent 68%);pointer-events:none}
+.savings-visual-card .section-heading,.savings-visual-card .big-progress-number,.savings-visual-card .progress,.savings-visual-card .progress-labels{position:relative;z-index:2}
+.savings-visual-card .eyebrow,.savings-visual-card small,.savings-visual-card span{color:rgba(255,255,255,.76)}
+.savings-visual-card h2,.savings-visual-card strong{color:#fff}
+.savings-visual-card .text-btn{color:#8bf5df}
+.savings-pig-3d{position:absolute;z-index:3;right:22px;top:26px;width:96px;height:auto;object-fit:contain;filter:drop-shadow(0 12px 16px rgba(0,0,0,.24));image-rendering:auto}
+.loan-hero{background:linear-gradient(135deg,#202a2b 0%,#121a1b 54%,#293234 100%)!important}
+.loan-audi-mark{position:relative;z-index:2;display:grid;place-items:center;width:126px;height:72px;color:#fff}
+.loan-audi-mark .audi-rings{width:118px!important;height:42px!important;stroke-width:1.8!important;filter:drop-shadow(0 2px 3px rgba(0,0,0,.28))}
+@media(max-width:620px){
+ .quick-icon.current,.quick-icon.saving{width:54px!important;height:54px!important}
+ .quick-icon.current .wallet-mark,.quick-icon.saving .pig-mark,.stat-icon.current .wallet-mark,.stat-icon.saving .pig-mark,.goal-icon.mint .pig-mark,.quick-icon.mint .pig-mark{width:29px!important;height:29px!important}
+ .savings-visual-card{padding-right:108px!important;min-height:218px}
+ .savings-pig-3d{right:16px;top:24px;width:84px}
+ .loan-audi-mark{width:104px;height:60px}
+ .loan-audi-mark .audi-rings{width:100px!important;height:36px!important}
+ .bottom-nav button[data-page="car"]>.audi-rings{width:35px!important;height:17px!important}
+}
+@media(max-width:390px){
+ .savings-visual-card{padding-right:96px!important}
+ .savings-pig-3d{width:76px;right:12px}
+ .loan-audi-mark{width:90px}
+ .loan-audi-mark .audi-rings{width:88px!important;height:32px!important}
+}
