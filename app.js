@@ -19,13 +19,16 @@ const escapeHtml = value => {
 };
 
 const ICONS = Object.freeze({
-  wallet: `<svg aria-hidden="true" class="wallet-mark" viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet"><path d="M5.3 7.1V6.7A2.2 2.2 0 0 1 7.5 4.5h9.2a2.1 2.1 0 0 1 2.1 2.1v.5"></path><rect x="3.5" y="7.1" width="17" height="11.2" rx="2.8"></rect><path d="M15.1 10.65h5.4v3.9h-5.4a1.95 1.95 0 1 1 0-3.9Z"></path><circle cx="16.95" cy="12.6" r=".92" fill="currentColor" stroke="none"></circle></svg>`,
+  wallet: `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5.25 7.25V6.9A2.4 2.4 0 0 1 7.65 4.5h9.1a2.1 2.1 0 0 1 2.1 2.1v.65"></path><rect x="3.5" y="7.25" width="17" height="10.75" rx="2.8"></rect><path d="M15.15 10.7h5.35v3.85h-5.35a1.92 1.92 0 0 1 0-3.85Z"></path><path d="M7.1 10.15h3.6"></path><circle cx="16.95" cy="12.62" r="0.9" fill="currentColor" stroke="none"></circle></svg>` ,
+  savings: `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M19.1 11.1c0-1.55-.86-2.94-2.2-3.68V6.35H15c-.94-.48-2.03-.75-3.2-.75-3.56 0-6.45 2.41-6.45 5.38 0 1 .34 1.95.93 2.74H4.95a1.05 1.05 0 1 0 0 2.1h2.16c.75.76 1.75 1.33 2.9 1.63v1.25h1.95v-1h4.1v1h1.95v-1.45c1.28-.93 2.09-2.41 2.09-4.15Z"></path><circle cx="14.25" cy="10.3" r="0.78" fill="currentColor" stroke="none"></circle><path d="M17.95 7.15c.2-.92 1-1.66 1.97-1.81"></path><path d="M10.35 11.2h2.95"></path><path d="M11.82 9.72v2.95"></path></svg>` ,
+  trend: `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 19h16M6 16l4-4 3 2 5-7M15 7h3v3M7 19v-2M11 19v-4M15 19v-6M19 19V9"></path></svg>`,
   receipt: `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M6 3.5h12v17l-2-1.4-2 1.4-2-1.4-2 1.4-2-1.4-2 1.4v-17Z"></path><path d="M9 8h6M9 12h6M9 16h4"></path></svg>`,
   calendar: `<svg aria-hidden="true" viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="15" rx="2.5"></rect><path d="M7 3.5v4M17 3.5v4M3.5 10h17"></path><path d="m8 15 2 2 5-5"></path></svg>`,
   pie: `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M11 3.5a8.5 8.5 0 1 0 8.5 8.5H11V3.5Z"></path><path d="M14 3.8A7.8 7.8 0 0 1 20.2 10H14V3.8Z"></path></svg>`,
   coins_down: `<svg aria-hidden="true" viewBox="0 0 24 24"><ellipse cx="9.5" cy="7" rx="4.5" ry="2"></ellipse><path d="M5 7v4c0 1.1 2 2 4.5 2s4.5-.9 4.5-2V7M5 11v4c0 1.1 2 2 4.5 2 1.2 0 2.3-.2 3.1-.5"></path><path d="M18 11v8m-3-3 3 3 3-3"></path></svg>`,
   coins: `<svg aria-hidden="true" viewBox="0 0 24 24"><ellipse cx="12" cy="6.5" rx="6" ry="2.5"></ellipse><path d="M6 6.5v5c0 1.4 2.7 2.5 6 2.5s6-1.1 6-2.5v-5M6 11.5v5c0 1.4 2.7 2.5 6 2.5s6-1.1 6-2.5v-5"></path></svg>`,
-  car: `<svg aria-hidden="true" class="audi-rings" viewBox="0 0 56 20" preserveAspectRatio="xMidYMid meet"><circle cx="8" cy="10" r="6.7"></circle><circle cx="21.3" cy="10" r="6.7"></circle><circle cx="34.7" cy="10" r="6.7"></circle><circle cx="48" cy="10" r="6.7"></circle></svg>`,
+  car: `<svg aria-hidden="true" class="audi-rings" viewBox="0 0 76 24" preserveAspectRatio="xMidYMid meet"><circle cx="12" cy="12" r="9.2"></circle><circle cx="29.3" cy="12" r="9.2"></circle><circle cx="46.7" cy="12" r="9.2"></circle><circle cx="64" cy="12" r="9.2"></circle></svg>`,
+  home: `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="m3.5 11 8.5-7.5 8.5 7.5v8.5a1.5 1.5 0 0 1-1.5 1.5h-4.5v-6h-5v6H5a1.5 1.5 0 0 1-1.5-1.5V11Z"></path></svg>`,
   sparkles: `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="m12 3 1.1 3.1L16.2 7.2l-3.1 1.1L12 11.5l-1.1-3.2-3.1-1.1 3.1-1.1L12 3Z"></path><path d="m18.2 13.2.8 2.1 2.1.8-2.1.8-.8 2.1-.8-2.1-2.1-.8 2.1-.8.8-2.1ZM5.2 14.3l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7.7-1.8Z"></path></svg>`,
   plus: `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"></path></svg>`,
   arrow_down_circle: `<svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v10M8.5 13.5 12 17l3.5-3.5"></path></svg>`,
@@ -596,49 +599,6 @@ function renderInsights() {
   target.innerHTML = cards.map(card => `<article class="insight-card"><span class="insight-icon ${card.color}">${card.icon}</span><h3>${card.title}</h3><p>${card.text}</p></article>`).join('');
 }
 
-
-
-function renderMockupPages() {
-  const savingsTransactions = [...vault.transactions]
-    .filter(t => t.category === 'Poupança' || t.from === 'savings' || t.to === 'savings' || t.type === 'saving')
-    .sort((a, b) => `${b.date || ''}${b.id || ''}`.localeCompare(`${a.date || ''}${a.id || ''}`));
-  const savingsRecent = $('savingsRecentList');
-  if (savingsRecent) {
-    if (!savingsTransactions.length) {
-      savingsRecent.innerHTML = `<div class="mockup-list-row"><span class="mockup-list-icon">${ICONS.arrow_down_circle}</span><div><strong>Depósito</strong><small>Sem movimentos registados</small></div><strong class="mockup-list-amount">+${euro(0)}</strong></div>`;
-    } else {
-      savingsRecent.innerHTML = savingsTransactions.slice(0, 2).map(t => {
-        const incoming = t.to === 'savings' || t.type === 'saving';
-        return `<div class="mockup-list-row"><span class="mockup-list-icon">${incoming ? ICONS.arrow_down_circle : ICONS.arrow_up_circle}</span><div><strong>${escapeHtml(t.description || 'Movimento de poupança')}</strong><small>${datePT(t.date)}</small></div><strong class="mockup-list-amount">${incoming ? '+' : '−'}${euro(t.amount)}</strong></div>`;
-      }).join('');
-    }
-  }
-  const savingsHistory = $('savingsHistoryList');
-  if (savingsHistory) {
-    const now = new Date();
-    savingsHistory.innerHTML = Array.from({ length: 4 }, (_, index) => {
-      const date = new Date(now.getFullYear(), now.getMonth() - index, 1);
-      const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-      const total = savingsTransactions.filter(t => String(t.date || '').slice(0, 7) === key).reduce((sum, t) => {
-        if (t.to === 'savings' || t.type === 'saving') return sum + Number(t.amount || 0);
-        if (t.from === 'savings') return sum - Number(t.amount || 0);
-        return sum;
-      }, 0);
-      return `<div class="mockup-history-row"><span>${monthLabel(key)}</span><strong>${euro(total)}</strong></div>`;
-    }).join('');
-  }
-
-  const carRecent = $('carRecentList');
-  if (carRecent) {
-    const items = [...vault.loan.history].sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')));
-    if (!items.length) {
-      carRecent.innerHTML = `<div class="mockup-list-row"><span class="mockup-list-icon">${ICONS.arrow_down_circle}</span><div><strong>Prestação</strong><small>Sem pagamentos registados</small></div><strong class="mockup-list-amount negative">−${euro(0)}</strong></div>`;
-    } else {
-      carRecent.innerHTML = items.slice(0, 2).map(item => `<div class="mockup-list-row"><span class="mockup-list-icon">${ICONS.arrow_down_circle}</span><div><strong>${item.type === 'payment' ? 'Prestação' : 'Amortização extra'}</strong><small>${datePT(item.date)}</small></div><strong class="mockup-list-amount negative">−${euro(item.amount ?? item.total ?? 0)}</strong></div>`).join('');
-    }
-  }
-}
-
 function render() {
   const b = vault.balances;
   const total = sumBalances();
@@ -754,13 +714,11 @@ function render() {
   renderExpenses();
   renderLoanHistory();
   renderInsights();
-  renderMockupPages();
   requestAnimationFrame(renderAllocationChart);
 }
 
 function showPage(name) {
   currentPage = name;
-  document.body.dataset.currentPage = name;
   document.querySelectorAll('.page').forEach(page => page.classList.toggle('active', page.id === `page-${name}`));
   document.querySelectorAll('.bottom-nav [data-page]').forEach(button => button.classList.toggle('active', button.dataset.page === name));
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -839,8 +797,7 @@ function initTheme() {
 
 function init() {
   initTheme();
-  document.body.dataset.currentPage = currentPage;
-  if ($('txDate')) $('txDate').value = todayISO();
+  $('txDate').value = todayISO();
   setTransferPreset('expense');
 
   document.querySelectorAll('[data-page]').forEach(button => {
@@ -876,14 +833,14 @@ function init() {
   });
 
   $('themeToggle')?.addEventListener('click', () => applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'));
-  $('txFrom')?.addEventListener('change', updateCategoryForTransfer);
-  $('txTo')?.addEventListener('change', updateCategoryForTransfer);
-  $('expenseMonthSelect')?.addEventListener('change', event => {
+  $('txFrom').addEventListener('change', updateCategoryForTransfer);
+  $('txTo').addEventListener('change', updateCategoryForTransfer);
+  $('expenseMonthSelect').addEventListener('change', event => {
     selectedExpenseMonth = event.target.value;
     renderExpenses();
   });
 
-  $('txForm')?.addEventListener('submit', event => {
+  $('txForm').addEventListener('submit', event => {
     if (event.submitter?.value === 'cancel') return;
     event.preventDefault();
     const amount = Number($('txAmount').value);
@@ -916,13 +873,13 @@ function init() {
     });
     save();
     event.target.reset();
-    if ($('txDate')) $('txDate').value = todayISO();
+    $('txDate').value = todayISO();
     setTransferPreset('expense');
     $('txDialog').close();
     render();
   });
 
-  $('balancesForm')?.addEventListener('submit', event => {
+  $('balancesForm').addEventListener('submit', event => {
     if (event.submitter?.value === 'cancel') return;
     event.preventDefault();
     vault.balances = {
@@ -934,28 +891,28 @@ function init() {
     save(); $('balancesDialog').close(); render();
   });
 
-  $('rateForm')?.addEventListener('submit', event => {
+  $('rateForm').addEventListener('submit', event => {
     if (event.submitter?.value === 'cancel') return;
     event.preventDefault();
     vault.annualRate = Number($('annualRateInput').value) || 0;
     save(); $('rateDialog').close(); render();
   });
 
-  $('savingsGoalForm')?.addEventListener('submit', event => {
+  $('savingsGoalForm').addEventListener('submit', event => {
     if (event.submitter?.value === 'cancel') return;
     event.preventDefault();
     vault.savingsGoal = Math.max(0, Number($('savingsGoalInput').value) || 0);
     save(); $('savingsGoalDialog').close(); render();
   });
 
-  $('carGoalForm')?.addEventListener('submit', event => {
+  $('carGoalForm').addEventListener('submit', event => {
     if (event.submitter?.value === 'cancel') return;
     event.preventDefault();
     vault.carFundGoal = Math.max(0, Number($('carGoalInput').value) || 0);
     save(); $('carGoalDialog').close(); render();
   });
 
-  $('transferForm')?.addEventListener('submit', event => {
+  $('transferForm').addEventListener('submit', event => {
     if (event.submitter?.value === 'cancel') return;
     event.preventDefault();
     const amount = Number($('transferAmount').value);
@@ -967,7 +924,7 @@ function init() {
     save(); event.target.reset(); $('transferDialog').close(); render();
   });
 
-  $('loanSettingsForm')?.addEventListener('submit', event => {
+  $('loanSettingsForm').addEventListener('submit', event => {
     if (event.submitter?.value === 'cancel') return;
     event.preventDefault();
     const originalBalance = Math.max(0, Number($('loanOriginalInput').value) || 0);
@@ -987,7 +944,7 @@ function init() {
     render();
   });
 
-  $('paymentForm')?.addEventListener('submit', event => {
+  $('paymentForm').addEventListener('submit', event => {
     if (event.submitter?.value === 'cancel') return;
     event.preventDefault();
     if (vault.loan.balance <= 0 || vault.loan.payment <= 0) return alert('Configura primeiro os dados do crédito.');
@@ -1004,7 +961,7 @@ function init() {
     save(); $('paymentDialog').close(); render();
   });
 
-  $('extraForm')?.addEventListener('submit', event => {
+  $('extraForm').addEventListener('submit', event => {
     if (event.submitter?.value === 'cancel') return;
     event.preventDefault();
     const amount = Number($('extraAmount').value);
@@ -1024,7 +981,7 @@ function init() {
     save(); event.target.reset(); $('extraDate').value = todayISO(); $('extraDialog').close(); render();
   });
 
-  $('exportBackup')?.addEventListener('click', () => {
+  $('exportBackup').addEventListener('click', () => {
     const payload = { app: 'DEALER$', format: 5, data: vault, exported: new Date().toISOString() };
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -1035,7 +992,7 @@ function init() {
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   });
 
-  $('importBackup')?.addEventListener('change', async event => {
+  $('importBackup').addEventListener('change', async event => {
     const file = event.target.files?.[0];
     if (!file) return;
     try {
@@ -1063,24 +1020,8 @@ function init() {
   });
 
   render();
-  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=23.6.0').catch(console.error);
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=23.8.0').catch(console.error);
 }
 
-function bootApp() {
-  try {
-    init();
-  } catch (error) {
-    console.error('DEALER$ startup error:', error);
-    const shell = document.getElementById('app');
-    if (shell) {
-      shell.classList.add('app-startup-error');
-      const notice = document.createElement('div');
-      notice.className = 'startup-error-notice';
-      notice.innerHTML = '<strong>Não foi possível iniciar a aplicação.</strong><span>Atualiza a página. Se continuar, substitui novamente todos os ficheiros do ZIP.</span>';
-      document.body.prepend(notice);
-    }
-  }
-}
-
-if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bootApp);
-else bootApp();
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+else init();
