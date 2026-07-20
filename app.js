@@ -596,6 +596,49 @@ function renderInsights() {
   target.innerHTML = cards.map(card => `<article class="insight-card"><span class="insight-icon ${card.color}">${card.icon}</span><h3>${card.title}</h3><p>${card.text}</p></article>`).join('');
 }
 
+
+
+function renderMockupPages() {
+  const savingsTransactions = [...vault.transactions]
+    .filter(t => t.category === 'Poupança' || t.from === 'savings' || t.to === 'savings' || t.type === 'saving')
+    .sort((a, b) => `${b.date || ''}${b.id || ''}`.localeCompare(`${a.date || ''}${a.id || ''}`));
+  const savingsRecent = $('savingsRecentList');
+  if (savingsRecent) {
+    if (!savingsTransactions.length) {
+      savingsRecent.innerHTML = `<div class="mockup-list-row"><span class="mockup-list-icon">${ICONS.arrow_down_circle}</span><div><strong>Depósito</strong><small>Sem movimentos registados</small></div><strong class="mockup-list-amount">+${euro(0)}</strong></div>`;
+    } else {
+      savingsRecent.innerHTML = savingsTransactions.slice(0, 2).map(t => {
+        const incoming = t.to === 'savings' || t.type === 'saving';
+        return `<div class="mockup-list-row"><span class="mockup-list-icon">${incoming ? ICONS.arrow_down_circle : ICONS.arrow_up_circle}</span><div><strong>${escapeHtml(t.description || 'Movimento de poupança')}</strong><small>${datePT(t.date)}</small></div><strong class="mockup-list-amount">${incoming ? '+' : '−'}${euro(t.amount)}</strong></div>`;
+      }).join('');
+    }
+  }
+  const savingsHistory = $('savingsHistoryList');
+  if (savingsHistory) {
+    const now = new Date();
+    savingsHistory.innerHTML = Array.from({ length: 4 }, (_, index) => {
+      const date = new Date(now.getFullYear(), now.getMonth() - index, 1);
+      const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+      const total = savingsTransactions.filter(t => String(t.date || '').slice(0, 7) === key).reduce((sum, t) => {
+        if (t.to === 'savings' || t.type === 'saving') return sum + Number(t.amount || 0);
+        if (t.from === 'savings') return sum - Number(t.amount || 0);
+        return sum;
+      }, 0);
+      return `<div class="mockup-history-row"><span>${monthLabel(key)}</span><strong>${euro(total)}</strong></div>`;
+    }).join('');
+  }
+
+  const carRecent = $('carRecentList');
+  if (carRecent) {
+    const items = [...vault.loan.history].sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')));
+    if (!items.length) {
+      carRecent.innerHTML = `<div class="mockup-list-row"><span class="mockup-list-icon">${ICONS.arrow_down_circle}</span><div><strong>Prestação</strong><small>Sem pagamentos registados</small></div><strong class="mockup-list-amount negative">−${euro(0)}</strong></div>`;
+    } else {
+      carRecent.innerHTML = items.slice(0, 2).map(item => `<div class="mockup-list-row"><span class="mockup-list-icon">${ICONS.arrow_down_circle}</span><div><strong>${item.type === 'payment' ? 'Prestação' : 'Amortização extra'}</strong><small>${datePT(item.date)}</small></div><strong class="mockup-list-amount negative">−${euro(item.amount ?? item.total ?? 0)}</strong></div>`).join('');
+    }
+  }
+}
+
 function render() {
   const b = vault.balances;
   const total = sumBalances();
@@ -711,11 +754,13 @@ function render() {
   renderExpenses();
   renderLoanHistory();
   renderInsights();
+  renderMockupPages();
   requestAnimationFrame(renderAllocationChart);
 }
 
 function showPage(name) {
   currentPage = name;
+  document.body.dataset.currentPage = name;
   document.querySelectorAll('.page').forEach(page => page.classList.toggle('active', page.id === `page-${name}`));
   document.querySelectorAll('.bottom-nav [data-page]').forEach(button => button.classList.toggle('active', button.dataset.page === name));
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -794,6 +839,7 @@ function initTheme() {
 
 function init() {
   initTheme();
+  document.body.dataset.currentPage = currentPage;
   $('txDate').value = todayISO();
   setTransferPreset('expense');
 
@@ -1017,7 +1063,7 @@ function init() {
   });
 
   render();
-  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=23.3.0').catch(console.error);
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=23.5.0').catch(console.error);
 }
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
