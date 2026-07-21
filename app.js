@@ -20,7 +20,7 @@ const escapeHtml = value => {
 
 const ICONS = Object.freeze({
   wallet: `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5.25 7.25V6.9A2.4 2.4 0 0 1 7.65 4.5h9.1a2.1 2.1 0 0 1 2.1 2.1v.65"></path><rect x="3.5" y="7.25" width="17" height="10.75" rx="2.8"></rect><path d="M15.15 10.7h5.35v3.85h-5.35a1.92 1.92 0 0 1 0-3.85Z"></path><path d="M7.1 10.15h3.6"></path><circle cx="16.95" cy="12.62" r="0.9" fill="currentColor" stroke="none"></circle></svg>` ,
-  savings: `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M19.1 11.1c0-1.55-.86-2.94-2.2-3.68V6.35H15c-.94-.48-2.03-.75-3.2-.75-3.56 0-6.45 2.41-6.45 5.38 0 1 .34 1.95.93 2.74H4.95a1.05 1.05 0 1 0 0 2.1h2.16c.75.76 1.75 1.33 2.9 1.63v1.25h1.95v-1h4.1v1h1.95v-1.45c1.28-.93 2.09-2.41 2.09-4.15Z"></path><circle cx="14.25" cy="10.3" r="0.78" fill="currentColor" stroke="none"></circle><path d="M17.95 7.15c.2-.92 1-1.66 1.97-1.81"></path><path d="M10.35 11.2h2.95"></path><path d="M11.82 9.72v2.95"></path></svg>` ,
+  savings: `<svg aria-hidden="true" class="savings-coins" viewBox="0 0 24 24"><ellipse cx="8" cy="14" rx="4" ry="2"></ellipse><path d="M4 14v4c0 1.15 1.8 2.05 4 2.05s4-.9 4-2.05v-4"></path><path d="M4 16.05c0 1.15 1.8 2.05 4 2.05s4-.9 4-2.05"></path><ellipse cx="15.5" cy="7.5" rx="4.5" ry="2.15"></ellipse><path d="M11 7.5v8.5c0 1.2 2 2.15 4.5 2.15S20 17.2 20 16V7.5"></path><path d="M11 11.7c0 1.2 2 2.15 4.5 2.15s4.5-.95 4.5-2.15"></path><path d="M11 15.9c0 1.2 2 2.15 4.5 2.15s4.5-.95 4.5-2.15"></path></svg>`,
   trend: `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 19h16M6 16l4-4 3 2 5-7M15 7h3v3M7 19v-2M11 19v-4M15 19v-6M19 19V9"></path></svg>`,
   receipt: `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M6 3.5h12v17l-2-1.4-2 1.4-2-1.4-2 1.4-2-1.4-2 1.4v-17Z"></path><path d="M9 8h6M9 12h6M9 16h4"></path></svg>`,
   calendar: `<svg aria-hidden="true" viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="15" rx="2.5"></rect><path d="M7 3.5v4M17 3.5v4M3.5 10h17"></path><path d="m8 15 2 2 5-5"></path></svg>`,
@@ -1020,7 +1020,7 @@ function init() {
   });
 
   render();
-  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=23.9.0').catch(console.error);
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=23.10.0').catch(console.error);
 }
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);

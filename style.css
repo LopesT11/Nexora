@@ -584,3 +584,33 @@ button,input,select,textarea{-webkit-tap-highlight-color:transparent;}
   }
   #txDialog .transfer-arrow svg{width:27px!important;height:27px!important;}
 }
+
+
+/* DEALER$ v23.10 — ícone de poupança em moedas */
+.savings-coins{
+  width:30px!important;
+  height:30px!important;
+  fill:none!important;
+  stroke:currentColor!important;
+  stroke-width:1.9!important;
+  stroke-linecap:round!important;
+  stroke-linejoin:round!important;
+  vector-effect:non-scaling-stroke;
+  overflow:visible!important;
+  shape-rendering:geometricPrecision;
+}
+.quick-icon.saving .savings-coins,
+.stat-icon.saving .savings-coins,
+.goal-icon.mint .savings-coins,
+.quick-icon.mint .savings-coins,
+.insight-icon .savings-coins,
+.tx-icon .savings-coins,
+.cat-icon .savings-coins{
+  width:30px!important;
+  height:30px!important;
+}
+.tx-icon .savings-coins,.cat-icon .savings-coins{width:23px!important;height:23px!important;}
+.insight-icon .savings-coins{width:27px!important;height:27px!important;}
+@media(max-width:390px){
+  .quick-icon.saving .savings-coins,.stat-icon.saving .savings-coins,.goal-icon.mint .savings-coins,.quick-icon.mint .savings-coins{width:28px!important;height:28px!important;}
+}
