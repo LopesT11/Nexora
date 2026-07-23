@@ -571,8 +571,9 @@ function renderInsights() {
   const currentMonth = new Date().toISOString().slice(0, 7);
   const current = getMonthStats(currentMonth);
   const previous = getMonthStats(previousMonth(currentMonth));
-  const savingsPct = vault.savingsGoal ? Math.min(100, vault.balances.savings / vault.savingsGoal * 100) : 0;
-  const savingsRemaining = Math.max(0, vault.savingsGoal - vault.balances.savings);
+  const savingsTotal = round2((Number(vault.balances.savings) || 0) + (Number(vault.balances.investments) || 0));
+  const savingsPct = vault.savingsGoal ? Math.min(100, savingsTotal / vault.savingsGoal * 100) : 0;
+  const savingsRemaining = Math.max(0, vault.savingsGoal - savingsTotal);
   const monthsLeft = Math.max(1, 12 - new Date().getMonth());
   const monthlyNeeded = savingsRemaining / monthsLeft;
   const projection = projectLoan();
@@ -625,16 +626,17 @@ function render() {
     wealthChange.className = `status-chip ${flow > 0 ? 'up' : flow < 0 ? 'down' : ''}`;
   }
 
-  const savingsPct = vault.savingsGoal ? Math.min(100, (b.savings / vault.savingsGoal) * 100) : 0;
+  const savingsTotal = round2((Number(b.savings) || 0) + (Number(b.investments) || 0));
+  const savingsPct = vault.savingsGoal ? Math.min(100, (savingsTotal / vault.savingsGoal) * 100) : 0;
   setWidth('savingsProgress', savingsPct);
   setWidth('savingsPageProgress', savingsPct);
-  setText('savingsNow', euro(b.savings));
+  setText('savingsNow', euro(savingsTotal));
   setText('savingsPct', pctText(savingsPct));
   setText('savingsGoalLabel', euro(vault.savingsGoal));
-  setText('savingsPageNow', euro(b.savings));
+  setText('savingsPageNow', euro(savingsTotal));
   setText('savingsPagePct', pctText(savingsPct));
   setText('savingsPageGoal', `Meta: ${euro(vault.savingsGoal)}`);
-  setText('savingsPageRemaining', `Faltam ${euro(Math.max(0, vault.savingsGoal - b.savings))}`);
+  setText('savingsPageRemaining', `Faltam ${euro(Math.max(0, vault.savingsGoal - savingsTotal))}`);
 
   const carPct = vault.carFundGoal ? Math.min(100, (b.carFund / vault.carFundGoal) * 100) : 0;
   setWidth('carFundProgress', carPct);
@@ -1020,7 +1022,7 @@ function init() {
   });
 
   render();
-  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=23.10.0').catch(console.error);
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=23.11.0').catch(console.error);
 }
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
