@@ -722,3 +722,8 @@ button,input,select,textarea{-webkit-tap-highlight-color:transparent;}
   .market-item-values{grid-template-columns:1fr 1fr;gap:12px}.form-two-cols{grid-template-columns:1fr}
 }
 @media(max-width:390px){.portfolio-home-value{display:none}.portfolio-home-card{grid-template-columns:48px minmax(0,1fr) 18px}.market-heading{align-items:flex-start}.primary-mini-btn{padding:10px 12px;font-size:12px}}
+
+
+/* DEALER$ v23.15 — histórico com sinais corretos e cartões separados */
+.portfolio-home-card{margin-top:22px!important;}
+.tx-amount.transfer{color:var(--muted)!important;}

@@ -101,7 +101,13 @@ function normalize(data) {
       ...(source.loan || {}),
       history: Array.isArray(source.loan?.history) ? source.loan.history : []
     },
-    transactions: Array.isArray(source.transactions) ? source.transactions : [],
+    transactions: Array.isArray(source.transactions)
+      ? source.transactions.map(transaction => {
+          const item = { ...transaction };
+          if (item.type === 'income' && item.from === 'external' && item.to === 'external') item.type = 'expense';
+          return item;
+        })
+      : [],
     marketInvestments: Array.isArray(source.marketInvestments) ? source.marketInvestments : []
   };
 }
@@ -257,15 +263,16 @@ function renderTransactions() {
 function transactionRowHtml(t, index = 0, canDelete = false) {
   const typeLabels = { income: 'Receita', expense: 'Despesa', transfer: 'Transferência', saving: 'Poupança', investment: 'Investimento', carfund: 'Fundo carro' };
   const meta = categoryMeta(t.category || 'Outros', index);
-  const sign = t.type === 'income' ? '+' : t.type === 'expense' ? '−' : '↔';
-  const route = t.from && t.to ? `${accountLabel(t.from)} → ${accountLabel(t.to)}` : (t.category || typeLabels[t.type] || 'Movimento');
+  const displayType = t.type === 'income' && t.from === 'external' && t.to === 'external' ? 'expense' : t.type;
+  const sign = displayType === 'income' ? '+' : displayType === 'expense' ? '−' : '';
+  const route = t.from && t.to ? `${accountLabel(t.from)} → ${accountLabel(t.to)}` : (t.category || typeLabels[displayType] || 'Movimento');
   const deleteButton = canDelete && !t.locked
     ? `<button class="tx-delete" type="button" data-delete-tx="${escapeHtml(t.id)}">Eliminar</button>`
     : '';
   return `<div class="tx-row">
     <span class="tx-icon" style="background:${meta.color}20;color:${meta.color}">${meta.icon}</span>
     <div class="tx-main"><strong>${escapeHtml(t.description || typeLabels[t.type] || 'Movimento')}</strong><small>${escapeHtml(route)} · ${datePT(t.date)}</small></div>
-    <div><strong class="tx-amount ${escapeHtml(t.type)}">${sign}${euro(t.amount)}</strong>${deleteButton}</div>
+    <div><strong class="tx-amount ${escapeHtml(displayType)}">${sign}${euro(t.amount)}</strong>${deleteButton}</div>
   </div>`;
 }
 
@@ -953,8 +960,11 @@ function setTransferPreset(type) {
 }
 
 function transactionType(from, to) {
-  if (movementMode === 'income' || from === 'external') return 'income';
-  if (movementMode === 'expense' || to === 'external') return 'expense';
+  if (movementMode === 'income') return 'income';
+  if (movementMode === 'expense') return 'expense';
+  if (movementMode === 'transfer') return 'transfer';
+  if (from === 'external' && to !== 'external') return 'income';
+  if (to === 'external') return 'expense';
   return 'transfer';
 }
 
@@ -1268,7 +1278,7 @@ function init() {
   });
 
   render();
-  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=23.14.0').catch(console.error);
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=23.15.0').catch(console.error);
 }
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
