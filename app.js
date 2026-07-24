@@ -20,6 +20,7 @@ const escapeHtml = value => {
 
 const ICONS = Object.freeze({
   wallet: `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5.25 7.25V6.9A2.4 2.4 0 0 1 7.65 4.5h9.1a2.1 2.1 0 0 1 2.1 2.1v.65"></path><rect x="3.5" y="7.25" width="17" height="10.75" rx="2.8"></rect><path d="M15.15 10.7h5.35v3.85h-5.35a1.92 1.92 0 0 1 0-3.85Z"></path><path d="M7.1 10.15h3.6"></path><circle cx="16.95" cy="12.62" r="0.9" fill="currentColor" stroke="none"></circle></svg>` ,
+  globe: `<svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3c2.2 2.45 3.3 5.45 3.3 9S14.2 18.55 12 21M12 3C9.8 5.45 8.7 8.45 8.7 12S9.8 18.55 12 21"></path></svg>`,
   savings: `<svg aria-hidden="true" class="savings-coins" viewBox="0 0 24 24"><ellipse cx="8" cy="14" rx="4" ry="2"></ellipse><path d="M4 14v4c0 1.15 1.8 2.05 4 2.05s4-.9 4-2.05v-4"></path><path d="M4 16.05c0 1.15 1.8 2.05 4 2.05s4-.9 4-2.05"></path><ellipse cx="15.5" cy="7.5" rx="4.5" ry="2.15"></ellipse><path d="M11 7.5v8.5c0 1.2 2 2.15 4.5 2.15S20 17.2 20 16V7.5"></path><path d="M11 11.7c0 1.2 2 2.15 4.5 2.15s4.5-.95 4.5-2.15"></path><path d="M11 15.9c0 1.2 2 2.15 4.5 2.15s4.5-.95 4.5-2.15"></path></svg>`,
   trend: `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 19h16M6 16l4-4 3 2 5-7M15 7h3v3M7 19v-2M11 19v-4M15 19v-6M19 19V9"></path></svg>`,
   receipt: `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M6 3.5h12v17l-2-1.4-2 1.4-2-1.4-2 1.4-2-1.4-2 1.4v-17Z"></path><path d="M9 8h6M9 12h6M9 16h4"></path></svg>`,
@@ -104,7 +105,7 @@ function normalize(data) {
     transactions: Array.isArray(source.transactions)
       ? source.transactions.map(transaction => {
           const item = { ...transaction };
-          if (item.type === 'income' && item.from === 'external' && item.to === 'external') item.type = 'expense';
+          if (item.type === 'income' && item.from === 'external' && item.to === 'external' && !item.externalIncome) item.type = 'expense';
           return item;
         })
       : [],
@@ -181,8 +182,46 @@ function sumBalances() {
   return round2(Number(b.current) + Number(b.savings) + Number(b.investments) + Number(b.carFund));
 }
 
+function isExteriorIncome(transaction) {
+  return transaction?.type === 'income' && transaction.from === 'external' && transaction.to === 'external' && transaction.externalIncome === true;
+}
+
+function isExteriorExpense(transaction) {
+  return transaction?.type === 'expense' && transaction.from === 'external' && transaction.to === 'external';
+}
+
+function exteriorBalance() {
+  return round2(vault.transactions.reduce((total, transaction) => {
+    const amount = Number(transaction.amount || 0);
+    if (isExteriorIncome(transaction)) return total + amount;
+    if (isExteriorExpense(transaction)) return total - amount;
+    if (transaction.type === 'transfer' && transaction.from === 'external' && transaction.to !== 'external') return total - amount;
+    if (transaction.type === 'transfer' && transaction.to === 'external' && transaction.from !== 'external') return total + amount;
+    return total;
+  }, 0));
+}
+
+function exteriorStats(period = 'month') {
+  const now = new Date();
+  const monthKey = now.toISOString().slice(0, 7);
+  const yearKey = String(now.getFullYear());
+  const inPeriod = transaction => {
+    const date = String(transaction.date || '');
+    if (period === 'all') return true;
+    if (period === 'year') return date.startsWith(yearKey);
+    return date.startsWith(monthKey);
+  };
+  const income = round2(vault.transactions.filter(transaction => isExteriorIncome(transaction) && inPeriod(transaction)).reduce((sum, transaction) => sum + Number(transaction.amount || 0), 0));
+  const expense = round2(vault.transactions.filter(transaction => isExteriorExpense(transaction) && inPeriod(transaction)).reduce((sum, transaction) => sum + Number(transaction.amount || 0), 0));
+  return { income, expense, net: round2(income - expense) };
+}
+
+function sumStablePatrimony() {
+  return round2(sumBalances() + exteriorBalance());
+}
+
 function sumPatrimonyTotal() {
-  return round2(sumBalances() + marketPortfolioSummary().current);
+  return round2(sumStablePatrimony() + marketPortfolioSummary().current);
 }
 
 function installmentParts(balance = vault.loan.balance, payment = vault.loan.payment) {
@@ -263,9 +302,9 @@ function renderTransactions() {
 function transactionRowHtml(t, index = 0, canDelete = false) {
   const typeLabels = { income: 'Receita', expense: 'Despesa', transfer: 'Transferência', saving: 'Poupança', investment: 'Investimento', carfund: 'Fundo carro' };
   const meta = categoryMeta(t.category || 'Outros', index);
-  const displayType = t.type === 'income' && t.from === 'external' && t.to === 'external' ? 'expense' : t.type;
+  const displayType = t.type;
   const sign = displayType === 'income' ? '+' : displayType === 'expense' ? '−' : '';
-  const route = t.from && t.to ? `${accountLabel(t.from)} → ${accountLabel(t.to)}` : (t.category || typeLabels[displayType] || 'Movimento');
+  const route = isExteriorIncome(t) ? 'Receita exterior' : isExteriorExpense(t) ? 'Despesa exterior' : t.from && t.to ? `${accountLabel(t.from)} → ${accountLabel(t.to)}` : (t.category || typeLabels[displayType] || 'Movimento');
   const deleteButton = canDelete && !t.locked
     ? `<button class="tx-delete" type="button" data-delete-tx="${escapeHtml(t.id)}">Eliminar</button>`
     : '';
@@ -533,11 +572,13 @@ function renderAllocationChart() {
   if (currentPage !== 'wealth') return;
   const b = vault.balances;
   const marketCurrent = marketPortfolioSummary().current;
+  const exteriorCurrent = exteriorBalance();
   const entries = [
     ['Conta corrente', Number(b.current) || 0],
     ['Poupança', Number(b.savings) || 0],
     ['Dinheiro a render', Number(b.investments) || 0],
     ['Fundo carro', Number(b.carFund) || 0],
+    ['Exterior', Math.max(0, Number(exteriorCurrent) || 0)],
     ['Investimentos (ETF / ações)', Number(marketCurrent) || 0]
   ].filter(([, amount]) => amount > 0);
   const colors = {
@@ -545,19 +586,37 @@ function renderAllocationChart() {
     'Poupança': '#36b87d',
     'Dinheiro a render': '#397bd8',
     'Fundo carro': '#e29432',
+    'Exterior': '#56c98c',
     'Investimentos (ETF / ações)': '#8f6bff'
   };
   entries.forEach(([name], index) => {
     CATEGORY_META[name] = { icon: ICONS.dots, color: colors[name] || FALLBACK_COLORS[index] };
   });
   const total = sumPatrimonyTotal();
-  drawDonut($('allocationDonut'), entries, total);
+  const chartTotal = round2(entries.reduce((sum, [, amount]) => sum + Number(amount || 0), 0));
+  drawDonut($('allocationDonut'), entries, chartTotal);
   setText('allocationTotal', euro(total));
   const legend = $('allocationLegend');
   if (legend) {
-    legend.innerHTML = entries.length
-      ? entries.map(([name, amount], index) => `<div class="legend-item"><span class="legend-dot" style="background:${colors[name] || FALLBACK_COLORS[index]}"></span><span>${name}</span><strong>${total ? Math.round(amount / total * 100) : 0}%</strong></div>`).join('')
+    const positiveRows = entries.map(([name, amount], index) => `<div class="legend-item"><span class="legend-dot" style="background:${colors[name] || FALLBACK_COLORS[index]}"></span><span>${name}</span><strong>${chartTotal ? Math.round(amount / chartTotal * 100) : 0}%</strong></div>`).join('');
+    const negativeExterior = exteriorCurrent < 0 ? `<div class="legend-item"><span class="legend-dot" style="background:${colors.Exterior}"></span><span>Exterior</span><strong class="negative">−${euro(Math.abs(exteriorCurrent))}</strong></div>` : '';
+    legend.innerHTML = positiveRows || negativeExterior
+      ? `${positiveRows}${negativeExterior}`
       : '<span class="muted">Atualiza os saldos para veres a distribuição.</span>';
+  }
+}
+
+function renderExteriorOverview() {
+  const period = $('exteriorPeriodSelect')?.value || 'month';
+  const stats = exteriorStats(period);
+  const balance = exteriorBalance();
+  setText('exteriorIncome', `+${euro(stats.income)}`);
+  setText('exteriorExpense', `−${euro(stats.expense)}`);
+  const balanceElement = $('exteriorBalance');
+  if (balanceElement) {
+    balanceElement.textContent = `${balance > 0 ? '+' : balance < 0 ? '−' : ''}${euro(Math.abs(balance))}`;
+    balanceElement.classList.toggle('positive', balance > 0);
+    balanceElement.classList.toggle('negative', balance < 0);
   }
 }
 
@@ -603,9 +662,9 @@ function renderInsights() {
       : `Gastaste <strong>${Math.abs(diff).toFixed(0)}% mais</strong> do que no mês anterior.`;
   }
 
-  const totalBalance = sumBalances();
+  const totalBalance = sumStablePatrimony();
   const cards = [
-    { color: 'mint', icon: ICONS.wallet, title: 'Saldo total', text: `O teu saldo estável atual é <strong>${euro(totalBalance)}</strong>, somando conta corrente, poupança, dinheiro a render e fundo do carro. Os ETF e ações aparecem à parte no gráfico de património.` },
+    { color: 'mint', icon: ICONS.wallet, title: 'Saldo total', text: `O teu saldo estável atual é <strong>${euro(totalBalance)}</strong>, somando conta corrente, poupança, dinheiro a render, fundo do carro e saldo exterior. Os ETF e ações aparecem à parte no gráfico de património.` },
     { color: 'mint', icon: ICONS.savings, title: 'Objetivo de poupança', text: `Já concluíste <strong>${pctText(savingsPct)}</strong> da meta anual. Faltam ${euro(savingsRemaining)} — cerca de ${euro(monthlyNeeded)} por mês até dezembro.` },
     { color: current.expense <= previous.expense ? 'mint' : 'rose', icon: ICONS.receipt, title: 'Ritmo de despesas', text: spendingText },
     { color: 'amber', icon: ICONS.coins_down, title: 'Crédito automóvel', text: projection.count ? `Ao ritmo atual, o carro ficará pago em <strong>${datePT(projection.payoffDate, { month: 'long', year: 'numeric' })}</strong>, após cerca de ${projection.count} prestações.` : 'O crédito está liquidado ou precisa de dados atualizados.' },
@@ -707,7 +766,7 @@ function openInvestmentEditor(id) {
 
 function render() {
   const b = vault.balances;
-  const total = sumBalances();
+  const total = sumStablePatrimony();
   const currentMonth = new Date().toISOString().slice(0, 7);
   const stats = getMonthStats(currentMonth);
   const flow = netFlowForMonth(currentMonth);
@@ -822,6 +881,7 @@ function render() {
   renderLoanHistory();
   renderInsights();
   renderMarketInvestments();
+  renderExteriorOverview();
   requestAnimationFrame(renderAllocationChart);
 }
 
@@ -881,12 +941,25 @@ function setAccountOptionState(mode) {
   const from = $('txFrom');
   const to = $('txTo');
   if (!from || !to) return;
-  [...from.options].forEach(option => {
-    option.disabled = mode === 'transfer' && option.value === 'external';
-  });
-  [...to.options].forEach(option => {
-    option.disabled = mode !== 'expense' && option.value === 'external';
-  });
+  [...from.options, ...to.options].forEach(option => { option.disabled = false; });
+  const fromExternal = [...from.options].find(option => option.value === 'external');
+  const toExternal = [...to.options].find(option => option.value === 'external');
+  if (fromExternal) fromExternal.textContent = mode === 'expense' ? 'Exterior — não alterar saldos' : 'Exterior';
+  if (toExternal) toExternal.textContent = mode === 'income' ? 'Exterior — não alterar saldos' : 'Exterior';
+}
+
+function updateExternalMovementHint() {
+  const hint = $('txExternalHint');
+  const text = $('txExternalHintText');
+  if (!hint || !text) return;
+  const from = $('txFrom')?.value;
+  const to = $('txTo')?.value;
+  let message = '';
+  if (movementMode === 'income' && to === 'external') message = 'Conta como receita e aumenta o saldo Exterior, sem alterar as contas da app.';
+  else if (movementMode === 'expense' && from === 'external') message = 'Conta como despesa e reduz o saldo Exterior, sem alterar as contas da app.';
+  else if (movementMode === 'transfer' && (from === 'external' || to === 'external')) message = 'Move dinheiro entre o Exterior e uma conta. Não conta como receita nem como despesa.';
+  hint.hidden = !message;
+  text.textContent = message;
 }
 
 function updateCategoryForTransfer() {
@@ -900,6 +973,7 @@ function updateCategoryForTransfer() {
   else if (to === 'investments' || from === 'investments') category.value = 'Investimentos';
   else if (to === 'carFund' || from === 'carFund') category.value = 'Carro';
   else if (movementMode === 'transfer') category.value = 'Outros';
+  updateExternalMovementHint();
 }
 
 function setMovementMode(mode, options = {}) {
@@ -945,6 +1019,7 @@ function setMovementMode(mode, options = {}) {
     }
   }
   updateCategoryForTransfer();
+  updateExternalMovementHint();
 }
 
 function setTransferPreset(type) {
@@ -1043,6 +1118,7 @@ function init() {
     selectedExpenseMonth = event.target.value;
     renderExpenses();
   });
+  $('exteriorPeriodSelect')?.addEventListener('change', renderExteriorOverview);
 
   $('txForm').addEventListener('submit', event => {
     if (event.submitter?.value === 'cancel') return;
@@ -1056,8 +1132,7 @@ function init() {
     if (movementMode === 'expense') to = 'external';
 
     if (movementMode === 'transfer' && from === to) return alert('Escolhe contas diferentes para a transferência.');
-    if (movementMode === 'transfer' && (from === 'external' || to === 'external')) return alert('Numa transferência, escolhe duas contas da aplicação.');
-    if (movementMode === 'income' && to === 'external') return alert('Escolhe a conta onde o dinheiro vai entrar.');
+    if (movementMode === 'transfer' && from === 'external' && to === 'external') return alert('Escolhe uma conta da aplicação num dos lados da transferência.');
 
     const fromKey = BALANCE_KEY_BY_ACCOUNT[from];
     const toKey = BALANCE_KEY_BY_ACCOUNT[to];
@@ -1082,7 +1157,8 @@ function init() {
       description: $('txDesc').value.trim(),
       amount: round2(amount),
       category,
-      date: $('txDate').value
+      date: $('txDate').value,
+      externalIncome: movementMode === 'income' && from === 'external' && to === 'external'
     });
     save();
     event.target.reset();
@@ -1278,7 +1354,7 @@ function init() {
   });
 
   render();
-  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=23.15.0').catch(console.error);
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=23.16.0').catch(console.error);
 }
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);

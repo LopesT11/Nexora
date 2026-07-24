@@ -12,7 +12,7 @@
 <title>DEALER$</title>
 <link href="manifest.json" rel="manifest"/>
 <link href="icon-192.png" rel="apple-touch-icon"/>
-<link href="style.css?v=23.15.0" rel="stylesheet"/>
+<link href="style.css?v=23.16.0" rel="stylesheet"/>
 </head>
 <body>
 <div class="app-shell" id="app">
@@ -224,6 +224,18 @@
 <div class="legend" id="allocationLegend"></div>
 </article>
 </section>
+<section class="section-block exterior-overview reveal">
+<div class="section-heading exterior-heading">
+<div><span class="eyebrow">Movimentos exteriores</span><h2>Exterior</h2><p>Dinheiro que tens fora das contas controladas pela app.</p></div>
+<label class="exterior-period-label">Período<select id="exteriorPeriodSelect" aria-label="Período dos movimentos exteriores"><option value="month">Este mês</option><option value="year">Este ano</option><option value="all">Total</option></select></label>
+</div>
+<div class="exterior-summary">
+<article><span class="exterior-metric-icon income" aria-hidden="true">↗</span><div><small>Receitas exteriores</small><strong class="positive" id="exteriorIncome">+0,00 €</strong></div></article>
+<article><span class="exterior-metric-icon expense" aria-hidden="true">↘</span><div><small>Despesas exteriores</small><strong class="negative" id="exteriorExpense">−0,00 €</strong></div></article>
+<article class="exterior-balance-card"><span class="exterior-metric-icon balance" aria-hidden="true">=</span><div><small>Saldo exterior atual</small><strong id="exteriorBalance">0,00 €</strong></div></article>
+</div>
+<p class="exterior-note"><span aria-hidden="true">i</span>O saldo exterior atual entra no património total, mas não entra na meta anual de poupança. Transferências entre o Exterior e uma conta não contam como receita nem despesa.</p>
+</section>
 <section class="section-block reveal">
 <div class="section-heading"><div><span class="eyebrow">Dinheiro parado</span><h2>Juros do saldo remunerado</h2></div><button class="text-btn" data-open="rateDialog">Editar taxa</button></div>
 <div class="rate-banner"><span>Taxa anual</span><strong id="annualRateLabel">0,00%</strong></div>
@@ -352,13 +364,14 @@
 </select></label>
 <span aria-hidden="true" class="transfer-arrow" id="txTransferArrow"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M6.5 8.25h11"></path><path d="m14.5 5.25 3 3-3 3"></path><path d="M17.5 15.75h-11"></path><path d="m9.5 12.75-3 3 3 3"></path></svg></span>
 <label id="txToField">Entra em<select id="txTo" required="">
-<option value="external">Exterior</option>
+<option value="external">Exterior — não alterar saldos</option>
 <option value="current">Conta corrente</option>
 <option value="savings">Poupança</option>
 <option value="investments">Dinheiro a render</option>
 <option value="carFund">Fundo carro</option>
 </select></label>
 </div>
+<p class="external-movement-hint" id="txExternalHint" hidden><span aria-hidden="true">i</span><span id="txExternalHintText"></span></p>
 <label>Descrição<input id="txDesc" maxlength="80" placeholder="Ex.: Salário, supermercado, combustível…" required="" type="text"/></label>
 <label>Valor (€)<input id="txAmount" inputmode="decimal" min="0.01" required="" step="0.01" type="number"/></label>
 <label>Data<input id="txDate" required="" type="date"/></label>
@@ -446,6 +459,6 @@
 <div class="history-list" id="loanHistory"></div>
 <button class="secondary-btn full" data-close="historyDialog" type="button">Fechar</button>
 </form></dialog>
-<script src="app.js?v=23.15.0"></script>
+<script src="app.js?v=23.16.0"></script>
 </body>
 </html>
