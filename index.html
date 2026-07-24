@@ -12,7 +12,7 @@
 <title>DEALER$</title>
 <link href="manifest.json" rel="manifest"/>
 <link href="icon-192.png" rel="apple-touch-icon"/>
-<link href="style.css?v=23.12.0" rel="stylesheet"/>
+<link href="style.css?v=23.13.0" rel="stylesheet"/>
 </head>
 <body>
 <div class="app-shell" id="app">
@@ -70,7 +70,7 @@
 </button>
 <button class="quick-card" data-page="wealth">
 <span class="quick-icon investing"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 19h16M6 16l4-4 3 2 5-7M15 7h3v3M7 19v-2M11 19v-4M15 19v-6M19 19V9"></path></svg></span>
-<span><small>Investimentos</small><strong id="homeInvestments">0,00 €</strong></span>
+<span><small>Dinheiro a render</small><strong id="homeInvestments">0,00 €</strong></span>
 <svg class="chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"></path></svg>
 </button>
 <button class="quick-card" data-page="expenses">
@@ -116,6 +116,7 @@
 <div><strong id="savingsPct">0%</strong><small>Progresso</small></div>
 <div><strong id="savingsGoalLabel">0,00 €</strong><small>Meta</small></div>
 </div>
+<p class="goal-note">Inclui apenas Poupança + Dinheiro a render. ETF e ações ficam separados.</p>
 </article>
 <article class="goal-card uniform-card reveal delay-1">
 <div class="goal-head">
@@ -129,6 +130,14 @@
 <div><strong id="carFundPct">0%</strong><small>Progresso</small></div>
 <div><strong id="carFundGoalLabel">0,00 €</strong><small>Meta</small></div>
 </div>
+</article>
+<article class="portfolio-home-card uniform-card reveal delay-2" data-page="wealth" role="button" tabindex="0">
+<div class="portfolio-home-icon">
+<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 19h16M6 16l4-4 3 2 5-7M15 7h3v3M7 19v-2M11 19v-4M15 19v-6M19 19V9"></path></svg>
+</div>
+<div class="portfolio-home-copy"><span class="eyebrow">Acompanhamento separado</span><h3>ETF e ações</h3><small>Não entra na meta anual nem no património total.</small></div>
+<div class="portfolio-home-value"><strong id="homeMarketCurrent">0,00 €</strong><span id="homeMarketResult">0,00 €</span></div>
+<svg class="chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"></path></svg>
 </article>
 <section class="section-block uniform-card recent-card reveal">
 <div class="section-heading"><div><span class="eyebrow">Movimentos</span><h2>Histórico recente</h2></div><button class="text-btn" data-open="txDialog">Adicionar</button></div>
@@ -190,13 +199,13 @@
 <!-- PATRIMÓNIO -->
 <section class="page" id="page-wealth">
 <section class="page-header reveal">
-<div><span class="eyebrow">Poupança e investimento</span><h1>Património</h1><p>Objetivos, rendimentos e distribuição num só lugar.</p></div>
+<div><span class="eyebrow">Poupança e rendimento</span><h1>Património</h1><p>Saldos estáveis, juros e investimentos variáveis organizados separadamente.</p></div>
 <button aria-label="Atualizar saldos" class="secondary-btn compact-action" data-open="balancesDialog" title="Atualizar saldos"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 7h7M15 7h5M4 12h3M11 12h9M4 17h10M18 17h2"></path><circle cx="13" cy="7" r="2"></circle><circle cx="9" cy="12" r="2"></circle><circle cx="16" cy="17" r="2"></circle></svg></button>
 </section>
 <section class="stat-grid page-stats reveal delay-1">
 <article class="stat-card"><span class="stat-icon current"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5.25 7.25V6.9A2.4 2.4 0 0 1 7.65 4.5h9.1a2.1 2.1 0 0 1 2.1 2.1v.65"></path><rect x="3.5" y="7.25" width="17" height="10.75" rx="2.8"></rect><path d="M15.15 10.7h5.35v3.85h-5.35a1.92 1.92 0 0 1 0-3.85Z"></path><path d="M7.1 10.15h3.6"></path><circle cx="16.95" cy="12.62" r="0.9" fill="currentColor" stroke="none"></circle></svg></span><div><small>Conta corrente</small><strong id="sCurrent">0,00 €</strong><span class="metric-sub">disponível</span></div></article>
 <article class="stat-card"><span class="stat-icon saving"><svg aria-hidden="true" class="savings-coins" viewBox="0 0 24 24"><ellipse cx="8" cy="14" rx="4" ry="2"></ellipse><path d="M4 14v4c0 1.15 1.8 2.05 4 2.05s4-.9 4-2.05v-4"></path><path d="M4 16.05c0 1.15 1.8 2.05 4 2.05s4-.9 4-2.05"></path><ellipse cx="15.5" cy="7.5" rx="4.5" ry="2.15"></ellipse><path d="M11 7.5v8.5c0 1.2 2 2.15 4.5 2.15S20 17.2 20 16V7.5"></path><path d="M11 11.7c0 1.2 2 2.15 4.5 2.15s4.5-.95 4.5-2.15"></path><path d="M11 15.9c0 1.2 2 2.15 4.5 2.15s4.5-.95 4.5-2.15"></path></svg></span><div><small>Poupança</small><strong id="sSavings">0,00 €</strong><span class="metric-sub">reserva</span></div></article>
-<article class="stat-card"><span class="stat-icon investing"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 19h16M6 16l4-4 3 2 5-7M15 7h3v3M7 19v-2M11 19v-4M15 19v-6M19 19V9"></path></svg></span><div><small>Investimentos</small><strong id="sInvestments">0,00 €</strong><span class="metric-sub">capital investido</span></div></article>
+<article class="stat-card"><span class="stat-icon investing"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 19h16M6 16l4-4 3 2 5-7M15 7h3v3M7 19v-2M11 19v-4M15 19v-6M19 19V9"></path></svg></span><div><small>Dinheiro a render</small><strong id="sInvestments">0,00 €</strong><span class="metric-sub">saldo remunerado</span></div></article>
 <article class="stat-card"><span class="stat-icon yield"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 19h16M6 16l3.5-3.5 3 2.2 5.5-7.2M15 7.5h3v3"></path><circle cx="7" cy="7" r="2.3"></circle></svg></span><div><small>Rendimento diário</small><strong id="sDailyYield">0,00 €</strong><span class="metric-sub">estimado</span></div></article>
 </section>
 <section class="analytics-grid">
@@ -204,7 +213,7 @@
 <div class="section-heading"><div><span class="eyebrow">Meta anual</span><h2>Poupança</h2></div><button class="text-btn" data-open="savingsGoalDialog">Editar meta</button></div>
 <div class="big-progress-number"><strong id="savingsPagePct">0%</strong><span>concluído</span></div>
 <div class="progress tall"><span id="savingsPageProgress"></span></div>
-<div class="progress-labels"><strong id="savingsPageNow">0,00 €</strong><small id="savingsPageRemaining">Faltam 0,00 €</small><small id="savingsPageGoal">0,00 €</small></div>
+<div class="progress-labels"><strong id="savingsPageNow">0,00 €</strong><small id="savingsPageRemaining">Faltam 0,00 €</small><small id="savingsPageGoal">0,00 €</small></div><p class="goal-note">Esta meta soma apenas Poupança + Dinheiro a render.</p>
 </article>
 <article class="chart-card reveal delay-1">
 <div class="card-heading"><div><span class="eyebrow">Distribuição</span><h2>Onde está o dinheiro</h2></div></div>
@@ -216,7 +225,7 @@
 </article>
 </section>
 <section class="section-block reveal">
-<div class="section-heading"><div><span class="eyebrow">Rendimentos estimados</span><h2>Juros estimados</h2></div><button class="text-btn" data-open="rateDialog">Editar taxa</button></div>
+<div class="section-heading"><div><span class="eyebrow">Dinheiro parado</span><h2>Juros do saldo remunerado</h2></div><button class="text-btn" data-open="rateDialog">Editar taxa</button></div>
 <div class="rate-banner"><span>Taxa anual</span><strong id="annualRateLabel">0,00%</strong></div>
 <div class="yield-cards">
 <article><span>Hoje</span><strong id="yieldDaily">0,00 €</strong><small>estimado por dia</small></article>
@@ -224,11 +233,25 @@
 <article><span>Este ano</span><strong id="yieldAnnual">0,00 €</strong><small>estimado por ano</small></article>
 </div>
 </section>
+<section class="section-block market-portfolio-section reveal">
+<div class="section-heading market-heading">
+<div><span class="eyebrow">Acompanhamento separado</span><h2>Investimentos — ETF e ações</h2></div>
+<button class="primary-mini-btn" data-new-investment data-open="investmentDialog" type="button">+ Adicionar</button>
+</div>
+<p class="market-disclaimer">O valor desta carteira pode subir ou descer. Não entra na meta anual de poupança nem no património total do início.</p>
+<div class="market-summary">
+<div><small>Valor investido</small><strong id="marketInvestedTotal">0,00 €</strong></div>
+<div><small>Valor atual</small><strong id="marketCurrentTotal">0,00 €</strong></div>
+<div><small>Resultado</small><strong id="marketResultTotal">0,00 €</strong></div>
+<div><small>Rentabilidade</small><strong id="marketReturnTotal">0,00%</strong></div>
+</div>
+<div class="market-list" id="marketInvestmentList"></div>
+</section>
 <section class="section-block reveal">
 <div class="section-heading"><div><span class="eyebrow">Ações rápidas</span><h2>Gerir património</h2></div></div>
 <div class="action-grid">
 <button class="action-card" data-open="txDialog" data-tx-type="saving"><span class="quick-icon mint"><svg aria-hidden="true" class="savings-coins" viewBox="0 0 24 24"><ellipse cx="8" cy="14" rx="4" ry="2"></ellipse><path d="M4 14v4c0 1.15 1.8 2.05 4 2.05s4-.9 4-2.05v-4"></path><path d="M4 16.05c0 1.15 1.8 2.05 4 2.05s4-.9 4-2.05"></path><ellipse cx="15.5" cy="7.5" rx="4.5" ry="2.15"></ellipse><path d="M11 7.5v8.5c0 1.2 2 2.15 4.5 2.15S20 17.2 20 16V7.5"></path><path d="M11 11.7c0 1.2 2 2.15 4.5 2.15s4.5-.95 4.5-2.15"></path><path d="M11 15.9c0 1.2 2 2.15 4.5 2.15s4.5-.95 4.5-2.15"></path></svg></span><strong>Adicionar à poupança</strong><small>Transferir da conta corrente</small></button>
-<button class="action-card" data-open="txDialog" data-tx-type="investment"><span class="quick-icon blue"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 19h16"></path><path d="M5 16l4-4 3 2 7-8"></path><path d="M15 6h4v4"></path><path d="M7 19v-2M11 19v-4M15 19v-6M19 19V9"></path></svg></span><strong>Adicionar investimento</strong><small>Registar capital investido</small></button>
+<button class="action-card" data-open="txDialog" data-tx-type="investment"><span class="quick-icon blue"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 19h16"></path><path d="M5 16l4-4 3 2 7-8"></path><path d="M15 6h4v4"></path><path d="M7 19v-2M11 19v-4M15 19v-6M19 19V9"></path></svg></span><strong>Adicionar dinheiro a render</strong><small>Transferir para o saldo remunerado</small></button>
 </div>
 </section>
 </section>
@@ -323,16 +346,16 @@
 <label id="txFromField">Sai de<select id="txFrom" required="">
 <option value="current">Conta corrente</option>
 <option value="savings">Poupança</option>
-<option value="investments">Investimentos</option>
+<option value="investments">Dinheiro a render</option>
 <option value="carFund">Fundo carro</option>
-<option value="external">Exterior</option>
+<option value="external">Exterior — não alterar saldos</option>
 </select></label>
 <span aria-hidden="true" class="transfer-arrow" id="txTransferArrow"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M6.5 8.25h11"></path><path d="m14.5 5.25 3 3-3 3"></path><path d="M17.5 15.75h-11"></path><path d="m9.5 12.75-3 3 3 3"></path></svg></span>
 <label id="txToField">Entra em<select id="txTo" required="">
 <option value="external">Exterior</option>
 <option value="current">Conta corrente</option>
 <option value="savings">Poupança</option>
-<option value="investments">Investimentos</option>
+<option value="investments">Dinheiro a render</option>
 <option value="carFund">Fundo carro</option>
 </select></label>
 </div>
@@ -350,7 +373,7 @@
 <div class="dialog-head"><div><span class="eyebrow">Património</span><h2>Atualizar saldos</h2></div><button aria-label="Fechar" class="close-btn" data-close="balancesDialog" type="button"><span>×</span></button></div>
 <label>Conta corrente<input id="balanceCurrent" step="0.01" type="number"/></label>
 <label>Poupança<input id="balanceSavings" step="0.01" type="number"/></label>
-<label>Investimentos<input id="balanceInvestments" step="0.01" type="number"/></label>
+<label>Dinheiro a render<input id="balanceInvestments" step="0.01" type="number"/></label>
 <label>Fundo carro<input id="balanceCarFund" step="0.01" type="number"/></label>
 <button class="primary-btn full" type="submit">Guardar saldos</button>
 </form></dialog>
@@ -374,6 +397,25 @@
 <p class="muted">O valor sai da conta corrente e fica reservado para amortização.</p>
 <label>Valor (€)<input id="transferAmount" min="0.01" required="" step="0.01" type="number"/></label>
 <button class="primary-btn full" type="submit">Transferir</button>
+</form></dialog>
+<dialog id="investmentDialog" class="investment-dialog"><form id="investmentForm" method="dialog">
+<div class="dialog-head"><div><span class="eyebrow">Carteira variável</span><h2 id="investmentDialogTitle">Adicionar investimento</h2></div><button aria-label="Fechar" class="close-btn" data-close="investmentDialog" type="button"><span>×</span></button></div>
+<input id="investmentId" type="hidden"/>
+<label>Nome do investimento<input id="investmentName" maxlength="80" placeholder="Ex.: Vanguard S&amp;P 500 ETF" required type="text"/></label>
+<div class="form-two-cols">
+<label>Símbolo / ticker<input id="investmentTicker" maxlength="15" placeholder="Ex.: VUAA" type="text"/></label>
+<label>Tipo<select id="investmentType"><option value="ETF">ETF</option><option value="Ação">Ação</option><option value="Fundo">Fundo</option><option value="Outro">Outro</option></select></label>
+</div>
+<div class="form-two-cols">
+<label>Valor investido (€)<input id="investmentInvested" inputmode="decimal" min="0" required step="0.01" type="number"/></label>
+<label>Valor atual (€)<input id="investmentCurrent" inputmode="decimal" min="0" required step="0.01" type="number"/></label>
+</div>
+<div class="form-two-cols">
+<label>Data da compra<input id="investmentDate" type="date"/></label>
+<label>Corretora <span class="optional-label">(opcional)</span><input id="investmentBroker" maxlength="40" placeholder="Ex.: Trade Republic" type="text"/></label>
+</div>
+<p class="muted investment-help">Atualiza manualmente o valor atual sempre que quiseres acompanhar o lucro ou prejuízo.</p>
+<button class="primary-btn full" id="investmentSubmit" type="submit">Guardar investimento</button>
 </form></dialog>
 <dialog id="loanSettingsDialog"><form id="loanSettingsForm" method="dialog">
 <div class="dialog-head"><div><span class="eyebrow">Dados privados</span><h2>Configurar crédito</h2></div><button aria-label="Fechar" class="close-btn" data-close="loanSettingsDialog" type="button"><span>×</span></button></div>
@@ -404,6 +446,6 @@
 <div class="history-list" id="loanHistory"></div>
 <button class="secondary-btn full" data-close="historyDialog" type="button">Fechar</button>
 </form></dialog>
-<script src="app.js?v=23.12.0"></script>
+<script src="app.js?v=23.13.0"></script>
 </body>
 </html>

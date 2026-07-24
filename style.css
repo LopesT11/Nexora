@@ -671,3 +671,54 @@ button,input,select,textarea{-webkit-tap-highlight-color:transparent;}
   .movement-intro strong{font-size:14px;}
   .movement-intro small{font-size:12px;}
 }
+
+
+/* DEALER$ v23.13 — poupança estável, dinheiro a render e carteira variável */
+.goal-note{
+  margin:14px 0 0;
+  padding:11px 13px;
+  border:1px solid color-mix(in srgb,var(--brand) 23%,var(--line));
+  border-radius:14px;
+  color:var(--muted);
+  background:color-mix(in srgb,var(--brand) 5%,var(--card-2));
+  font-size:12px;
+  line-height:1.45;
+}
+.portfolio-home-card{
+  border:1px solid var(--line);
+  background:var(--card);
+  border-radius:26px;
+  padding:18px;
+  display:grid;
+  grid-template-columns:54px minmax(0,1fr) auto 20px;
+  gap:14px;
+  align-items:center;
+  cursor:pointer;
+}
+.portfolio-home-icon{
+  width:54px;height:54px;border-radius:17px;
+  display:grid;place-items:center;
+  color:#6197ff;
+  background:color-mix(in srgb,#397bd8 15%,var(--card-2));
+  border:1px solid color-mix(in srgb,#6197ff 32%,var(--line));
+}
+.portfolio-home-icon svg{width:29px;height:29px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.portfolio-home-copy{min-width:0}.portfolio-home-copy h3{margin:3px 0;font-size:20px}.portfolio-home-copy small{display:block;color:var(--muted);font-size:12px;line-height:1.35}
+.portfolio-home-value{text-align:right}.portfolio-home-value strong{display:block;font-size:20px}.portfolio-home-value span{display:block;margin-top:4px;font-size:12px;color:var(--muted)}
+.portfolio-home-card>.chevron{width:20px;height:20px;fill:none;stroke:var(--muted);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.market-heading{align-items:center}.primary-mini-btn{border:0;border-radius:14px;padding:11px 15px;background:linear-gradient(135deg,var(--brand),var(--brand-2));color:#fff;font-weight:800;white-space:nowrap}
+.market-disclaimer{margin:2px 0 16px;color:var(--muted);font-size:13px;line-height:1.48;padding:12px 14px;border:1px solid var(--line);border-radius:15px;background:var(--card-2)}
+.market-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:1px solid var(--line);border-radius:19px;overflow:hidden;margin-bottom:16px;background:var(--card-2)}
+.market-summary>div{padding:14px 12px;border-right:1px solid var(--line);min-width:0}.market-summary>div:last-child{border-right:0}.market-summary small{display:block;color:var(--muted);font-size:11px;margin-bottom:7px}.market-summary strong{font-size:17px;white-space:nowrap}
+.market-list{display:grid;gap:12px}.market-empty{padding:22px;border:1px dashed var(--line);border-radius:18px;text-align:center;color:var(--muted)}.market-empty strong{display:block;color:var(--text);margin-bottom:7px}.market-empty small{line-height:1.5}
+.market-item{border:1px solid var(--line);border-radius:20px;padding:15px;background:var(--card-2)}
+.market-item-head{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:12px;align-items:center}.market-symbol{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-weight:900;background:color-mix(in srgb,#397bd8 22%,var(--card));color:#86adff;border:1px solid color-mix(in srgb,#6197ff 35%,var(--line))}.market-name{min-width:0}.market-name strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.market-name small{display:block;margin-top:4px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.market-edit,.market-delete{border:1px solid var(--line);background:transparent;color:var(--brand);border-radius:11px;padding:8px 10px;font-weight:800}.market-delete{display:block;margin:12px 0 0 auto;color:var(--negative)}
+.market-item-values{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin-top:14px}.market-item-values>div{min-width:0}.market-item-values small{display:block;color:var(--muted);font-size:10px;margin-bottom:4px}.market-item-values strong{font-size:13px;white-space:nowrap}
+.form-two-cols{display:grid;grid-template-columns:1fr 1fr;gap:12px}.investment-help{font-size:12px;margin:0 0 14px}
+@media(max-width:620px){
+  .portfolio-home-card{grid-template-columns:50px minmax(0,1fr) auto 18px;padding:16px;gap:11px}.portfolio-home-icon{width:50px;height:50px}.portfolio-home-value strong{font-size:17px}
+  .market-summary{grid-template-columns:1fr 1fr}.market-summary>div:nth-child(2){border-right:0}.market-summary>div:nth-child(-n+2){border-bottom:1px solid var(--line)}
+  .market-item-values{grid-template-columns:1fr 1fr;gap:12px}.form-two-cols{grid-template-columns:1fr}
+}
+@media(max-width:390px){.portfolio-home-value{display:none}.portfolio-home-card{grid-template-columns:48px minmax(0,1fr) 18px}.market-heading{align-items:flex-start}.primary-mini-btn{padding:10px 12px;font-size:12px}}

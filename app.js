@@ -69,8 +69,9 @@ const FALLBACK_COLORS = ['#12a594', '#e29432', '#5b83d6', '#e15b8f', '#7e65cf', 
 
 function blank() {
   return {
-    version: 5,
+    version: 6,
     balances: { current: 0, savings: 0, investments: 0, carFund: 0 },
+    marketInvestments: [],
     savingsGoal: 0,
     carFundGoal: 0,
     annualRate: 0,
@@ -93,14 +94,15 @@ function normalize(data) {
   return {
     ...base,
     ...source,
-    version: 5,
+    version: 6,
     balances: { ...base.balances, ...(source.balances || {}) },
     loan: {
       ...base.loan,
       ...(source.loan || {}),
       history: Array.isArray(source.loan?.history) ? source.loan.history : []
     },
-    transactions: Array.isArray(source.transactions) ? source.transactions : []
+    transactions: Array.isArray(source.transactions) ? source.transactions : [],
+    marketInvestments: Array.isArray(source.marketInvestments) ? source.marketInvestments : []
   };
 }
 
@@ -117,7 +119,7 @@ let selectedExpenseMonth = new Date().toISOString().slice(0, 7);
 let currentPage = 'home';
 
 function save() {
-  vault.version = 5;
+  vault.version = 6;
   storageSet(STORE, JSON.stringify(vault));
 }
 
@@ -522,13 +524,13 @@ function renderAllocationChart() {
   const entries = [
     ['Conta corrente', Number(b.current) || 0],
     ['Poupança', Number(b.savings) || 0],
-    ['Investimentos', Number(b.investments) || 0],
+    ['Dinheiro a render', Number(b.investments) || 0],
     ['Fundo carro', Number(b.carFund) || 0]
   ].filter(([, amount]) => amount > 0);
   const colors = {
     'Conta corrente': '#0f988a',
     'Poupança': '#36b87d',
-    'Investimentos': '#397bd8',
+    'Dinheiro a render': '#397bd8',
     'Fundo carro': '#e29432'
   };
   entries.forEach(([name], index) => {
@@ -589,15 +591,104 @@ function renderInsights() {
 
   const totalBalance = sumBalances();
   const cards = [
-    { color: 'mint', icon: ICONS.wallet, title: 'Saldo total', text: `O teu saldo total atual é <strong>${euro(totalBalance)}</strong>, somando conta corrente, poupança, investimentos e fundo do carro.` },
+    { color: 'mint', icon: ICONS.wallet, title: 'Saldo total', text: `O teu saldo total atual é <strong>${euro(totalBalance)}</strong>, somando conta corrente, poupança, dinheiro a render e fundo do carro. A carteira de ETF e ações fica separada.` },
     { color: 'mint', icon: ICONS.savings, title: 'Objetivo de poupança', text: `Já concluíste <strong>${pctText(savingsPct)}</strong> da meta anual. Faltam ${euro(savingsRemaining)} — cerca de ${euro(monthlyNeeded)} por mês até dezembro.` },
     { color: current.expense <= previous.expense ? 'mint' : 'rose', icon: ICONS.receipt, title: 'Ritmo de despesas', text: spendingText },
     { color: 'amber', icon: ICONS.coins_down, title: 'Crédito automóvel', text: projection.count ? `Ao ritmo atual, o carro ficará pago em <strong>${datePT(projection.payoffDate, { month: 'long', year: 'numeric' })}</strong>, após cerca de ${projection.count} prestações.` : 'O crédito está liquidado ou precisa de dados atualizados.' },
-    { color: 'blue', icon: ICONS.trend, title: 'Rendimento estimado', text: `Os investimentos estão a gerar aproximadamente <strong>${euro(dailyYield)} por dia</strong> e ${euro(dailyYield * 365)} por ano à taxa atual.` },
+    { color: 'blue', icon: ICONS.trend, title: 'Rendimento estimado', text: `O dinheiro a render está a gerar aproximadamente <strong>${euro(dailyYield)} por dia</strong> e ${euro(dailyYield * 365)} por ano à taxa atual.` },
     { color: 'rose', icon: ICONS.pie, title: 'Maior categoria', text: top[1] ? `A categoria com mais gastos este mês é <strong>${escapeHtml(top[0])}</strong>, com ${euro(top[1])}.` : 'Ainda não existem despesas registadas neste mês.' }
   ];
 
   target.innerHTML = cards.map(card => `<article class="insight-card"><span class="insight-icon ${card.color}">${card.icon}</span><h3>${card.title}</h3><p>${card.text}</p></article>`).join('');
+}
+
+
+function marketPortfolioSummary() {
+  const items = Array.isArray(vault.marketInvestments) ? vault.marketInvestments : [];
+  const invested = round2(items.reduce((sum, item) => sum + Number(item.invested || 0), 0));
+  const current = round2(items.reduce((sum, item) => sum + Number(item.currentValue || 0), 0));
+  const result = round2(current - invested);
+  const returnPct = invested > 0 ? (result / invested) * 100 : 0;
+  return { invested, current, result, returnPct };
+}
+
+function marketTypeLabel(item) {
+  return [item.type || 'Investimento', item.ticker, item.broker].filter(Boolean).join(' · ');
+}
+
+function renderMarketInvestments() {
+  const summary = marketPortfolioSummary();
+  setText('marketInvestedTotal', euro(summary.invested));
+  setText('marketCurrentTotal', euro(summary.current));
+  setText('marketResultTotal', `${summary.result >= 0 ? '+' : ''}${euro(summary.result)}`);
+  setText('marketReturnTotal', `${summary.returnPct >= 0 ? '+' : ''}${summary.returnPct.toFixed(2).replace('.', ',')}%`);
+  setText('homeMarketCurrent', euro(summary.current));
+  setText('homeMarketResult', `${summary.result >= 0 ? '+' : ''}${euro(summary.result)}`);
+
+  const resultElement = $('marketResultTotal');
+  const returnElement = $('marketReturnTotal');
+  const homeResult = $('homeMarketResult');
+  [resultElement, returnElement, homeResult].forEach(element => {
+    if (!element) return;
+    element.classList.toggle('positive', summary.result > 0);
+    element.classList.toggle('negative', summary.result < 0);
+  });
+
+  const target = $('marketInvestmentList');
+  if (!target) return;
+  const items = [...vault.marketInvestments].sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')));
+  if (!items.length) {
+    target.innerHTML = '<div class="market-empty"><strong>Ainda não tens ETF ou ações registados.</strong><small>Adiciona o primeiro investimento para acompanhares o valor atual e a rentabilidade.</small></div>';
+    return;
+  }
+
+  target.innerHTML = items.map(item => {
+    const invested = Number(item.invested || 0);
+    const current = Number(item.currentValue || 0);
+    const result = round2(current - invested);
+    const returnPct = invested > 0 ? (result / invested) * 100 : 0;
+    const initial = escapeHtml((item.ticker || item.name || '?').trim().charAt(0).toUpperCase());
+    return `<article class="market-item">
+      <div class="market-item-head">
+        <span class="market-symbol">${initial}</span>
+        <div class="market-name"><strong>${escapeHtml(item.name || 'Investimento')}</strong><small>${escapeHtml(marketTypeLabel(item))}</small></div>
+        <button class="market-edit" data-investment-edit="${escapeHtml(item.id)}" type="button">Editar</button>
+      </div>
+      <div class="market-item-values">
+        <div><small>Investido</small><strong>${euro(invested)}</strong></div>
+        <div><small>Valor atual</small><strong>${euro(current)}</strong></div>
+        <div><small>Resultado</small><strong class="${result > 0 ? 'positive' : result < 0 ? 'negative' : ''}">${result >= 0 ? '+' : ''}${euro(result)}</strong></div>
+        <div><small>Rentabilidade</small><strong class="${result > 0 ? 'positive' : result < 0 ? 'negative' : ''}">${returnPct >= 0 ? '+' : ''}${returnPct.toFixed(2).replace('.', ',')}%</strong></div>
+      </div>
+      <button class="market-delete" data-investment-delete="${escapeHtml(item.id)}" type="button">Eliminar</button>
+    </article>`;
+  }).join('');
+}
+
+function resetInvestmentForm() {
+  const form = $('investmentForm');
+  if (!form) return;
+  form.reset();
+  $('investmentId').value = '';
+  $('investmentDate').value = todayISO();
+  $('investmentDialogTitle').textContent = 'Adicionar investimento';
+  $('investmentSubmit').textContent = 'Guardar investimento';
+}
+
+function openInvestmentEditor(id) {
+  const item = vault.marketInvestments.find(investment => investment.id === id);
+  if (!item) return;
+  $('investmentId').value = item.id;
+  $('investmentName').value = item.name || '';
+  $('investmentTicker').value = item.ticker || '';
+  $('investmentType').value = item.type || 'ETF';
+  $('investmentInvested').value = Number(item.invested || 0);
+  $('investmentCurrent').value = Number(item.currentValue || 0);
+  $('investmentDate').value = item.date || todayISO();
+  $('investmentBroker').value = item.broker || '';
+  $('investmentDialogTitle').textContent = 'Editar investimento';
+  $('investmentSubmit').textContent = 'Guardar alterações';
+  openDialog('investmentDialog');
 }
 
 function render() {
@@ -716,6 +807,7 @@ function render() {
   renderExpenses();
   renderLoanHistory();
   renderInsights();
+  renderMarketInvestments();
   requestAnimationFrame(renderAllocationChart);
 }
 
@@ -736,7 +828,7 @@ function openDialog(id) {
 }
 
 const BALANCE_KEY_BY_ACCOUNT = Object.freeze({ current: 'current', savings: 'savings', investments: 'investments', carFund: 'carFund' });
-const ACCOUNT_LABELS = Object.freeze({ external: 'Exterior', current: 'Conta corrente', savings: 'Poupança', investments: 'Investimentos', carFund: 'Fundo carro' });
+const ACCOUNT_LABELS = Object.freeze({ external: 'Exterior', current: 'Conta corrente', savings: 'Poupança', investments: 'Dinheiro a render', carFund: 'Fundo carro' });
 
 function accountLabel(account) {
   return ACCOUNT_LABELS[account] || 'Conta';
@@ -776,7 +868,7 @@ function setAccountOptionState(mode) {
   const to = $('txTo');
   if (!from || !to) return;
   [...from.options].forEach(option => {
-    option.disabled = mode !== 'income' && option.value === 'external';
+    option.disabled = mode === 'transfer' && option.value === 'external';
   });
   [...to.options].forEach(option => {
     option.disabled = mode !== 'expense' && option.value === 'external';
@@ -884,6 +976,7 @@ function initTheme() {
 function init() {
   initTheme();
   $('txDate').value = todayISO();
+  if ($('investmentDate')) $('investmentDate').value = todayISO();
   setTransferPreset('expense');
 
   document.querySelectorAll('[data-movement-mode]').forEach(button => {
@@ -904,6 +997,10 @@ function init() {
       if (button.dataset.txType) setTransferPreset(button.dataset.txType);
       openDialog(button.dataset.open);
     });
+  });
+
+  document.querySelectorAll('[data-new-investment]').forEach(button => {
+    button.addEventListener('click', resetInvestmentForm);
   });
 
   document.querySelectorAll('[data-close]').forEach(button => {
@@ -944,7 +1041,6 @@ function init() {
     if (movementMode === 'transfer' && from === to) return alert('Escolhe contas diferentes para a transferência.');
     if (movementMode === 'transfer' && (from === 'external' || to === 'external')) return alert('Numa transferência, escolhe duas contas da aplicação.');
     if (movementMode === 'income' && to === 'external') return alert('Escolhe a conta onde o dinheiro vai entrar.');
-    if (movementMode === 'expense' && from === 'external') return alert('Escolhe a conta de onde o dinheiro vai sair.');
 
     const fromKey = BALANCE_KEY_BY_ACCOUNT[from];
     const toKey = BALANCE_KEY_BY_ACCOUNT[to];
@@ -976,6 +1072,51 @@ function init() {
     $('txDate').value = todayISO();
     setTransferPreset('expense');
     $('txDialog').close();
+    render();
+  });
+
+  $('investmentForm')?.addEventListener('submit', event => {
+    if (event.submitter?.value === 'cancel') return;
+    event.preventDefault();
+    const name = $('investmentName').value.trim();
+    const invested = Number($('investmentInvested').value);
+    const currentValue = Number($('investmentCurrent').value);
+    if (!name) return alert('Indica o nome do investimento.');
+    if (invested < 0 || currentValue < 0) return alert('Os valores não podem ser negativos.');
+
+    const id = $('investmentId').value || makeId();
+    const record = {
+      id,
+      name,
+      ticker: $('investmentTicker').value.trim().toUpperCase(),
+      type: $('investmentType').value,
+      invested: round2(invested),
+      currentValue: round2(currentValue),
+      date: $('investmentDate').value || todayISO(),
+      broker: $('investmentBroker').value.trim()
+    };
+    const existingIndex = vault.marketInvestments.findIndex(item => item.id === id);
+    if (existingIndex >= 0) vault.marketInvestments[existingIndex] = record;
+    else vault.marketInvestments.push(record);
+    save();
+    $('investmentDialog').close();
+    resetInvestmentForm();
+    render();
+  });
+
+  $('marketInvestmentList')?.addEventListener('click', event => {
+    const editButton = event.target.closest('[data-investment-edit]');
+    if (editButton) {
+      openInvestmentEditor(editButton.dataset.investmentEdit);
+      return;
+    }
+    const deleteButton = event.target.closest('[data-investment-delete]');
+    if (!deleteButton) return;
+    const id = deleteButton.dataset.investmentDelete;
+    const item = vault.marketInvestments.find(investment => investment.id === id);
+    if (!item || !confirm(`Eliminar ${item.name}?`)) return;
+    vault.marketInvestments = vault.marketInvestments.filter(investment => investment.id !== id);
+    save();
     render();
   });
 
@@ -1120,7 +1261,7 @@ function init() {
   });
 
   render();
-  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=23.12.0').catch(console.error);
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=23.13.0').catch(console.error);
 }
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
