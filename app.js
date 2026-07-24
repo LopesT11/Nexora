@@ -175,6 +175,10 @@ function sumBalances() {
   return round2(Number(b.current) + Number(b.savings) + Number(b.investments) + Number(b.carFund));
 }
 
+function sumPatrimonyTotal() {
+  return round2(sumBalances() + marketPortfolioSummary().current);
+}
+
 function installmentParts(balance = vault.loan.balance, payment = vault.loan.payment) {
   const interest = round2(balance * (Number(vault.loan.annualRate) / 12));
   const stamp = round2(interest * Number(vault.loan.stampRate));
@@ -521,22 +525,25 @@ function renderExpenseCharts() {
 function renderAllocationChart() {
   if (currentPage !== 'wealth') return;
   const b = vault.balances;
+  const marketCurrent = marketPortfolioSummary().current;
   const entries = [
     ['Conta corrente', Number(b.current) || 0],
     ['Poupança', Number(b.savings) || 0],
     ['Dinheiro a render', Number(b.investments) || 0],
-    ['Fundo carro', Number(b.carFund) || 0]
+    ['Fundo carro', Number(b.carFund) || 0],
+    ['Investimentos (ETF / ações)', Number(marketCurrent) || 0]
   ].filter(([, amount]) => amount > 0);
   const colors = {
     'Conta corrente': '#0f988a',
     'Poupança': '#36b87d',
     'Dinheiro a render': '#397bd8',
-    'Fundo carro': '#e29432'
+    'Fundo carro': '#e29432',
+    'Investimentos (ETF / ações)': '#8f6bff'
   };
   entries.forEach(([name], index) => {
     CATEGORY_META[name] = { icon: ICONS.dots, color: colors[name] || FALLBACK_COLORS[index] };
   });
-  const total = sumBalances();
+  const total = sumPatrimonyTotal();
   drawDonut($('allocationDonut'), entries, total);
   setText('allocationTotal', euro(total));
   const legend = $('allocationLegend');
@@ -591,7 +598,7 @@ function renderInsights() {
 
   const totalBalance = sumBalances();
   const cards = [
-    { color: 'mint', icon: ICONS.wallet, title: 'Saldo total', text: `O teu saldo total atual é <strong>${euro(totalBalance)}</strong>, somando conta corrente, poupança, dinheiro a render e fundo do carro. A carteira de ETF e ações fica separada.` },
+    { color: 'mint', icon: ICONS.wallet, title: 'Saldo total', text: `O teu saldo estável atual é <strong>${euro(totalBalance)}</strong>, somando conta corrente, poupança, dinheiro a render e fundo do carro. Os ETF e ações aparecem à parte no gráfico de património.` },
     { color: 'mint', icon: ICONS.savings, title: 'Objetivo de poupança', text: `Já concluíste <strong>${pctText(savingsPct)}</strong> da meta anual. Faltam ${euro(savingsRemaining)} — cerca de ${euro(monthlyNeeded)} por mês até dezembro.` },
     { color: current.expense <= previous.expense ? 'mint' : 'rose', icon: ICONS.receipt, title: 'Ritmo de despesas', text: spendingText },
     { color: 'amber', icon: ICONS.coins_down, title: 'Crédito automóvel', text: projection.count ? `Ao ritmo atual, o carro ficará pago em <strong>${datePT(projection.payoffDate, { month: 'long', year: 'numeric' })}</strong>, após cerca de ${projection.count} prestações.` : 'O crédito está liquidado ou precisa de dados atualizados.' },
@@ -1261,7 +1268,7 @@ function init() {
   });
 
   render();
-  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=23.13.0').catch(console.error);
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=23.14.0').catch(console.error);
 }
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
