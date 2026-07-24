@@ -742,36 +742,120 @@ function accountLabel(account) {
   return ACCOUNT_LABELS[account] || 'Conta';
 }
 
+const MOVEMENT_MODE_META = Object.freeze({
+  income: {
+    title: 'Dinheiro a entrar',
+    subtitle: 'Regista aqui os teus recebimentos',
+    submit: 'Guardar receita',
+    icon: `<svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v10M8.5 13.5 12 17l3.5-3.5"></path></svg>`
+  },
+  expense: {
+    title: 'Dinheiro a sair',
+    subtitle: 'Regista aqui as tuas despesas',
+    submit: 'Guardar despesa',
+    icon: `<svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 17V7M8.5 10.5 12 7l3.5 3.5"></path></svg>`
+  },
+  transfer: {
+    title: 'Transferir dinheiro',
+    subtitle: 'Move dinheiro entre contas',
+    submit: 'Guardar transferência',
+    icon: `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M6.5 8.25h11"></path><path d="m14.5 5.25 3 3-3 3"></path><path d="M17.5 15.75h-11"></path><path d="m9.5 12.75-3 3 3 3"></path></svg>`
+  }
+});
+
+let movementMode = 'expense';
+
+function movementModeForPreset(type) {
+  if (type === 'income') return 'income';
+  if (type === 'expense') return 'expense';
+  return 'transfer';
+}
+
+function setAccountOptionState(mode) {
+  const from = $('txFrom');
+  const to = $('txTo');
+  if (!from || !to) return;
+  [...from.options].forEach(option => {
+    option.disabled = mode !== 'income' && option.value === 'external';
+  });
+  [...to.options].forEach(option => {
+    option.disabled = mode !== 'expense' && option.value === 'external';
+  });
+}
+
 function updateCategoryForTransfer() {
   const from = $('txFrom')?.value;
   const to = $('txTo')?.value;
   const category = $('txCategory');
   if (!category) return;
-  if (from === 'external' && to === 'current') category.value = 'Salário';
-  else if (to === 'external') category.value = 'Alimentação';
+  if (movementMode === 'income') category.value = 'Salário';
+  else if (movementMode === 'expense' && category.value === 'Salário') category.value = 'Alimentação';
   else if (to === 'savings' || from === 'savings') category.value = 'Poupança';
   else if (to === 'investments' || from === 'investments') category.value = 'Investimentos';
   else if (to === 'carFund' || from === 'carFund') category.value = 'Carro';
-  else category.value = 'Outros';
+  else if (movementMode === 'transfer') category.value = 'Outros';
+}
+
+function setMovementMode(mode, options = {}) {
+  const nextMode = MOVEMENT_MODE_META[mode] ? mode : 'expense';
+  movementMode = nextMode;
+  const dialog = $('txDialog');
+  if (dialog) dialog.dataset.mode = nextMode;
+
+  document.querySelectorAll('[data-movement-mode]').forEach(button => {
+    const active = button.dataset.movementMode === nextMode;
+    button.classList.toggle('active', active);
+    button.setAttribute('aria-selected', active ? 'true' : 'false');
+  });
+
+  const fromField = $('txFromField');
+  const toField = $('txToField');
+  const arrow = $('txTransferArrow');
+  const categoryField = $('txCategoryField');
+  if (fromField) fromField.hidden = nextMode === 'income';
+  if (toField) toField.hidden = nextMode === 'expense';
+  if (arrow) arrow.hidden = nextMode !== 'transfer';
+  if (categoryField) categoryField.hidden = nextMode === 'transfer';
+
+  const meta = MOVEMENT_MODE_META[nextMode];
+  if ($('txModeTitle')) $('txModeTitle').textContent = meta.title;
+  if ($('txModeSubtitle')) $('txModeSubtitle').textContent = meta.subtitle;
+  if ($('txModeIcon')) $('txModeIcon').innerHTML = meta.icon;
+  if ($('txSubmit')) $('txSubmit').textContent = meta.submit;
+
+  setAccountOptionState(nextMode);
+
+  if (!options.keepAccounts) {
+    if (nextMode === 'income') {
+      $('txFrom').value = 'external';
+      $('txTo').value = options.to || 'current';
+    } else if (nextMode === 'expense') {
+      $('txFrom').value = options.from || 'current';
+      $('txTo').value = 'external';
+    } else {
+      $('txFrom').value = options.from || 'current';
+      $('txTo').value = options.to || 'savings';
+      if ($('txFrom').value === $('txTo').value) $('txTo').value = 'savings';
+    }
+  }
+  updateCategoryForTransfer();
 }
 
 function setTransferPreset(type) {
   const presets = {
-    income: ['external', 'current'],
-    expense: ['current', 'external'],
-    saving: ['current', 'savings'],
-    investment: ['current', 'investments'],
-    carfund: ['current', 'carFund']
+    income: { mode: 'income', to: 'current' },
+    expense: { mode: 'expense', from: 'current' },
+    saving: { mode: 'transfer', from: 'current', to: 'savings' },
+    investment: { mode: 'transfer', from: 'current', to: 'investments' },
+    carfund: { mode: 'transfer', from: 'current', to: 'carFund' }
   };
-  const [from, to] = presets[type] || ['current', 'external'];
-  if ($('txFrom')) $('txFrom').value = from;
-  if ($('txTo')) $('txTo').value = to;
-  updateCategoryForTransfer();
+  const preset = presets[type] || presets.expense;
+  setMovementMode(preset.mode, preset);
 }
 
 function transactionType(from, to) {
-  if (from === 'external') return 'income';
-  if (to === 'external') return 'expense';
+  if (movementMode === 'income' || from === 'external') return 'income';
+  if (movementMode === 'expense' || to === 'external') return 'expense';
   return 'transfer';
 }
 
@@ -801,6 +885,10 @@ function init() {
   initTheme();
   $('txDate').value = todayISO();
   setTransferPreset('expense');
+
+  document.querySelectorAll('[data-movement-mode]').forEach(button => {
+    button.addEventListener('click', () => setMovementMode(button.dataset.movementMode));
+  });
 
   document.querySelectorAll('[data-page]').forEach(button => {
     button.addEventListener('click', event => {
@@ -848,10 +936,15 @@ function init() {
     const amount = Number($('txAmount').value);
     if (!(amount > 0)) return alert('Introduz um valor válido.');
 
-    const from = $('txFrom').value;
-    const to = $('txTo').value;
-    if (from === to) return alert('Escolhe locais diferentes para a origem e o destino.');
-    if (from === 'external' && to === 'external') return alert('Escolhe pelo menos uma conta da aplicação.');
+    let from = $('txFrom').value;
+    let to = $('txTo').value;
+    if (movementMode === 'income') from = 'external';
+    if (movementMode === 'expense') to = 'external';
+
+    if (movementMode === 'transfer' && from === to) return alert('Escolhe contas diferentes para a transferência.');
+    if (movementMode === 'transfer' && (from === 'external' || to === 'external')) return alert('Numa transferência, escolhe duas contas da aplicação.');
+    if (movementMode === 'income' && to === 'external') return alert('Escolhe a conta onde o dinheiro vai entrar.');
+    if (movementMode === 'expense' && from === 'external') return alert('Escolhe a conta de onde o dinheiro vai sair.');
 
     const fromKey = BALANCE_KEY_BY_ACCOUNT[from];
     const toKey = BALANCE_KEY_BY_ACCOUNT[to];
@@ -863,6 +956,11 @@ function init() {
     if (toKey) vault.balances[toKey] = round2(Number(vault.balances[toKey] || 0) + amount);
 
     const type = transactionType(from, to);
+    const category = movementMode === 'transfer' ? (
+      to === 'savings' || from === 'savings' ? 'Poupança' :
+      to === 'investments' || from === 'investments' ? 'Investimentos' :
+      to === 'carFund' || from === 'carFund' ? 'Carro' : 'Outros'
+    ) : $('txCategory').value;
     vault.transactions.push({
       id: makeId(),
       type,
@@ -870,7 +968,7 @@ function init() {
       to,
       description: $('txDesc').value.trim(),
       amount: round2(amount),
-      category: $('txCategory').value,
+      category,
       date: $('txDate').value
     });
     save();
@@ -1022,7 +1120,7 @@ function init() {
   });
 
   render();
-  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=23.11.0').catch(console.error);
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=23.12.0').catch(console.error);
 }
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);

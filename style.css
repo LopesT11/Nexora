@@ -614,3 +614,60 @@ button,input,select,textarea{-webkit-tap-highlight-color:transparent;}
 @media(max-width:390px){
   .quick-icon.saving .savings-coins,.stat-icon.saving .savings-coins,.goal-icon.mint .savings-coins,.quick-icon.mint .savings-coins{width:28px!important;height:28px!important;}
 }
+
+
+/* DEALER$ v23.12 — Receita, Despesa e Transferência separadas */
+#txDialog.movement-dialog{width:min(94vw,590px);}
+#txDialog.movement-dialog form{padding:25px;}
+.movement-tabs{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  border:1px solid var(--line);
+  background:color-mix(in srgb,var(--card-2) 72%,transparent);
+  border-radius:16px;
+  overflow:hidden;
+  margin:4px 0 18px;
+}
+.movement-tab{
+  min-width:0;
+  min-height:46px;
+  border:0;
+  border-right:1px solid var(--line);
+  background:transparent;
+  color:var(--muted);
+  font-weight:800;
+  font-size:13px;
+  padding:10px 6px;
+}
+.movement-tab:last-child{border-right:0;}
+.movement-tab.active{color:#fff;background:linear-gradient(135deg,var(--brand),var(--brand-2));}
+#txDialog[data-mode="expense"] .movement-tab.active{background:linear-gradient(135deg,#d8443c,#ef5b50);}
+.movement-intro{display:flex;align-items:center;gap:13px;margin:0 0 14px;padding:4px 2px;}
+.movement-intro-icon{
+  width:48px;height:48px;min-width:48px;border-radius:16px;display:grid;place-items:center;
+  color:var(--brand);background:color-mix(in srgb,var(--brand) 14%,var(--card-2));
+  border:1px solid color-mix(in srgb,var(--brand) 30%,var(--line));
+}
+.movement-intro-icon svg{width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.movement-intro strong{display:block;font-size:15px;margin-bottom:3px;color:var(--brand);}
+.movement-intro small{display:block;color:var(--muted);font-size:13px;}
+#txDialog[data-mode="expense"] .movement-intro-icon{color:#ef5b50;background:rgba(239,91,80,.14);border-color:rgba(239,91,80,.34);}
+#txDialog[data-mode="expense"] .movement-intro strong{color:#ef5b50;}
+#txDialog .transfer-fields>[hidden],#txDialog [hidden]{display:none!important;}
+#txDialog[data-mode="income"] .transfer-fields,
+#txDialog[data-mode="expense"] .transfer-fields{display:block!important;}
+#txDialog[data-mode="income"] #txToField,
+#txDialog[data-mode="expense"] #txFromField{display:block!important;margin:8px 0 0!important;}
+#txDialog[data-mode="transfer"] .transfer-arrow{margin:17px auto 14px!important;}
+.optional-label{color:var(--muted);font-size:.86em;font-weight:650;}
+.movement-submit{margin-top:6px;}
+#txDialog[data-mode="expense"] .movement-submit{background:linear-gradient(135deg,#d8443c,#ef5b50);box-shadow:0 10px 25px rgba(216,68,60,.2);}
+@media(max-width:420px){
+  #txDialog.movement-dialog form{padding:21px;}
+  .movement-tabs{border-radius:15px;margin-bottom:16px;}
+  .movement-tab{font-size:12px;min-height:44px;padding:9px 4px;}
+  .movement-intro-icon{width:45px;height:45px;min-width:45px;border-radius:15px;}
+  .movement-intro-icon svg{width:24px;height:24px;}
+  .movement-intro strong{font-size:14px;}
+  .movement-intro small{font-size:12px;}
+}
