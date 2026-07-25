@@ -1,6 +1,7 @@
 'use strict';
 
 const STORE = 'dealers_data_v2';
+const DATA_VERSION = 7;
 const THEME_STORE = 'dealers_theme_v2';
 const memoryStorage = new Map();
 const storageGet = key => { try { return localStorage.getItem(key); } catch { return memoryStorage.get(key) ?? null; } };
@@ -70,13 +71,16 @@ const FALLBACK_COLORS = ['#12a594', '#e29432', '#5b83d6', '#e15b8f', '#7e65cf', 
 
 function blank() {
   return {
-    version: 6,
+    version: DATA_VERSION,
     balances: { current: 0, savings: 0, investments: 0, carFund: 0 },
     marketInvestments: [],
     savingsGoal: 0,
     carFundGoal: 0,
     annualRate: 0,
     transactions: [],
+    annualClosures: {},
+    appMeta: { lastOpenedYear: new Date().getFullYear() },
+    carArchived: false,
     loan: {
       originalBalance: 0,
       balance: 0,
@@ -84,6 +88,7 @@ function blank() {
       annualRate: 0,
       stampRate: 0,
       nextDate: '',
+      liquidatedDate: '',
       history: []
     }
   };
@@ -92,16 +97,24 @@ function blank() {
 function normalize(data) {
   const source = data && typeof data === 'object' ? data : {};
   const base = blank();
+  const normalizedLoan = {
+    ...base.loan,
+    ...(source.loan || {}),
+    history: Array.isArray(source.loan?.history) ? source.loan.history : []
+  };
+  if (Number(normalizedLoan.originalBalance) > 0 && Number(normalizedLoan.balance) <= 0.005 && !normalizedLoan.liquidatedDate) {
+    const lastRecord = [...normalizedLoan.history].sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')))[0];
+    normalizedLoan.liquidatedDate = lastRecord?.date || '';
+  }
   return {
     ...base,
     ...source,
-    version: 6,
+    version: DATA_VERSION,
     balances: { ...base.balances, ...(source.balances || {}) },
-    loan: {
-      ...base.loan,
-      ...(source.loan || {}),
-      history: Array.isArray(source.loan?.history) ? source.loan.history : []
-    },
+    loan: normalizedLoan,
+    annualClosures: source.annualClosures && typeof source.annualClosures === 'object' ? source.annualClosures : {},
+    appMeta: { ...base.appMeta, ...(source.appMeta || {}) },
+    carArchived: Boolean(source.carArchived),
     transactions: Array.isArray(source.transactions)
       ? source.transactions.map(transaction => {
           const item = { ...transaction };
@@ -124,9 +137,10 @@ function load() {
 let vault = load();
 let selectedExpenseMonth = new Date().toISOString().slice(0, 7);
 let currentPage = 'home';
+let selectedAnnualYear = null;
 
 function save() {
-  vault.version = 6;
+  vault.version = DATA_VERSION;
   storageSet(STORE, JSON.stringify(vault));
 }
 
@@ -272,6 +286,257 @@ function currentYearExpenses() {
     .reduce((sum, t) => sum + Number(t.amount || 0), 0));
 }
 
+
+function loanIsLiquidated() {
+  return Number(vault.loan.originalBalance) > 0 && Number(vault.loan.balance) <= 0.005;
+}
+
+function loanHistorySummary() {
+  const items = [...vault.loan.history].sort((a, b) => String(a.date || '').localeCompare(String(b.date || '')));
+  const payments = items.filter(item => item.type === 'payment');
+  const extras = items.filter(item => item.type === 'extra');
+  const totalPaid = round2(items.reduce((sum, item) => sum + Number(item.total ?? item.amount ?? 0), 0));
+  const interestPaid = round2(payments.reduce((sum, item) => sum + Number(item.interest || 0) + Number(item.stamp || 0), 0));
+  const extrasPaid = round2(extras.reduce((sum, item) => sum + Number(item.amount || 0), 0));
+  return {
+    totalPaid,
+    interestPaid,
+    extrasPaid,
+    paymentCount: payments.length,
+    firstDate: items[0]?.date || '',
+    lastDate: items[items.length - 1]?.date || ''
+  };
+}
+
+function syncLoanStatus() {
+  let changed = false;
+  if (loanIsLiquidated()) {
+    if (!vault.loan.liquidatedDate) {
+      vault.loan.liquidatedDate = loanHistorySummary().lastDate || todayISO();
+      changed = true;
+    }
+  } else {
+    if (vault.loan.liquidatedDate) {
+      vault.loan.liquidatedDate = '';
+      changed = true;
+    }
+    if (vault.carArchived) {
+      vault.carArchived = false;
+      changed = true;
+    }
+  }
+  if (changed) save();
+}
+
+function annualFlowStats(year) {
+  const yearKey = String(year);
+  const transactions = vault.transactions.filter(transaction => String(transaction.date || '').startsWith(yearKey));
+  const income = round2(transactions.filter(transaction => transaction.type === 'income').reduce((sum, transaction) => sum + Number(transaction.amount || 0), 0));
+  const expense = round2(transactions.filter(transaction => transaction.type === 'expense').reduce((sum, transaction) => sum + Number(transaction.amount || 0), 0));
+  const exteriorIncome = round2(transactions.filter(isExteriorIncome).reduce((sum, transaction) => sum + Number(transaction.amount || 0), 0));
+  const exteriorExpense = round2(transactions.filter(isExteriorExpense).reduce((sum, transaction) => sum + Number(transaction.amount || 0), 0));
+  const accountFlow = account => {
+    const incoming = transactions.filter(transaction => transaction.to === account || (account === 'savings' && transaction.type === 'saving') || (account === 'investments' && transaction.type === 'investment') || (account === 'carFund' && transaction.type === 'carfund')).reduce((sum, transaction) => sum + Number(transaction.amount || 0), 0);
+    const outgoing = transactions.filter(transaction => transaction.from === account).reduce((sum, transaction) => sum + Number(transaction.amount || 0), 0);
+    return { incoming: round2(incoming), outgoing: round2(outgoing), net: round2(incoming - outgoing) };
+  };
+  return {
+    income,
+    expense,
+    net: round2(income - expense),
+    exteriorIncome,
+    exteriorExpense,
+    exteriorNet: round2(exteriorIncome - exteriorExpense),
+    savings: accountFlow('savings'),
+    investments: accountFlow('investments'),
+    carFund: accountFlow('carFund')
+  };
+}
+
+function annualLoanStats(year) {
+  const yearKey = String(year);
+  const items = vault.loan.history.filter(item => String(item.date || '').startsWith(yearKey));
+  const payments = items.filter(item => item.type === 'payment');
+  const extras = items.filter(item => item.type === 'extra');
+  return {
+    paid: round2(items.reduce((sum, item) => sum + Number(item.total ?? item.amount ?? 0), 0)),
+    paymentsPaid: round2(payments.reduce((sum, item) => sum + Number(item.total || 0), 0)),
+    extrasPaid: round2(extras.reduce((sum, item) => sum + Number(item.amount || 0), 0)),
+    interestPaid: round2(payments.reduce((sum, item) => sum + Number(item.interest || 0) + Number(item.stamp || 0), 0)),
+    paymentCount: payments.length,
+    extraCount: extras.length
+  };
+}
+
+function buildAnnualClosure(year, options = {}) {
+  const yearKey = String(year);
+  const existing = vault.annualClosures?.[yearKey];
+  const preserveSnapshot = Boolean(options.preserveSnapshot && existing);
+  const flow = annualFlowStats(year);
+  const loanYear = annualLoanStats(year);
+  const market = marketPortfolioSummary();
+  const snapshot = preserveSnapshot ? existing.snapshot : {
+    current: round2(vault.balances.current),
+    savings: round2(vault.balances.savings),
+    investments: round2(vault.balances.investments),
+    carFund: round2(vault.balances.carFund),
+    exterior: round2(exteriorBalance()),
+    marketInvested: round2(market.invested),
+    marketCurrent: round2(market.current),
+    marketResult: round2(market.result),
+    patrimonyTotal: round2(sumPatrimonyTotal()),
+    loanBalance: round2(vault.loan.balance)
+  };
+  const marketStartedInYear = round2(vault.marketInvestments
+    .filter(item => String(item.date || '').startsWith(yearKey))
+    .reduce((sum, item) => sum + Number(item.invested || 0), 0));
+  return {
+    year: Number(year),
+    createdAt: existing?.createdAt || new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    automatic: Boolean(options.automatic),
+    flow,
+    loan: {
+      ...loanYear,
+      balanceAtClose: snapshot.loanBalance,
+      liquidated: snapshot.loanBalance <= 0.005 && Number(vault.loan.originalBalance) > 0,
+      liquidatedDate: vault.loan.liquidatedDate || ''
+    },
+    investments: {
+      startedInYear: marketStartedInYear,
+      investedAtClose: snapshot.marketInvested,
+      marketValueAtClose: snapshot.marketCurrent,
+      resultAtClose: snapshot.marketResult,
+      returnAtClose: snapshot.marketInvested > 0 ? (snapshot.marketResult / snapshot.marketInvested) * 100 : 0
+    },
+    snapshot
+  };
+}
+
+function saveAnnualClosure(year, options = {}) {
+  if (!vault.annualClosures || typeof vault.annualClosures !== 'object') vault.annualClosures = {};
+  vault.annualClosures[String(year)] = buildAnnualClosure(year, options);
+  selectedAnnualYear = String(year);
+  save();
+}
+
+function refreshAnnualClosureForDate(dateValue) {
+  const year = String(dateValue || '').slice(0, 4);
+  if (!/^\d{4}$/.test(year) || !vault.annualClosures?.[year]) return;
+  saveAnnualClosure(Number(year), {
+    preserveSnapshot: true,
+    automatic: Boolean(vault.annualClosures[year]?.automatic)
+  });
+}
+
+function ensureAnnualTransition() {
+  const currentYear = new Date().getFullYear();
+  const lastOpenedYear = Number(vault.appMeta?.lastOpenedYear || currentYear);
+  if (lastOpenedYear < currentYear) {
+    for (let year = lastOpenedYear; year < currentYear; year += 1) {
+      saveAnnualClosure(year, { automatic: true });
+    }
+  }
+  if (!vault.appMeta || vault.appMeta.lastOpenedYear !== currentYear) {
+    vault.appMeta = { ...(vault.appMeta || {}), lastOpenedYear: currentYear };
+    save();
+  }
+}
+
+function renderCarState() {
+  const liquidated = loanIsLiquidated();
+  document.querySelectorAll('[data-car-active]').forEach(element => { element.hidden = liquidated; });
+  if ($('carLiquidatedPanel')) $('carLiquidatedPanel').hidden = !liquidated;
+  if ($('homeCarFundGoalCard')) $('homeCarFundGoalCard').hidden = liquidated;
+  if ($('carNavButton')) $('carNavButton').hidden = Boolean(vault.carArchived);
+  document.querySelector('.bottom-nav')?.classList.toggle('car-archived', Boolean(vault.carArchived));
+  if ($('archivedCarCard')) $('archivedCarCard').hidden = !vault.carArchived;
+
+  const summary = loanHistorySummary();
+  setText('carLiquidatedDate', vault.loan.liquidatedDate ? `Liquidado em ${datePT(vault.loan.liquidatedDate)}` : 'Crédito liquidado');
+  setText('carClosedOriginal', euro(vault.loan.originalBalance));
+  setText('carClosedPaid', euro(summary.totalPaid));
+  setText('carClosedInterest', euro(summary.interestPaid));
+  setText('carClosedPayments', summary.paymentCount);
+  setText('carClosedExtras', euro(summary.extrasPaid));
+  setText('carClosedLastDate', datePT(summary.lastDate));
+  setText('carClosedFund', euro(vault.balances.carFund));
+  setText('archivedCarDate', vault.loan.liquidatedDate ? `Liquidado em ${datePT(vault.loan.liquidatedDate)}` : 'Crédito liquidado');
+}
+
+function renderAnnualHistory() {
+  const currentYear = new Date().getFullYear();
+  const currentFlow = annualFlowStats(currentYear);
+  setText('annualCurrentIncome', euro(currentFlow.income));
+  setText('annualCurrentExpense', euro(currentFlow.expense));
+  const currentNet = $('annualCurrentNet');
+  if (currentNet) {
+    currentNet.textContent = `${currentFlow.net > 0 ? '+' : currentFlow.net < 0 ? '−' : ''}${euro(Math.abs(currentFlow.net))}`;
+    currentNet.className = currentFlow.net > 0 ? 'positive' : currentFlow.net < 0 ? 'negative' : '';
+  }
+  setText('annualCurrentPatrimony', euro(sumPatrimonyTotal()));
+  setText('annualCloseHeading', `Fechar ${currentYear}`);
+  const closeButton = $('closeCurrentYearButton');
+  if (closeButton) closeButton.textContent = vault.annualClosures[String(currentYear)] ? `Atualizar fecho de ${currentYear}` : `Fechar ${currentYear} agora`;
+
+  const years = Object.keys(vault.annualClosures || {}).sort((a, b) => Number(b) - Number(a));
+  const list = $('annualYearList');
+  if (list) {
+    list.innerHTML = years.length ? years.map(year => {
+      const closure = vault.annualClosures[year];
+      const selected = String(selectedAnnualYear || years[0]) === String(year);
+      return `<button class="annual-year-row ${selected ? 'active' : ''}" data-annual-year="${escapeHtml(year)}" type="button"><span><strong>${escapeHtml(year)}</strong><small>${closure.automatic ? 'Fecho automático' : 'Fecho manual'}</small></span><span><strong>${euro(closure.snapshot?.patrimonyTotal || 0)}</strong><small>Património total</small></span><span aria-hidden="true">›</span></button>`;
+    }).join('') : '<div class="empty-state"><span>📅</span>Ainda não existe nenhum ano fechado.</div>';
+  }
+
+  if (!selectedAnnualYear || !vault.annualClosures[String(selectedAnnualYear)]) selectedAnnualYear = years[0] || null;
+  const detail = $('annualDetail');
+  const empty = $('annualDetailEmpty');
+  const closure = selectedAnnualYear ? vault.annualClosures[String(selectedAnnualYear)] : null;
+  if (!detail || !empty) return;
+  empty.hidden = Boolean(closure);
+  detail.hidden = !closure;
+  if (!closure) return;
+
+  const flow = closure.flow || {};
+  const snapshot = closure.snapshot || {};
+  const investments = closure.investments || {};
+  const loan = closure.loan || {};
+  detail.innerHTML = `
+    <div class="annual-detail-head"><div><span class="eyebrow">Fecho guardado</span><h2>Resumo de ${escapeHtml(closure.year)}</h2><p>Fotografia criada em ${datePT(String(closure.createdAt || '').slice(0, 10))}.</p></div><span class="annual-status-badge">Fechado</span></div>
+    <div class="annual-detail-section"><h3>Ganhos e gastos</h3><div class="annual-value-list">
+      <div><span>Receitas totais</span><strong class="positive">+${euro(flow.income || 0)}</strong></div>
+      <div><span>Despesas totais</span><strong class="negative">−${euro(flow.expense || 0)}</strong></div>
+      <div class="annual-total-row"><span>Saldo do ano</span><strong class="${Number(flow.net) >= 0 ? 'positive' : 'negative'}">${Number(flow.net) >= 0 ? '+' : '−'}${euro(Math.abs(Number(flow.net) || 0))}</strong></div>
+    </div></div>
+    <div class="annual-detail-section"><h3>Movimentos exteriores</h3><div class="annual-value-list">
+      <div><span>Receitas exteriores</span><strong class="positive">+${euro(flow.exteriorIncome || 0)}</strong></div>
+      <div><span>Despesas exteriores</span><strong class="negative">−${euro(flow.exteriorExpense || 0)}</strong></div>
+      <div class="annual-total-row"><span>Saldo exterior no fecho</span><strong>${euro(snapshot.exterior || 0)}</strong></div>
+    </div></div>
+    <div class="annual-detail-section"><h3>Poupança e património</h3><div class="annual-value-list">
+      <div><span>Poupança final</span><strong>${euro(snapshot.savings || 0)}</strong></div>
+      <div><span>Dinheiro a render</span><strong>${euro(snapshot.investments || 0)}</strong></div>
+      <div><span>Fundo carro</span><strong>${euro(snapshot.carFund || 0)}</strong></div>
+      <div><span>Conta corrente</span><strong>${euro(snapshot.current || 0)}</strong></div>
+      <div class="annual-total-row"><span>Património total</span><strong class="positive">${euro(snapshot.patrimonyTotal || 0)}</strong></div>
+    </div></div>
+    <div class="annual-detail-section"><h3>ETF e ações</h3><div class="annual-value-list">
+      <div><span>Valor investido acumulado</span><strong>${euro(investments.investedAtClose || 0)}</strong></div>
+      <div><span>Valor de mercado no fecho</span><strong>${euro(investments.marketValueAtClose || 0)}</strong></div>
+      <div><span>Resultado</span><strong class="${Number(investments.resultAtClose) >= 0 ? 'positive' : 'negative'}">${Number(investments.resultAtClose) >= 0 ? '+' : ''}${euro(investments.resultAtClose || 0)}</strong></div>
+      <div><span>Rentabilidade</span><strong>${Number(investments.returnAtClose || 0).toFixed(2).replace('.', ',')}%</strong></div>
+    </div></div>
+    <div class="annual-detail-section"><h3>Crédito automóvel</h3><div class="annual-value-list">
+      <div><span>Total pago no ano</span><strong>${euro(loan.paid || 0)}</strong></div>
+      <div><span>Amortizações extra</span><strong>${euro(loan.extrasPaid || 0)}</strong></div>
+      <div><span>Juros e imposto pagos</span><strong>${euro(loan.interestPaid || 0)}</strong></div>
+      <div><span>Dívida restante</span><strong>${euro(loan.balanceAtClose || 0)}</strong></div>
+      <div class="annual-total-row"><span>Estado</span><strong class="${loan.liquidated ? 'positive' : ''}">${loan.liquidated ? 'Crédito liquidado' : 'Em curso'}</strong></div>
+    </div></div>
+    <button class="secondary-btn full" data-recalculate-annual="${escapeHtml(String(closure.year))}" type="button">Recalcular movimentos de ${escapeHtml(String(closure.year))}</button>`;
+}
+
 function netFlowForMonth(monthKey) {
   const stats = getMonthStats(monthKey);
   return round2(stats.income - stats.expense);
@@ -332,6 +597,7 @@ function deleteTransaction(id) {
     if (fromKey) vault.balances[fromKey] = round2(Number(vault.balances[fromKey] || 0) + amount);
     vault.transactions.splice(index, 1);
     save();
+    refreshAnnualClosureForDate(t.date);
     render();
     return;
   }
@@ -355,6 +621,7 @@ function deleteTransaction(id) {
 
   vault.transactions.splice(index, 1);
   save();
+  refreshAnnualClosureForDate(t.date);
   render();
 }
 
@@ -882,10 +1149,13 @@ function render() {
   renderInsights();
   renderMarketInvestments();
   renderExteriorOverview();
+  renderCarState();
+  renderAnnualHistory();
   requestAnimationFrame(renderAllocationChart);
 }
 
 function showPage(name) {
+  if (name === 'car' && vault.carArchived) name = 'insights';
   currentPage = name;
   document.querySelectorAll('.page').forEach(page => page.classList.toggle('active', page.id === `page-${name}`));
   document.querySelectorAll('.bottom-nav [data-page]').forEach(button => button.classList.toggle('active', button.dataset.page === name));
@@ -893,6 +1163,7 @@ function showPage(name) {
   requestAnimationFrame(() => {
     if (name === 'expenses') renderExpenseCharts();
     if (name === 'wealth') renderAllocationChart();
+    if (name === 'annual') renderAnnualHistory();
   });
 }
 
@@ -1067,6 +1338,8 @@ function initTheme() {
 
 function init() {
   initTheme();
+  ensureAnnualTransition();
+  syncLoanStatus();
   $('txDate').value = todayISO();
   if ($('investmentDate')) $('investmentDate').value = todayISO();
   setTransferPreset('expense');
@@ -1120,6 +1393,55 @@ function init() {
   });
   $('exteriorPeriodSelect')?.addEventListener('change', renderExteriorOverview);
 
+
+  $('annualYearList')?.addEventListener('click', event => {
+    const button = event.target.closest('[data-annual-year]');
+    if (!button) return;
+    selectedAnnualYear = button.dataset.annualYear;
+    renderAnnualHistory();
+  });
+
+  $('annualDetail')?.addEventListener('click', event => {
+    const button = event.target.closest('[data-recalculate-annual]');
+    if (!button) return;
+    const year = Number(button.dataset.recalculateAnnual);
+    if (!confirm(`Recalcular os movimentos de ${year}? Os saldos guardados no fecho mantêm-se.`)) return;
+    saveAnnualClosure(year, { preserveSnapshot: true, automatic: vault.annualClosures[String(year)]?.automatic });
+    renderAnnualHistory();
+  });
+
+  $('closeCurrentYearButton')?.addEventListener('click', () => {
+    const year = new Date().getFullYear();
+    const exists = Boolean(vault.annualClosures[String(year)]);
+    const message = exists
+      ? `Atualizar o fecho de ${year} com os saldos e valores atuais?`
+      : `Criar o fecho anual de ${year} com os valores atuais?`;
+    if (!confirm(message)) return;
+    saveAnnualClosure(year, { automatic: false });
+    render();
+    alert(`Fecho de ${year} guardado com sucesso.`);
+  });
+
+  $('archiveCarButton')?.addEventListener('click', () => openDialog('archiveCarDialog'));
+  $('confirmArchiveCar')?.addEventListener('click', () => {
+    if (!loanIsLiquidated()) return alert('Só podes arquivar o carro depois de liquidar o crédito.');
+    vault.carArchived = true;
+    save();
+    $('archiveCarDialog')?.close();
+    render();
+    showPage('insights');
+  });
+  $('restoreCarButton')?.addEventListener('click', () => {
+    vault.carArchived = false;
+    save();
+    render();
+    showPage('car');
+  });
+  $('moveCarFundButton')?.addEventListener('click', () => {
+    setMovementMode('transfer', { from: 'carFund', to: 'savings' });
+    openDialog('txDialog');
+  });
+
   $('txForm').addEventListener('submit', event => {
     if (event.submitter?.value === 'cancel') return;
     event.preventDefault();
@@ -1161,6 +1483,7 @@ function init() {
       externalIncome: movementMode === 'income' && from === 'external' && to === 'external'
     });
     save();
+    refreshAnnualClosureForDate($('txDate').value);
     event.target.reset();
     $('txDate').value = todayISO();
     setTransferPreset('expense');
@@ -1273,7 +1596,14 @@ function init() {
     vault.loan.annualRate = annualRatePct / 100;
     vault.loan.stampRate = stampRatePct / 100;
     vault.loan.nextDate = $('loanNextDateInput').value || '';
+    if (balance > 0) {
+      vault.loan.liquidatedDate = '';
+      vault.carArchived = false;
+    } else if (originalBalance > 0 && !vault.loan.liquidatedDate) {
+      vault.loan.liquidatedDate = todayISO();
+    }
     save();
+    syncLoanStatus();
     $('loanSettingsDialog').close();
     render();
   });
@@ -1288,11 +1618,17 @@ function init() {
     if (fromCurrent) vault.balances.current = round2(vault.balances.current - parts.total);
     vault.loan.balance = round2(Math.max(0, vault.loan.balance - parts.capital));
     const paymentDate = $('paymentDate').value;
-    vault.loan.nextDate = addMonths(vault.loan.nextDate || paymentDate, 1);
+    if (vault.loan.balance <= 0.005) {
+      vault.loan.balance = 0;
+      vault.loan.liquidatedDate = paymentDate;
+      vault.loan.nextDate = '';
+    } else {
+      vault.loan.nextDate = addMonths(vault.loan.nextDate || paymentDate, 1);
+    }
     const historyId = makeId();
     vault.loan.history.push({ id: historyId, type: 'payment', date: paymentDate, ...parts });
     vault.transactions.push({ id: makeId(), type: 'expense', description: 'Prestação do carro', amount: parts.total, category: 'Carro', date: paymentDate, locked: true, loanHistoryId: historyId });
-    save(); $('paymentDialog').close(); render();
+    save(); syncLoanStatus(); refreshAnnualClosureForDate(paymentDate); $('paymentDialog').close(); render();
   });
 
   $('extraForm').addEventListener('submit', event => {
@@ -1309,14 +1645,19 @@ function init() {
     if (source === 'current') vault.balances.current = round2(vault.balances.current - amount);
     vault.loan.balance = round2(vault.loan.balance - amount);
     const date = $('extraDate').value;
+    if (vault.loan.balance <= 0.005) {
+      vault.loan.balance = 0;
+      vault.loan.liquidatedDate = date;
+      vault.loan.nextDate = '';
+    }
     const historyId = makeId();
     vault.loan.history.push({ id: historyId, type: 'extra', date, amount: round2(amount), source });
     vault.transactions.push({ id: makeId(), type: 'expense', description: 'Amortização extraordinária do carro', amount: round2(amount), category: 'Amortização', date, locked: true, loanHistoryId: historyId });
-    save(); event.target.reset(); $('extraDate').value = todayISO(); $('extraDialog').close(); render();
+    save(); syncLoanStatus(); refreshAnnualClosureForDate(date); event.target.reset(); $('extraDate').value = todayISO(); $('extraDialog').close(); render();
   });
 
   $('exportBackup').addEventListener('click', () => {
-    const payload = { app: 'DEALER$', format: 5, data: vault, exported: new Date().toISOString() };
+    const payload = { app: 'DEALER$', format: 6, data: vault, exported: new Date().toISOString() };
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -1334,7 +1675,8 @@ function init() {
       const imported = normalize(backup.data || backup);
       if (!confirm('Isto vai substituir os dados atuais. Continuar?')) return;
       vault = imported;
-      save(); render();
+      save(); syncLoanStatus(); render();
+      if (vault.carArchived && currentPage === 'car') showPage('insights');
       alert('Cópia importada com sucesso.');
     } catch (error) {
       console.error(error);
@@ -1354,7 +1696,7 @@ function init() {
   });
 
   render();
-  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=23.16.0').catch(console.error);
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=23.17.0').catch(console.error);
 }
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
