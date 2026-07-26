@@ -1,7 +1,7 @@
 'use strict';
 
 const STORE = 'dealers_data_v2';
-const DATA_VERSION = 7;
+const DATA_VERSION = 8;
 const THEME_STORE = 'dealers_theme_v2';
 const memoryStorage = new Map();
 const storageGet = key => { try { return localStorage.getItem(key); } catch { return memoryStorage.get(key) ?? null; } };
@@ -89,6 +89,10 @@ function blank() {
       stampRate: 0,
       nextDate: '',
       liquidatedDate: '',
+      officialTotalPayments: 84,
+      officialPaidPayments: 10,
+      officialLastDate: '2032-09-01',
+      officialScheduleActive: true,
       history: []
     }
   };
@@ -97,11 +101,36 @@ function blank() {
 function normalize(data) {
   const source = data && typeof data === 'object' ? data : {};
   const base = blank();
+  const sourceVersion = Number(source.version) || 0;
+  const sourceLoan = source.loan || {};
+  const paymentHistoryCount = Array.isArray(sourceLoan.history)
+    ? sourceLoan.history.filter(item => item?.type === 'payment').length
+    : 0;
+  const hasExtraHistory = Array.isArray(sourceLoan.history)
+    ? sourceLoan.history.some(item => item?.type === 'extra')
+    : false;
   const normalizedLoan = {
     ...base.loan,
-    ...(source.loan || {}),
-    history: Array.isArray(source.loan?.history) ? source.loan.history : []
+    ...sourceLoan,
+    officialTotalPayments: Math.max(0, Number(sourceLoan.officialTotalPayments ?? 84) || 0),
+    officialPaidPayments: Math.max(0, Number(sourceLoan.officialPaidPayments ?? Math.max(10, paymentHistoryCount)) || 0),
+    officialLastDate: sourceLoan.officialLastDate || '2032-09-01',
+    officialScheduleActive: sourceLoan.officialScheduleActive === undefined
+      ? !hasExtraHistory
+      : Boolean(sourceLoan.officialScheduleActive),
+    history: Array.isArray(sourceLoan.history) ? sourceLoan.history : []
   };
+  if (sourceVersion < 8 && Number(normalizedLoan.balance) > 0) {
+    normalizedLoan.officialTotalPayments = 84;
+    normalizedLoan.officialPaidPayments = 10;
+    normalizedLoan.officialLastDate = '2032-09-01';
+    normalizedLoan.officialScheduleActive = !hasExtraHistory;
+    normalizedLoan.nextDate = '2026-08-01';
+  }
+  normalizedLoan.officialPaidPayments = Math.min(
+    normalizedLoan.officialTotalPayments || normalizedLoan.officialPaidPayments,
+    normalizedLoan.officialPaidPayments
+  );
   if (Number(normalizedLoan.originalBalance) > 0 && Number(normalizedLoan.balance) <= 0.005 && !normalizedLoan.liquidatedDate) {
     const lastRecord = [...normalizedLoan.history].sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')))[0];
     normalizedLoan.liquidatedDate = lastRecord?.date || '';
@@ -245,10 +274,30 @@ function installmentParts(balance = vault.loan.balance, payment = vault.loan.pay
   return { interest, stamp, capital, total: round2(capital + interest + stamp) };
 }
 
+function loanHasExtraAmortization() {
+  return vault.loan.officialScheduleActive === false
+    || vault.loan.history.some(item => item?.type === 'extra');
+}
+
 function projectLoan() {
   let balance = Number(vault.loan.balance) || 0;
   const payment = Number(vault.loan.payment) || 0;
-  if (balance <= 0 || payment <= 0) return { count: 0, payoffDate: '', interestTotal: 0 };
+  if (balance <= 0 || payment <= 0) {
+    return { count: 0, payoffDate: '', interestTotal: 0, mode: 'liquidated' };
+  }
+
+  const totalPayments = Math.max(0, Number(vault.loan.officialTotalPayments) || 0);
+  const paidPayments = Math.max(0, Number(vault.loan.officialPaidPayments) || 0);
+  const useOfficialSchedule = !loanHasExtraAmortization() && totalPayments > 0;
+
+  if (useOfficialSchedule) {
+    const count = Math.max(0, totalPayments - Math.min(totalPayments, paidPayments));
+    const payoffDate = vault.loan.officialLastDate
+      || (count > 0 ? addMonths(vault.loan.nextDate || todayISO(), count - 1) : '');
+    const interestTotal = round2(Math.max(0, count * payment - balance));
+    return { count, payoffDate, interestTotal, mode: 'official' };
+  }
+
   let count = 0;
   let interestTotal = 0;
   let date = vault.loan.nextDate || todayISO();
@@ -262,7 +311,7 @@ function projectLoan() {
     if (balance > 0) date = addMonths(date, 1);
   }
 
-  return { count, payoffDate: date, interestTotal: round2(interestTotal) };
+  return { count, payoffDate: date, interestTotal: round2(interestTotal), mode: 'simulation' };
 }
 
 function getMonthStats(monthKey = selectedExpenseMonth) {
@@ -1105,6 +1154,12 @@ function render() {
   const parts = installmentParts();
   setText('nextPaymentDate', datePT(vault.loan.nextDate, { day: '2-digit', month: 'short' }));
   setText('monthlyPayment', euro(vault.loan.payment));
+  const officialTotal = Math.max(0, Number(vault.loan.officialTotalPayments) || 0);
+  const officialPaid = Math.max(0, Number(vault.loan.officialPaidPayments) || 0);
+  const nextContractNumber = officialTotal > 0 ? Math.min(officialTotal, officialPaid + 1) : 0;
+  setText('paymentContractPosition', !loanHasExtraAmortization() && nextContractNumber
+    ? `prestação ${nextContractNumber} de ${officialTotal}`
+    : 'prestação prevista');
   setText('nextCapital', euro(parts.capital));
   setText('nextCosts', euro(parts.interest + parts.stamp));
   const countdown = $('paymentCountdown');
@@ -1120,9 +1175,10 @@ function render() {
   }
 
   const projection = projectLoan();
-  setText('estimatedPayoff', projection.count ? datePT(projection.payoffDate, { month: 'short', year: 'numeric' }) : 'Liquidado');
+  setText('estimatedPayoff', projection.count ? datePT(projection.payoffDate) : 'Liquidado');
   setText('remainingPayments', projection.count);
   setText('projectedInterest', euro(projection.interestTotal));
+  setText('projectionMode', projection.mode === 'official' ? 'Plano oficial' : projection.mode === 'simulation' ? 'Recalculado após amortização' : 'Crédito liquidado');
   const paidInterest = vault.loan.history.reduce((sum, h) => sum + Number(h.interest || 0) + Number(h.stamp || 0), 0);
   setText('loanInterestPaid', euro(paidInterest));
 
@@ -1141,6 +1197,9 @@ function render() {
   if ($('loanRateInput')) $('loanRateInput').value = round2((Number(vault.loan.annualRate) || 0) * 100);
   if ($('loanStampInput')) $('loanStampInput').value = round2((Number(vault.loan.stampRate) || 0) * 100);
   if ($('loanNextDateInput')) $('loanNextDateInput').value = vault.loan.nextDate || '';
+  if ($('loanTotalPaymentsInput')) $('loanTotalPaymentsInput').value = Number(vault.loan.officialTotalPayments) || 0;
+  if ($('loanPaidPaymentsInput')) $('loanPaidPaymentsInput').value = Number(vault.loan.officialPaidPayments) || 0;
+  if ($('loanLastDateInput')) $('loanLastDateInput').value = vault.loan.officialLastDate || '';
 
   renderTransactions();
   renderExpenseMonthOptions();
@@ -1589,13 +1648,20 @@ function init() {
     const payment = Math.max(0, Number($('loanPaymentInput').value) || 0);
     const annualRatePct = Math.max(0, Number($('loanRateInput').value) || 0);
     const stampRatePct = Math.max(0, Number($('loanStampInput').value) || 0);
+    const officialTotalPayments = Math.max(0, Math.trunc(Number($('loanTotalPaymentsInput').value) || 0));
+    const officialPaidPayments = Math.max(0, Math.trunc(Number($('loanPaidPaymentsInput').value) || 0));
     if (originalBalance > 0 && balance > originalBalance) return alert('A dívida atual não pode ser superior ao valor inicial financiado.');
+    if (officialTotalPayments > 0 && officialPaidPayments > officialTotalPayments) return alert('As prestações pagas não podem ultrapassar o total do contrato.');
     vault.loan.originalBalance = round2(originalBalance);
     vault.loan.balance = round2(balance);
     vault.loan.payment = round2(payment);
     vault.loan.annualRate = annualRatePct / 100;
     vault.loan.stampRate = stampRatePct / 100;
     vault.loan.nextDate = $('loanNextDateInput').value || '';
+    vault.loan.officialTotalPayments = officialTotalPayments;
+    vault.loan.officialPaidPayments = Math.min(officialTotalPayments || officialPaidPayments, officialPaidPayments);
+    vault.loan.officialLastDate = $('loanLastDateInput').value || '';
+    if (!vault.loan.history.some(item => item?.type === 'extra')) vault.loan.officialScheduleActive = true;
     if (balance > 0) {
       vault.loan.liquidatedDate = '';
       vault.carArchived = false;
@@ -1616,9 +1682,15 @@ function init() {
     const fromCurrent = $('paymentFromCurrent').checked;
     if (fromCurrent && parts.total > vault.balances.current) return alert('Saldo insuficiente na conta corrente. Desmarca a opção de desconto ou atualiza o saldo.');
     if (fromCurrent) vault.balances.current = round2(vault.balances.current - parts.total);
+    const officialTotal = Math.max(0, Number(vault.loan.officialTotalPayments) || 0);
+    const nextOfficialPaid = officialTotal > 0
+      ? Math.min(officialTotal, (Number(vault.loan.officialPaidPayments) || 0) + 1)
+      : Number(vault.loan.officialPaidPayments) || 0;
+    const finalOfficialPayment = !loanHasExtraAmortization() && officialTotal > 0 && nextOfficialPaid >= officialTotal;
+    vault.loan.officialPaidPayments = nextOfficialPaid;
     vault.loan.balance = round2(Math.max(0, vault.loan.balance - parts.capital));
     const paymentDate = $('paymentDate').value;
-    if (vault.loan.balance <= 0.005) {
+    if (vault.loan.balance <= 0.005 || finalOfficialPayment) {
       vault.loan.balance = 0;
       vault.loan.liquidatedDate = paymentDate;
       vault.loan.nextDate = '';
@@ -1644,6 +1716,7 @@ function init() {
     if (source === 'carFund') vault.balances.carFund = round2(vault.balances.carFund - amount);
     if (source === 'current') vault.balances.current = round2(vault.balances.current - amount);
     vault.loan.balance = round2(vault.loan.balance - amount);
+    vault.loan.officialScheduleActive = false;
     const date = $('extraDate').value;
     if (vault.loan.balance <= 0.005) {
       vault.loan.balance = 0;
@@ -1696,7 +1769,7 @@ function init() {
   });
 
   render();
-  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=23.17.0').catch(console.error);
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=23.18.0').catch(console.error);
 }
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);

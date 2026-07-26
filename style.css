@@ -772,3 +772,8 @@ button,input,select,textarea{-webkit-tap-highlight-color:transparent;}
 @media(max-width:480px){.car-closed-summary{grid-template-columns:1fr}.car-closed-fund{align-items:stretch;flex-direction:column}.car-closed-actions{grid-template-columns:1fr}.car-liquidated-hero{padding:18px}.annual-auto-card{padding:17px}.annual-years-card,.annual-detail-card{padding:15px}.annual-year-row{grid-template-columns:1fr auto}.annual-year-row>span:last-child{display:none}.annual-value-list>div{align-items:flex-start}.annual-value-list>div span{max-width:58%}}
 
 .bottom-nav.car-archived{grid-template-columns:repeat(5,1fr)}
+
+/* v23.18 — plano oficial do crédito */
+.projection-mode{display:inline-flex;align-items:center;justify-content:center;min-height:30px;padding:6px 10px;border:1px solid rgba(91,218,187,.28);border-radius:999px;background:rgba(91,218,187,.08);color:var(--accent);font-size:.76rem;font-weight:700;text-align:center}
+.loan-plan-help{margin-top:2px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--surface-soft)}
+@media (max-width:430px){.projection-mode{max-width:128px;line-height:1.15}.chart-card .card-heading{align-items:flex-start;gap:10px}}
