@@ -1769,7 +1769,7 @@ function init() {
   });
 
   render();
-  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=23.18.0').catch(console.error);
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=23.19.0').catch(console.error);
 }
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);

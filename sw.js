@@ -1,4 +1,4 @@
-const CACHE = 'dealers-v23.18.0';
+const CACHE = 'dealers-v23.19.0';
 const ASSETS = [
   './',
   './index.html',
