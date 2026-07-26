@@ -1125,8 +1125,8 @@ function render() {
   setText('carFundPct', pctText(carPct));
   setText('carFundGoalLabel', euro(vault.carFundGoal));
   setText('carPageFundNow', euro(b.carFund));
-  setText('carPageFundPct', pctText(carPct));
-  setText('carPageFundGoal', euro(vault.carFundGoal));
+  setText('carPageFundRemaining', `Faltam ${euro(Math.max(0, Number(vault.carFundGoal || 0) - Number(b.carFund || 0)))}`);
+  setText('carPageFundGoal', `Meta: ${euro(vault.carFundGoal)}`);
 
   setText('sCurrent', euro(b.current));
   setText('sSavings', euro(b.savings));
@@ -1769,7 +1769,7 @@ function init() {
   });
 
   render();
-  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=23.19.0').catch(console.error);
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=23.20.0').catch(console.error);
 }
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
