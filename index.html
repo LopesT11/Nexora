@@ -12,7 +12,7 @@
 <title>DEALER$</title>
 <link href="manifest.json" rel="manifest"/>
 <link href="icon-192.png" rel="apple-touch-icon"/>
-<link href="style.css?v=23.20.0" rel="stylesheet"/>
+<link href="style.css?v=23.22.0" rel="stylesheet"/>
 </head>
 <body>
 <div class="app-shell" id="app">
@@ -213,7 +213,7 @@
 <div class="section-heading"><div><span class="eyebrow">Meta anual</span><h2>Poupança</h2></div><button class="text-btn" data-open="savingsGoalDialog">Editar meta</button></div>
 <div class="big-progress-number"><strong id="savingsPagePct">0%</strong><span>concluído</span></div>
 <div class="progress tall"><span id="savingsPageProgress"></span></div>
-<div class="progress-labels"><strong id="savingsPageNow">0,00 €</strong><small id="savingsPageRemaining">Faltam 0,00 €</small><small id="savingsPageGoal">0,00 €</small></div><p class="goal-note">Esta meta soma apenas Poupança + Dinheiro a render.</p>
+<div class="progress-labels goal-values-spread"><strong id="savingsPageNow">0,00 €</strong><small id="savingsPageRemaining">Faltam 0,00 €</small><small id="savingsPageGoal">0,00 €</small></div><p class="goal-note">Esta meta soma apenas Poupança + Dinheiro a render.</p>
 </article>
 <article class="chart-card reveal delay-1">
 <div class="card-heading"><div><span class="eyebrow">Distribuição</span><h2>Onde está o dinheiro</h2></div></div>
@@ -309,10 +309,10 @@
 <article class="stat-card"><span class="stat-icon expense"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M6 3h12v18l-2-1.5-2 1.5-2-1.5-2 1.5-2-1.5L6 21V3Z"></path><path d="M9 8h6M9 12h6M9 16h4"></path></svg></span><div><small>Juros + imposto</small><strong id="nextCosts">0,00 €</strong><span class="metric-sub">na próxima prestação</span></div></article>
 </section>
 <section class="analytics-grid" data-car-active>
-<article class="goal-card large reveal">
+<article class="goal-card large reveal car-fund-goal-card">
 <div class="section-heading"><div><span class="eyebrow">Fundo de amortização</span><h2>Objetivo anual</h2></div><button class="text-btn" data-open="carGoalDialog">Editar</button></div>
 <div class="progress tall amber"><span id="carPageFundProgress"></span></div>
-<div class="progress-labels"><strong id="carPageFundNow">0,00 €</strong><small id="carPageFundRemaining">Faltam 0,00 €</small><small id="carPageFundGoal">Meta: 0,00 €</small></div>
+<div class="progress-labels goal-values-spread"><strong id="carPageFundNow">0,00 €</strong><small id="carPageFundRemaining">Faltam 0,00 €</small><small id="carPageFundGoal">Meta: 0,00 €</small></div>
 <button class="secondary-btn full" data-open="transferDialog">Transferir da conta corrente</button>
 </article>
 <article class="chart-card reveal delay-1">
@@ -538,6 +538,6 @@
 <div class="history-list" id="loanHistory"></div>
 <button class="secondary-btn full" data-close="historyDialog" type="button">Fechar</button>
 </form></dialog>
-<script src="app.js?v=23.20.0"></script>
+<script src="app.js?v=23.22.0"></script>
 </body>
 </html>
