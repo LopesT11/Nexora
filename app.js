@@ -1,7 +1,7 @@
 'use strict';
 
 const STORE = 'dealers_data_v2';
-const DATA_VERSION = 9;
+const DATA_VERSION = 10;
 const THEME_STORE = 'dealers_theme_v2';
 const memoryStorage = new Map();
 const storageGet = key => { try { return localStorage.getItem(key); } catch { return memoryStorage.get(key) ?? null; } };
@@ -80,6 +80,7 @@ function blank() {
     transactions: [],
     annualClosures: {},
     monthlyBudgets: {},
+    bills: [],
     budgetDefaults: { savings: 0, amortization: 0, insurance: 0 },
     insuranceReserve: { balance: 0, monthlyDefault: 0, history: [] },
     appMeta: { lastOpenedYear: new Date().getFullYear() },
@@ -146,6 +147,7 @@ function normalize(data) {
     loan: normalizedLoan,
     annualClosures: source.annualClosures && typeof source.annualClosures === 'object' ? source.annualClosures : {},
     monthlyBudgets: source.monthlyBudgets && typeof source.monthlyBudgets === 'object' ? source.monthlyBudgets : {},
+    bills: Array.isArray(source.bills) ? source.bills.map(item => ({ ...item, payments: item?.payments && typeof item.payments === 'object' ? item.payments : {} })) : [],
     budgetDefaults: { ...base.budgetDefaults, ...(source.budgetDefaults || {}) },
     insuranceReserve: { ...base.insuranceReserve, ...(source.insuranceReserve || {}), history: Array.isArray(source.insuranceReserve?.history) ? source.insuranceReserve.history : [] },
     appMeta: { ...base.appMeta, ...(source.appMeta || {}) },
@@ -1116,7 +1118,13 @@ function render() {
 
   const wealthChange = $('wealthChange');
   if (wealthChange) {
-    wealthChange.textContent = flow === 0 ? 'Sem alterações este mês' : `${flow > 0 ? '↑' : '↓'} ${euro(Math.abs(flow))} este mês`;
+    const previousWealth = round2(total - flow);
+    const flowPct = previousWealth > 0 ? Math.abs(flow / previousWealth * 100) : 0;
+    const pctLabel = flowPct > 0 ? `${flowPct.toFixed(1).replace('.', ',')}%` : '';
+    const sign = flow > 0 ? '+' : '−';
+    wealthChange.textContent = flow === 0
+      ? 'Sem alterações este mês'
+      : `${flow > 0 ? '↑' : '↓'} ${pctLabel ? `${sign}${pctLabel} · ` : ''}${sign}${euro(Math.abs(flow))} vs anterior`;
     wealthChange.className = `status-chip ${flow > 0 ? 'up' : flow < 0 ? 'down' : ''}`;
   }
 
@@ -1348,6 +1356,7 @@ function setMovementMode(mode, options = {}) {
   if (categoryField) categoryField.hidden = nextMode === 'transfer';
   if (incomeBudgetFields) incomeBudgetFields.hidden = nextMode !== 'income';
   if (expenseBudgetFields) expenseBudgetFields.hidden = nextMode !== 'expense';
+  if (nextMode === 'income' && !options.keepBudgetChoice) setIncomeBudgetChoice('yes');
 
   const meta = MOVEMENT_MODE_META[nextMode];
   if ($('txModeTitle')) $('txModeTitle').textContent = meta.title;
@@ -1425,6 +1434,7 @@ function init() {
   syncLoanStatus();
   $('txDate').value = todayISO();
   if ($('investmentDate')) $('investmentDate').value = todayISO();
+  setIncomeBudgetChoice('yes');
   setTransferPreset('expense');
 
   document.querySelectorAll('[data-movement-mode]').forEach(button => {
@@ -1472,6 +1482,9 @@ function init() {
   $('txTo').addEventListener('change', updateCategoryForTransfer);
   $('txDate').addEventListener('change', updateBudgetMonthSuggestion);
   $('txIncomeKind')?.addEventListener('change', updateBudgetMonthSuggestion);
+  document.querySelectorAll('[data-income-budget-choice]').forEach(button => {
+    button.addEventListener('click', () => setIncomeBudgetChoice(button.dataset.incomeBudgetChoice));
+  });
   $('expenseMonthSelect').addEventListener('change', event => {
     selectedExpenseMonth = event.target.value;
     renderExpenses();
@@ -1568,14 +1581,19 @@ function init() {
       category,
       date: $('txDate').value,
       incomeKind: movementMode === 'income' ? $('txIncomeKind')?.value || 'other' : '',
-      budgetMonth: movementMode === 'income' ? ($('txBudgetMonth')?.value || String($('txDate').value).slice(0, 7)) : movementMode === 'expense' ? ($('txExpenseBudgetMonth')?.value || String($('txDate').value).slice(0, 7)) : '',
-      countsInBudget: movementMode === 'expense' ? Boolean($('txCountsBudget')?.checked) : movementMode === 'income',
+      budgetMonth: movementMode === 'income'
+        ? ($('txIncomeCountsBudget')?.value === 'yes' ? ($('txBudgetMonth')?.value || String($('txDate').value).slice(0, 7)) : '')
+        : movementMode === 'expense' ? ($('txExpenseBudgetMonth')?.value || String($('txDate').value).slice(0, 7)) : '',
+      countsInBudget: movementMode === 'expense'
+        ? Boolean($('txCountsBudget')?.checked)
+        : movementMode === 'income' ? $('txIncomeCountsBudget')?.value === 'yes' : false,
       externalIncome: movementMode === 'income' && from === 'external' && to === 'external'
     });
     save();
     refreshAnnualClosureForDate($('txDate').value);
     event.target.reset();
     $('txDate').value = todayISO();
+    setIncomeBudgetChoice('yes');
     setTransferPreset('expense');
     $('txDialog').close();
     render();
@@ -1803,7 +1821,7 @@ function init() {
   });
 
   render();
-  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=23.30.0').catch(console.error);
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=23.31.0').catch(console.error);
 }
 
 /* ===== DEALER$ 23.30 — orçamento mensal, reservas e histórico editável ===== */
@@ -1842,7 +1860,7 @@ function assignedBudgetMonth(transaction) {
 }
 function budgetStats(monthKey = selectedBudgetMonth) {
   const budget = ensureBudget(monthKey);
-  const incomeTransactions = vault.transactions.filter(transaction => transaction.type === 'income' && assignedBudgetMonth(transaction) === monthKey);
+  const incomeTransactions = vault.transactions.filter(transaction => transaction.type === 'income' && transaction.countsInBudget !== false && assignedBudgetMonth(transaction) === monthKey);
   const expenseTransactions = vault.transactions.filter(transaction => transaction.type === 'expense' && transaction.countsInBudget !== false && assignedBudgetMonth(transaction) === monthKey);
   const returnTransactions = vault.transactions.filter(transaction => transaction.budgetReturn && assignedBudgetMonth(transaction) === monthKey);
   const sum = items => round2(items.reduce((total, item) => total + Number(item.amount || 0), 0));
@@ -1891,6 +1909,7 @@ function renderBudgetFeatures() {
   setText('homeBudgetStatus', homeStats.budget.closed ? 'Fechado' : 'Em curso');
   setWidth('homeBudgetProgress', homeStats.income > 0 ? Math.min(100, ((homeStats.expense + homeStats.reserved) / homeStats.income) * 100) : 0);
   setText('homeExterior', euro(exteriorBalance()));
+  renderPendingBills(month);
 
   setText('budgetPageTitle', monthLabel(month));
   setText('budgetMonthEyebrow', `1 a ${daysInMonth(month)} de ${monthLabel(month)}`);
@@ -1939,6 +1958,176 @@ function updateBudgetMonthSuggestion() {
     $('txBudgetMonth').value = kind === 'salary' && day >= 20 ? nextMonthKey(dateMonth) : dateMonth;
   }
 }
+
+function setIncomeBudgetChoice(value = 'yes') {
+  const selected = value === 'no' ? 'no' : 'yes';
+  if ($('txIncomeCountsBudget')) $('txIncomeCountsBudget').value = selected;
+  document.querySelectorAll('[data-income-budget-choice]').forEach(button => {
+    const active = button.dataset.incomeBudgetChoice === selected;
+    button.classList.toggle('active', active);
+    button.setAttribute('aria-pressed', active ? 'true' : 'false');
+  });
+  const monthField = $('txIncomeBudgetMonthField');
+  if (monthField) monthField.hidden = selected === 'no';
+  if (selected === 'yes') updateBudgetMonthSuggestion();
+}
+
+function billAppliesToMonth(bill, monthKey) {
+  if (!bill || bill.active === false) return false;
+  if (bill.recurring === true) {
+    const starts = String(monthKey) >= String(bill.startMonth || bill.month || monthKey);
+    const beforeEnd = !bill.endMonth || String(monthKey) < String(bill.endMonth);
+    return starts && beforeEnd;
+  }
+  return String(bill.month || bill.startMonth || '') === String(monthKey);
+}
+
+function billsForMonth(monthKey = selectedBudgetMonth) {
+  return (Array.isArray(vault.bills) ? vault.bills : [])
+    .filter(bill => billAppliesToMonth(bill, monthKey))
+    .map(bill => ({ ...bill, payment: bill.payments?.[monthKey] || null, billMonth: monthKey }))
+    .sort((a, b) => Number(a.dueDay || 32) - Number(b.dueDay || 32) || String(a.description || '').localeCompare(String(b.description || ''), 'pt'));
+}
+
+function pendingBillStats(monthKey = selectedBudgetMonth) {
+  const items = billsForMonth(monthKey);
+  const pending = items.filter(item => !item.payment);
+  const paid = items.filter(item => item.payment);
+  return {
+    items,
+    pending,
+    paid,
+    total: round2(pending.reduce((sum, item) => sum + Number(item.amount || 0), 0))
+  };
+}
+
+function billRowHtml(item, index = 0) {
+  const meta = categoryMeta(item.category || 'Outros', index);
+  const dueText = item.dueDay ? `Dia ${item.dueDay} · ` : '';
+  const recurrence = item.recurring ? 'mensal' : 'apenas este mês';
+  if (item.payment) {
+    return `<article class="pending-bill-row paid">
+      <span class="pending-bill-icon" style="color:${meta.color};background:${meta.color}18">${meta.icon}</span>
+      <div class="pending-bill-main"><strong>${escapeHtml(item.description)}</strong><small>${dueText}${recurrence}</small></div>
+      <div class="pending-bill-value"><strong>${euro(item.payment.amount ?? item.amount)}</strong><span class="bill-status paid">Paga</span></div>
+    </article>`;
+  }
+  return `<article class="pending-bill-row">
+    <span class="pending-bill-icon" style="color:${meta.color};background:${meta.color}18">${meta.icon}</span>
+    <div class="pending-bill-main"><strong>${escapeHtml(item.description)}</strong><small>${dueText}${recurrence}</small></div>
+    <div class="pending-bill-value"><strong>${euro(item.amount)}</strong><span class="bill-status pending">Por pagar</span></div>
+    <div class="pending-bill-actions">
+      <button class="bill-pay-btn" type="button" data-bill-pay="${escapeHtml(item.id)}" data-bill-month="${escapeHtml(item.billMonth)}">Pagar</button>
+      <button class="bill-edit-btn" type="button" data-bill-edit="${escapeHtml(item.id)}" data-bill-month="${escapeHtml(item.billMonth)}">Editar</button>
+      <button class="bill-delete-btn" type="button" data-bill-delete="${escapeHtml(item.id)}" data-bill-month="${escapeHtml(item.billMonth)}">Eliminar</button>
+    </div>
+  </article>`;
+}
+
+function renderPendingBills(monthKey = selectedBudgetMonth) {
+  const stats = pendingBillStats(monthKey);
+  setText('pendingBillsTotal', euro(stats.total));
+  setText('pendingBillsCount', `${stats.pending.length} ${stats.pending.length === 1 ? 'despesa' : 'despesas'}`);
+  const list = $('pendingBillsList');
+  if (list) {
+    list.innerHTML = stats.items.length
+      ? stats.items.map((item, index) => billRowHtml(item, index)).join('')
+      : '<div class="empty-state"><span>▤</span>Não existem despesas por pagar neste mês.</div>';
+  }
+  const homeStats = pendingBillStats(currentMonthKey());
+  setText('homeBillsSummaryText', `${euro(homeStats.total)} · ${homeStats.pending.length} ${homeStats.pending.length === 1 ? 'despesa' : 'despesas'}`);
+}
+
+function resetPendingBillForm(monthKey = selectedBudgetMonth) {
+  const form = $('pendingBillForm');
+  if (!form) return;
+  form.reset();
+  $('pendingBillId').value = '';
+  $('pendingBillMonth').value = monthKey || currentMonthKey();
+  $('pendingBillRecurring').value = 'monthly';
+  $('pendingBillCategory').value = 'Contas';
+  $('pendingBillDialogTitle').textContent = 'Adicionar despesa';
+  $('pendingBillSubmit').textContent = 'Guardar despesa';
+}
+
+function openPendingBillEditor(id, monthKey = selectedBudgetMonth) {
+  const bill = vault.bills.find(item => item.id === id);
+  if (!bill) return;
+  $('pendingBillId').value = bill.id;
+  $('pendingBillMonth').value = bill.recurring ? (bill.startMonth || monthKey) : (bill.month || monthKey);
+  $('pendingBillDescription').value = bill.description || '';
+  $('pendingBillAmount').value = Number(bill.amount || 0);
+  $('pendingBillDueDay').value = bill.dueDay || '';
+  $('pendingBillCategory').value = bill.category || 'Outros';
+  $('pendingBillRecurring').value = bill.recurring ? 'monthly' : 'once';
+  $('pendingBillDialogTitle').textContent = 'Editar despesa';
+  $('pendingBillSubmit').textContent = 'Guardar alterações';
+  openDialog('pendingBillDialog');
+}
+
+function openPendingBillPayment(id, monthKey = selectedBudgetMonth) {
+  const bill = vault.bills.find(item => item.id === id);
+  if (!bill || bill.payments?.[monthKey]) return;
+  $('pendingBillPayId').value = id;
+  $('pendingBillPayMonth').value = monthKey;
+  $('pendingBillPayDescription').value = bill.description || '';
+  $('pendingBillPayAmount').value = Number(bill.amount || 0);
+  const maxDay = daysInMonth(monthKey);
+  const day = Math.min(maxDay, Math.max(1, Number(bill.dueDay) || new Date().getDate()));
+  const suggestedDate = monthKey === currentMonthKey() ? todayISO() : `${monthKey}-${String(day).padStart(2, '0')}`;
+  $('pendingBillPayDate').value = suggestedDate;
+  $('pendingBillPaySource').value = 'current';
+  setText('pendingBillPayTitle', bill.description || 'Marcar como paga');
+  setText('pendingBillPaySummary', euro(bill.amount));
+  openDialog('pendingBillPayDialog');
+}
+
+function deletePendingBill(id, monthKey = selectedBudgetMonth) {
+  const index = vault.bills.findIndex(item => item.id === id);
+  if (index < 0) return;
+  const bill = vault.bills[index];
+  if (bill.payments?.[monthKey]) return alert('Esta despesa já foi paga. Corrige ou apaga o pagamento no histórico.');
+  const text = bill.recurring
+    ? `Eliminar “${bill.description}” deste mês e dos meses seguintes? Os pagamentos antigos ficam no histórico.`
+    : `Eliminar “${bill.description}” deste mês?`;
+  if (!confirm(text)) return;
+  if (bill.recurring) {
+    const hasPastPayments = Object.keys(bill.payments || {}).some(key => key < monthKey);
+    if (hasPastPayments || String(bill.startMonth || '') < String(monthKey)) bill.endMonth = monthKey;
+    else vault.bills.splice(index, 1);
+  } else {
+    vault.bills.splice(index, 1);
+  }
+  save();
+  render();
+}
+
+function findBillPayment(transaction) {
+  if (!transaction?.billId || !transaction?.billMonth) return null;
+  const bill = vault.bills.find(item => item.id === transaction.billId);
+  if (!bill) return null;
+  return { bill, month: transaction.billMonth };
+}
+
+function clearBillPaymentForTransaction(transaction) {
+  const found = findBillPayment(transaction);
+  if (!found) return;
+  if (found.bill.payments?.[found.month]?.txId === transaction.id) delete found.bill.payments[found.month];
+}
+
+function syncBillPaymentFromTransaction(transaction) {
+  const found = findBillPayment(transaction);
+  if (!found) return;
+  found.bill.payments ||= {};
+  found.bill.payments[found.month] = {
+    txId: transaction.id,
+    amount: Number(transaction.amount || 0),
+    date: transaction.date,
+    source: transaction.from,
+    description: transaction.description
+  };
+}
+
 function settleReserve(type, monthKey = selectedBudgetMonth, silent = false) {
   const budget = ensureBudget(monthKey);
   const amount = safeNumber(budget.reserves[type]);
@@ -2076,7 +2265,7 @@ function deleteTransaction(id) {
   if (!confirm(`Apagar “${transaction.description}”? Os totais deste mês e dos seguintes serão recalculados.`)) return;
   const state = getFinancialState(); applyTransactionEffect(state, transaction, -1);
   if (!stateIsValid(state)) return alert('Não é possível apagar porque um dos saldos ficaria negativo. Atualiza primeiro os saldos ou corrige o movimento.');
-  commitFinancialState(state); vault.transactions.splice(index, 1); save(); refreshAnnualClosureForDate(transaction.date); render(); $('txActionDialog')?.close();
+  commitFinancialState(state); clearBillPaymentForTransaction(transaction); vault.transactions.splice(index, 1); save(); refreshAnnualClosureForDate(transaction.date); render(); $('txActionDialog')?.close();
 }
 function openTransactionActions(id) {
   const item = vault.transactions.find(t => t.id === id); if (!item) return;
@@ -2085,7 +2274,7 @@ function openTransactionActions(id) {
 }
 function openTransactionEditor(id) {
   const item = vault.transactions.find(t => t.id === id); if (!item || item.locked) return;
-  $('txEditId').value = id; $('txEditDesc').value = item.description || ''; $('txEditAmount').value = Number(item.amount || 0); $('txEditDate').value = item.date || todayISO(); $('txEditCategory').value = item.category || 'Outros'; $('txEditBudgetMonth').value = assignedBudgetMonth(item); $('txEditCountsBudget').checked = item.type === 'income' || (item.type === 'expense' && item.countsInBudget !== false); $('txActionDialog')?.close(); openDialog('txEditDialog');
+  $('txEditId').value = id; $('txEditDesc').value = item.description || ''; $('txEditAmount').value = Number(item.amount || 0); $('txEditDate').value = item.date || todayISO(); $('txEditCategory').value = item.category || 'Outros'; $('txEditBudgetMonth').value = assignedBudgetMonth(item); $('txEditCountsBudget').checked = item.countsInBudget !== false; $('txActionDialog')?.close(); openDialog('txEditDialog');
 }
 function openReserveEditor(type) {
   const budget = ensureBudget(selectedBudgetMonth); $('reserveEditType').value = type; setText('reserveEditTitle', reserveLabel(type)); setText('reserveEditCurrent', `Valor atual: ${euro(budget.reserves[type])}`); $('reserveEditValue').value = Number(budget.reserves[type] || 0); openDialog('reserveEditDialog');
@@ -2105,7 +2294,10 @@ function openDialog(id) {
 function initBudgetFeatureListeners() {
   document.addEventListener('click', event => {
     const menu = event.target.closest('[data-tx-menu]'); if (menu) { event.preventDefault(); openTransactionActions(menu.dataset.txMenu); return; }
-    const reserve = event.target.closest('[data-edit-reserve]'); if (reserve) { event.preventDefault(); openReserveEditor(reserve.dataset.editReserve); }
+    const reserve = event.target.closest('[data-edit-reserve]'); if (reserve) { event.preventDefault(); openReserveEditor(reserve.dataset.editReserve); return; }
+    const payBill = event.target.closest('[data-bill-pay]'); if (payBill) { event.preventDefault(); openPendingBillPayment(payBill.dataset.billPay, payBill.dataset.billMonth); return; }
+    const editBill = event.target.closest('[data-bill-edit]'); if (editBill) { event.preventDefault(); openPendingBillEditor(editBill.dataset.billEdit, editBill.dataset.billMonth); return; }
+    const deleteBill = event.target.closest('[data-bill-delete]'); if (deleteBill) { event.preventDefault(); deletePendingBill(deleteBill.dataset.billDelete, deleteBill.dataset.billMonth); }
   });
   $('budgetSettingsForm')?.addEventListener('submit', event => {
     if (event.submitter?.value === 'cancel') return; event.preventDefault();
@@ -2127,12 +2319,82 @@ function initBudgetFeatureListeners() {
   $('deleteTxButton')?.addEventListener('click', () => deleteTransaction($('txActionId').value));
   $('txEditForm')?.addEventListener('submit', event => {
     event.preventDefault(); const id = $('txEditId').value; const index = vault.transactions.findIndex(t => t.id === id); if (index < 0) return;
-    const old = vault.transactions[index]; const updated = { ...old, description: $('txEditDesc').value.trim(), amount: round2($('txEditAmount').value), date: $('txEditDate').value, category: $('txEditCategory').value, budgetMonth: $('txEditBudgetMonth').value || monthKeyFromDate($('txEditDate').value), countsInBudget: old.type === 'income' ? true : Boolean($('txEditCountsBudget').checked) };
+    const old = vault.transactions[index]; const updated = { ...old, description: $('txEditDesc').value.trim(), amount: round2($('txEditAmount').value), date: $('txEditDate').value, category: $('txEditCategory').value, budgetMonth: $('txEditBudgetMonth').value || monthKeyFromDate($('txEditDate').value), countsInBudget: Boolean($('txEditCountsBudget').checked) };
     if (!(updated.amount > 0)) return alert('Introduz um valor válido.');
     const state = getFinancialState(); applyTransactionEffect(state, old, -1); applyTransactionEffect(state, updated, 1);
     if (!stateIsValid(state)) return alert('A correção deixaria um saldo negativo.');
-    commitFinancialState(state); vault.transactions[index] = updated; save(); refreshAnnualClosureForDate(old.date); refreshAnnualClosureForDate(updated.date); $('txEditDialog').close(); render();
+    commitFinancialState(state); vault.transactions[index] = updated; syncBillPaymentFromTransaction(updated); save(); refreshAnnualClosureForDate(old.date); refreshAnnualClosureForDate(updated.date); $('txEditDialog').close(); render();
   });
+  $('addPendingBillButton')?.addEventListener('click', () => {
+    resetPendingBillForm(selectedBudgetMonth);
+    openDialog('pendingBillDialog');
+  });
+  $('pendingBillForm')?.addEventListener('submit', event => {
+    event.preventDefault();
+    const id = $('pendingBillId').value;
+    const description = $('pendingBillDescription').value.trim();
+    const amount = safeNumber($('pendingBillAmount').value);
+    const month = $('pendingBillMonth').value || selectedBudgetMonth || currentMonthKey();
+    const dueDay = Math.min(31, Math.max(0, Number($('pendingBillDueDay').value) || 0));
+    if (!description || !(amount > 0)) return alert('Preenche a descrição e um valor válido.');
+    const record = {
+      id: id || makeId(),
+      description,
+      amount,
+      dueDay,
+      category: $('pendingBillCategory').value || 'Outros',
+      recurring: $('pendingBillRecurring').value === 'monthly',
+      startMonth: month,
+      month,
+      active: true,
+      payments: id ? (vault.bills.find(item => item.id === id)?.payments || {}) : {}
+    };
+    const index = vault.bills.findIndex(item => item.id === record.id);
+    if (index >= 0) vault.bills[index] = record;
+    else vault.bills.push(record);
+    selectedBudgetMonth = month;
+    save();
+    $('pendingBillDialog').close();
+    render();
+  });
+  $('pendingBillPayForm')?.addEventListener('submit', event => {
+    event.preventDefault();
+    const id = $('pendingBillPayId').value;
+    const month = $('pendingBillPayMonth').value || selectedBudgetMonth || currentMonthKey();
+    const bill = vault.bills.find(item => item.id === id);
+    if (!bill) return;
+    if (bill.payments?.[month]) return alert('Esta despesa já foi marcada como paga.');
+    const amount = safeNumber($('pendingBillPayAmount').value);
+    const date = $('pendingBillPayDate').value || todayISO();
+    const source = $('pendingBillPaySource').value;
+    const description = $('pendingBillPayDescription').value.trim() || bill.description;
+    if (!(amount > 0)) return alert('Introduz o valor realmente pago.');
+    const sourceKey = BALANCE_KEY_BY_ACCOUNT[source];
+    if (sourceKey && amount > Number(vault.balances[sourceKey] || 0)) return alert(`Saldo insuficiente em ${accountLabel(source)}.`);
+    if (sourceKey) vault.balances[sourceKey] = round2(Number(vault.balances[sourceKey] || 0) - amount);
+    const transaction = {
+      id: makeId(),
+      type: 'expense',
+      from: source,
+      to: 'external',
+      description,
+      amount,
+      category: bill.category || 'Outros',
+      date,
+      budgetMonth: month,
+      countsInBudget: true,
+      billId: bill.id,
+      billMonth: month
+    };
+    vault.transactions.push(transaction);
+    bill.payments ||= {};
+    bill.payments[month] = { txId: transaction.id, amount, date, source, description };
+    save();
+    refreshAnnualClosureForDate(date);
+    $('pendingBillPayDialog').close();
+    render();
+  });
+
   $('insuranceForm')?.addEventListener('submit', event => {
     if (event.submitter?.value === 'cancel') return; event.preventDefault();
     const value = safeNumber($('insuranceDefaultInput').value); vault.insuranceReserve.monthlyDefault = value; vault.budgetDefaults.insurance = value; save(); $('insuranceDialog').close(); render();

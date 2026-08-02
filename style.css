@@ -803,3 +803,84 @@ button,input,select,textarea{-webkit-tap-highlight-color:transparent;}
 #txIncomeBudgetFields,#txExpenseBudgetFields{display:grid;gap:12px}#txIncomeBudgetFields[hidden],#txExpenseBudgetFields[hidden]{display:none!important}
 @media(max-width:760px){.budget-home-grid{grid-template-columns:1fr 1fr}.budget-four-grid{grid-template-columns:1fr 1fr}.budget-close-card{align-items:stretch;flex-direction:column}.budget-close-card .primary-btn{width:100%}.market-allocation{grid-template-columns:1fr}.exterior-summary{grid-template-columns:1fr}.exterior-summary .exterior-balance-card{grid-column:auto}.exterior-controls{display:grid;grid-template-columns:1fr 1fr;width:100%}}
 @media(max-width:480px){.budget-home-card{padding:16px}.budget-home-grid>div{padding:10px}.budget-home-grid strong{font-size:14px}.budget-hero{padding:18px}.budget-hero-value strong{font-size:38px}.pending-reserve-row{grid-template-columns:42px minmax(0,1fr) auto}.pending-reserve-row .pending-icon{width:42px;height:42px}.pending-reserve-row>.text-btn{grid-column:2/-1;justify-self:end;margin-top:-5px}.insurance-balance{grid-template-columns:1fr}.exterior-controls{grid-template-columns:1fr}.exterior-month-flow{grid-template-columns:1fr}.quick-card-main{padding:14px}.home-exterior-row{margin-bottom:12px}}
+
+
+/* DEALER$ v23.31 — despesas por pagar, receita opcional e ajustes visuais finais */
+.home-bills-summary{
+  width:100%;border:1px solid var(--line);border-radius:15px;background:var(--card-2);
+  color:var(--text);display:grid;grid-template-columns:34px minmax(0,1fr) 18px;gap:11px;
+  align-items:center;text-align:left;padding:10px 12px;margin:-2px 0 14px
+}
+.home-bills-summary>span:nth-child(2){min-width:0}
+.home-bills-summary small{display:block;color:var(--muted);font-size:10px;margin-bottom:3px}
+.home-bills-summary strong{display:block;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.home-bills-icon{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;color:var(--brand);
+  border:1px solid color-mix(in srgb,var(--brand) 30%,var(--line));background:color-mix(in srgb,var(--brand) 8%,var(--card))}
+.home-bills-summary .chevron{width:18px;height:18px;fill:none;stroke:var(--muted);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+.section-subtitle{margin:5px 0 0;color:var(--muted);font-size:12px;line-height:1.4}
+.pending-bills-card .section-heading{align-items:flex-start}
+.pending-bills-summary{display:grid;grid-template-columns:1fr auto;gap:3px 12px;align-items:end;padding:13px 15px;margin-bottom:12px;
+  border:1px solid var(--line);border-radius:17px;background:color-mix(in srgb,var(--brand) 6%,var(--card-2))}
+.pending-bills-summary span{color:var(--muted);font-size:12px}
+.pending-bills-summary strong{font-size:22px;color:var(--brand);white-space:nowrap}
+.pending-bills-summary small{grid-column:1/-1;color:var(--muted);font-size:11px}
+.pending-bills-list{display:grid;gap:10px}
+.pending-bill-row{display:grid;grid-template-columns:46px minmax(0,1fr) auto;gap:12px;align-items:center;
+  padding:13px 14px;border:1px solid var(--line);border-radius:18px;background:var(--card-2)}
+.pending-bill-row.paid{opacity:.72}
+.pending-bill-icon{width:46px;height:46px;border-radius:15px;display:grid;place-items:center;border:1px solid var(--line)}
+.pending-bill-icon svg{width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.pending-bill-main{min-width:0}.pending-bill-main strong{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pending-bill-main small{display:block;margin-top:4px;color:var(--muted);font-size:11px}
+.pending-bill-value{text-align:right}.pending-bill-value>strong{display:block;font-size:17px;white-space:nowrap}
+.bill-status{display:inline-flex;margin-top:5px;padding:4px 8px;border-radius:999px;font-size:10px;font-weight:850}
+.bill-status.pending{color:#e9a831;background:color-mix(in srgb,#e9a831 13%,var(--card));border:1px solid color-mix(in srgb,#e9a831 34%,var(--line))}
+.bill-status.paid{color:var(--green);background:color-mix(in srgb,var(--green) 12%,var(--card));border:1px solid color-mix(in srgb,var(--green) 30%,var(--line))}
+.pending-bill-actions{grid-column:2/-1;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:1px}
+.pending-bill-actions button{min-height:38px;border-radius:12px;padding:8px 9px;font-weight:800;font-size:11px}
+.bill-pay-btn{color:var(--green);border:1px solid color-mix(in srgb,var(--green) 40%,var(--line));background:color-mix(in srgb,var(--green) 8%,var(--card))}
+.bill-edit-btn{color:var(--brand);border:1px solid var(--line);background:transparent}
+.bill-delete-btn{color:var(--red);border:1px solid color-mix(in srgb,var(--red) 40%,var(--line));background:color-mix(in srgb,var(--red) 7%,var(--card))}
+
+.income-budget-choice{margin:10px 0 4px;padding:13px;border:1px solid var(--line);border-radius:17px;background:var(--card-2)}
+.income-budget-choice>span{display:block;font-size:13px;font-weight:850;margin-bottom:10px}
+.binary-choice{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:14px;padding:4px;gap:4px;background:var(--bg-2)}
+.binary-choice button{height:44px;border:0;border-radius:11px;background:transparent;color:var(--muted);font-weight:850}
+.binary-choice button.active{background:linear-gradient(135deg,color-mix(in srgb,var(--brand) 70%,#fff),var(--brand));color:#fff}
+.binary-choice button span{margin-right:7px}
+#txIncomeBudgetFields{gap:8px}
+#txIncomeBudgetFields label{margin:9px 0}
+#txIncomeBudgetFields input,#txIncomeBudgetFields select{margin-top:6px}
+#txIncomeBudgetMonthField[hidden]{display:none!important}
+
+/* Indicador mensal ocupa exatamente o lugar do antigo “Sem alterações” */
+.wealth-actions .status-chip{line-height:1.2;padding-left:10px;padding-right:10px}
+
+/* Exterior mais compacto e alinhado */
+.exterior-overview .exterior-heading{margin-bottom:10px}
+.exterior-overview .exterior-heading p{margin-top:3px}
+.exterior-overview .exterior-controls{gap:8px}
+.exterior-overview .exterior-period-label{gap:3px;margin:4px 0 0}
+.exterior-overview .exterior-period-label select{margin-top:0;height:50px}
+.exterior-overview .exterior-summary{margin-top:12px;gap:8px}
+.exterior-overview .exterior-summary article{padding:11px 12px}
+.exterior-overview .exterior-month-flow{margin-top:9px}
+.exterior-overview .transaction-list.compact{margin-top:9px}
+
+/* Projeção: título afastado dos cartões e bloco separado de Gerir crédito */
+.chart-card .card-heading{margin-bottom:26px}
+.analytics-grid + .section-block[data-car-active]{margin-top:32px}
+
+@media(max-width:480px){
+  .pending-bills-card .section-heading{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px}
+  .pending-bills-card .primary-mini-btn{padding:9px 11px;font-size:11px}
+  .pending-bill-row{grid-template-columns:42px minmax(0,1fr) auto;padding:12px;gap:10px}
+  .pending-bill-icon{width:42px;height:42px}
+  .pending-bill-actions{grid-column:1/-1}
+  .exterior-overview .exterior-heading{gap:7px}
+  .exterior-overview .exterior-controls{gap:6px}
+  .chart-card .card-heading{margin-bottom:30px}
+  .analytics-grid + .section-block[data-car-active]{margin-top:30px}
+  .wealth-actions .status-chip{font-size:9.5px}
+}
