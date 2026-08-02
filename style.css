@@ -884,3 +884,75 @@ button,input,select,textarea{-webkit-tap-highlight-color:transparent;}
   .analytics-grid + .section-block[data-car-active]{margin-top:30px}
   .wealth-actions .status-chip{font-size:9.5px}
 }
+
+
+/* DEALER$ v23.32 — refinamentos finais de espaçamento */
+#reserveEditDialog form > label + .primary-btn.full,
+#txActionDialog form > input + .secondary-btn.full{
+  margin-top:18px;
+}
+#reserveEditDialog form > .secondary-btn.full,
+#reserveEditDialog form > .danger-outline-btn.full,
+#txActionDialog form > .danger-outline-btn.full,
+#txActionDialog form > .secondary-btn.full + .secondary-btn.full,
+#txActionDialog form > .secondary-btn.full + .danger-outline-btn.full{
+  margin-top:12px;
+}
+#reserveEditDialog form > button.full,
+#txActionDialog form > button.full{
+  display:flex;
+}
+
+.exterior-overview .section-heading.exterior-heading{
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  justify-content:stretch;
+  gap:12px;
+  margin-bottom:14px;
+}
+.exterior-overview .exterior-heading > div:first-child h2{
+  margin-bottom:4px;
+}
+.exterior-overview .exterior-heading > div:first-child p{
+  margin:0;
+}
+.exterior-overview .exterior-controls{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(170px,1fr));
+  gap:8px;
+  align-items:end;
+}
+.exterior-overview .exterior-period-label{
+  display:grid;
+  gap:4px;
+  margin:0;
+}
+.exterior-overview .exterior-period-label select{
+  margin-top:0;
+}
+
+.chart-card .card-heading{
+  margin-bottom:34px;
+}
+.section-block[data-car-active]{
+  margin-top:36px;
+}
+.section-block[data-car-active] .section-heading{
+  margin-bottom:24px;
+}
+
+@media(max-width:760px){
+  .exterior-overview .exterior-controls{
+    grid-template-columns:1fr;
+    gap:6px;
+  }
+  .chart-card .card-heading{
+    margin-bottom:30px;
+  }
+  .section-block[data-car-active]{
+    margin-top:32px;
+  }
+  .section-block[data-car-active] .section-heading{
+    margin-bottom:20px;
+  }
+}
