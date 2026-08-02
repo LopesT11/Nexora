@@ -12,7 +12,7 @@
 <title>DEALER$</title>
 <link href="manifest.json" rel="manifest"/>
 <link href="icon-192.png" rel="apple-touch-icon"/>
-<link href="style.css?v=23.22.0" rel="stylesheet"/>
+<link href="style.css?v=23.30.0" rel="stylesheet"/>
 </head>
 <body>
 <div class="app-shell" id="app">
@@ -57,12 +57,20 @@
             </button>
 </div>
 </section>
+<section class="budget-home-card uniform-card reveal delay-1" data-page="budget" role="button" tabindex="0">
+<div class="budget-home-head"><div><span class="eyebrow">Orçamento mensal</span><h2 id="homeBudgetTitle">Este mês</h2></div><span class="budget-status" id="homeBudgetStatus">Em curso</span></div>
+<div class="budget-home-grid"><div><small>Recebido</small><strong id="homeBudgetIncome">0,00 €</strong></div><div><small>Reservado pendente</small><strong id="homeBudgetReserved">0,00 €</strong></div><div><small>Já gasto</small><strong id="homeBudgetSpent">0,00 €</strong></div><div class="budget-available"><small>Disponível</small><strong id="homeBudgetAvailable">0,00 €</strong></div></div>
+<div class="progress"><span id="homeBudgetProgress"></span></div><p>Do dia 1 ao último dia do mês. Ordenado, bónus, despesas e reservas numa só visão.</p>
+</section>
 <section aria-label="Saldos principais" class="quick-list reveal delay-1">
-<button class="quick-card" data-open="balancesDialog">
+<article class="quick-card current-exterior-card">
+<button class="quick-card-main" data-open="balancesDialog" type="button">
 <span class="quick-icon current"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5.25 7.25V6.9A2.4 2.4 0 0 1 7.65 4.5h9.1a2.1 2.1 0 0 1 2.1 2.1v.65"></path><rect x="3.5" y="7.25" width="17" height="10.75" rx="2.8"></rect><path d="M15.15 10.7h5.35v3.85h-5.35a1.92 1.92 0 0 1 0-3.85Z"></path><path d="M7.1 10.15h3.6"></path><circle cx="16.95" cy="12.62" r="0.9" fill="currentColor" stroke="none"></circle></svg></span>
 <span><small>Conta corrente</small><strong id="homeCurrent">0,00 €</strong></span>
 <svg class="chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"></path></svg>
 </button>
+<button class="home-exterior-row" data-page="wealth" type="button"><span class="home-exterior-icon">◎</span><span>Exterior</span><strong id="homeExterior">0,00 €</strong><svg class="chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"></path></svg></button>
+</article>
 <button class="quick-card" data-page="wealth">
 <span class="quick-icon saving"><svg aria-hidden="true" class="savings-coins" viewBox="0 0 24 24"><ellipse cx="8" cy="14" rx="4" ry="2"></ellipse><path d="M4 14v4c0 1.15 1.8 2.05 4 2.05s4-.9 4-2.05v-4"></path><path d="M4 16.05c0 1.15 1.8 2.05 4 2.05s4-.9 4-2.05"></path><ellipse cx="15.5" cy="7.5" rx="4.5" ry="2.15"></ellipse><path d="M11 7.5v8.5c0 1.2 2 2.15 4.5 2.15S20 17.2 20 16V7.5"></path><path d="M11 11.7c0 1.2 2 2.15 4.5 2.15s4.5-.95 4.5-2.15"></path><path d="M11 15.9c0 1.2 2 2.15 4.5 2.15s4.5-.95 4.5-2.15"></path></svg></span>
 <span><small>Poupança</small><strong id="homeSavings">0,00 €</strong></span>
@@ -144,6 +152,17 @@
 <div class="transaction-list" id="txList"></div>
 </section>
 </section>
+</section>
+<!-- ORÇAMENTO -->
+<section class="page" id="page-budget">
+<section class="page-header reveal"><div><span class="eyebrow">Gestão do ordenado</span><h1>Orçamento mensal</h1><p>Do dia 1 ao último dia do mês, com salário, bónus, despesas e reservas pendentes.</p></div><button class="secondary-btn compact-action" data-open="budgetSettingsDialog" type="button" aria-label="Editar automáticas"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 7h7M15 7h5M4 12h3M11 12h9M4 17h10M18 17h2"></path><circle cx="13" cy="7" r="2"></circle><circle cx="9" cy="12" r="2"></circle><circle cx="16" cy="17" r="2"></circle></svg></button></section>
+<section class="filter-bar budget-filter reveal delay-1"><label for="budgetMonthSelect">Mês do orçamento</label><select id="budgetMonthSelect" aria-label="Escolher mês do orçamento"></select></section>
+<section class="budget-hero reveal delay-2"><div class="budget-hero-top"><div><span class="eyebrow" id="budgetMonthEyebrow">Orçamento</span><h2 id="budgetPageTitle">Este mês</h2></div><span class="budget-status" id="budgetPageStatus">Em curso</span></div><div class="budget-hero-value"><small>Disponível para o resto do mês</small><strong id="budgetAvailable">0,00 €</strong></div><div class="budget-four-grid"><div><small>Ordenado base</small><strong id="budgetSalary">0,00 €</strong></div><div><small>Bónus recebido</small><strong id="budgetBonus">0,00 €</strong></div><div><small>Outras receitas</small><strong id="budgetOtherIncome">0,00 €</strong></div><div><small>Total recebido</small><strong id="budgetIncomeTotal">0,00 €</strong></div></div></section>
+<section class="stat-grid page-stats reveal"><article class="stat-card"><span class="stat-icon expense">↓</span><div><small>Já gasto</small><strong id="budgetSpent">0,00 €</strong><span class="metric-sub">despesas que contam</span></div></article><article class="stat-card"><span class="stat-icon neutral">◌</span><div><small>Reservado pendente</small><strong id="budgetReserved">0,00 €</strong><span class="metric-sub">ainda utilizável</span></div></article><article class="stat-card"><span class="stat-icon income">↩</span><div><small>Devolvido ao disponível</small><strong id="budgetReturns">0,00 €</strong><span class="metric-sub">sobras e cancelamentos</span></div></article><article class="stat-card"><span class="stat-icon ratio">÷</span><div><small>Disponível por dia</small><strong id="budgetDaily">0,00 €</strong><span class="metric-sub" id="budgetDaysLeft">até ao fim do mês</span></div></article></section>
+<section class="section-block reveal"><div class="section-heading"><div><span class="eyebrow">Automáticas mensais</span><h2>Reservado pendente</h2></div><button class="text-btn" data-open="budgetSettingsDialog" type="button">Editar valores</button></div><div class="pending-reserve-list" id="pendingReserveList"></div><p class="goal-note">Estas reservas reduzem o disponível, mas continuam utilizáveis até serem transferidas. A reserva do seguro fica fora do património total.</p></section>
+<section class="section-block insurance-card reveal"><div class="section-heading"><div><span class="eyebrow">Despesa anual preparada aos poucos</span><h2>Reserva do seguro</h2></div><button class="text-btn" data-open="insuranceDialog" type="button">Gerir</button></div><div class="insurance-balance"><div><small>Total guardado</small><strong id="insuranceReserveBalance">0,00 €</strong></div><div><small>Reserva média mensal</small><strong id="insuranceMonthlyDefault">0,00 €</strong></div></div><p>Não entra no património total. Quando pagares o seguro, qualquer sobra regressa ao saldo disponível.</p></section>
+<section class="section-block reveal"><div class="section-heading"><div><span class="eyebrow">Movimentos</span><h2>Movimentos do orçamento</h2></div></div><div class="transaction-list" id="budgetTransactionList"></div></section>
+<section class="budget-close-card reveal"><div><span class="eyebrow">Fecho mensal</span><h2>Confirmar o que sobrou</h2><p>Transfere o pendente da Poupança e Amortização e acumula o Seguro.</p></div><button class="primary-btn" id="closeBudgetMonth" type="button">Fechar mês</button></section>
 </section>
 <!-- DESPESAS -->
 <section class="page" id="page-expenses">
@@ -227,14 +246,14 @@
 <section class="section-block exterior-overview reveal">
 <div class="section-heading exterior-heading">
 <div><span class="eyebrow">Movimentos exteriores</span><h2>Exterior</h2><p>Dinheiro que tens fora das contas controladas pela app.</p></div>
-<label class="exterior-period-label">Período<select id="exteriorPeriodSelect" aria-label="Período dos movimentos exteriores"><option value="month">Este mês</option><option value="year">Este ano</option><option value="all">Total</option></select></label>
+<div class="exterior-controls"><label class="exterior-period-label">Período<select id="exteriorPeriodSelect" aria-label="Período dos movimentos exteriores"><option value="month">Mês específico</option><option value="year">Este ano</option><option value="all">Total</option></select></label><label class="exterior-period-label" id="exteriorMonthField">Mês<select id="exteriorMonthSelect" aria-label="Escolher mês exterior"></select></label></div>
 </div>
 <div class="exterior-summary">
 <article><span class="exterior-metric-icon income" aria-hidden="true">↗</span><div><small>Receitas exteriores</small><strong class="positive" id="exteriorIncome">+0,00 €</strong></div></article>
 <article><span class="exterior-metric-icon expense" aria-hidden="true">↘</span><div><small>Despesas exteriores</small><strong class="negative" id="exteriorExpense">−0,00 €</strong></div></article>
-<article class="exterior-balance-card"><span class="exterior-metric-icon balance" aria-hidden="true">=</span><div><small>Saldo exterior atual</small><strong id="exteriorBalance">0,00 €</strong></div></article>
+<article><span class="exterior-metric-icon balance" aria-hidden="true">⇄</span><div><small>Transferências líquidas</small><strong id="exteriorTransfers">0,00 €</strong></div></article><article class="exterior-balance-card"><span class="exterior-metric-icon balance" aria-hidden="true">=</span><div><small id="exteriorBalanceLabel">Saldo no fim do mês</small><strong id="exteriorBalance">0,00 €</strong></div></article>
 </div>
-<p class="exterior-note"><span aria-hidden="true">i</span>O saldo exterior atual entra no património total, mas não entra na meta anual de poupança. Transferências entre o Exterior e uma conta não contam como receita nem despesa.</p>
+<div class="exterior-month-flow"><div><span>Saldo no início</span><strong id="exteriorOpening">0,00 €</strong></div><div><span>Saldo no fim</span><strong id="exteriorClosing">0,00 €</strong></div></div><div class="transaction-list compact" id="exteriorTransactionList"></div><p class="exterior-note"><span aria-hidden="true">i</span>O saldo exterior entra no património total, mas não entra na meta anual de poupança. Transferências alteram o numerário, sem contar como receita nem despesa.</p>
 </section>
 <section class="section-block reveal">
 <div class="section-heading"><div><span class="eyebrow">Dinheiro parado</span><h2>Juros do saldo remunerado</h2></div><button class="text-btn" data-open="rateDialog">Editar taxa</button></div>
@@ -257,7 +276,7 @@
 <div><small>Resultado</small><strong id="marketResultTotal">0,00 €</strong></div>
 <div><small>Rentabilidade</small><strong id="marketReturnTotal">0,00%</strong></div>
 </div>
-<div class="market-list" id="marketInvestmentList"></div>
+<div class="market-allocation"><div class="donut-wrap small"><canvas aria-label="Distribuição do portefólio" height="260" id="portfolioDonut" width="260"></canvas><div class="donut-center"><small>Valor atual</small><strong id="portfolioDonutTotal">0,00 €</strong></div></div><div class="legend" id="portfolioLegend"></div></div><div class="market-list" id="marketInvestmentList"></div>
 </section>
 <section class="section-block reveal">
 <div class="section-heading"><div><span class="eyebrow">Ações rápidas</span><h2>Gerir património</h2></div></div>
@@ -440,6 +459,8 @@
 <label>Descrição<input id="txDesc" maxlength="80" placeholder="Ex.: Salário, supermercado, combustível…" required="" type="text"/></label>
 <label>Valor (€)<input id="txAmount" inputmode="decimal" min="0.01" required="" step="0.01" type="number"/></label>
 <label>Data<input id="txDate" required="" type="date"/></label>
+<div id="txIncomeBudgetFields" hidden><label>Tipo de receita<select id="txIncomeKind"><option value="salary">Ordenado</option><option value="bonus">Bónus do ordenado</option><option value="other">Outra receita</option><option value="refund">Reembolso</option></select></label><label>Conta para o orçamento de<input id="txBudgetMonth" type="month"/></label></div>
+<div id="txExpenseBudgetFields"><label>Conta para o orçamento de<input id="txExpenseBudgetMonth" type="month"/></label><label class="check-row"><input checked id="txCountsBudget" type="checkbox"/><span>Esta despesa reduz o orçamento disponível</span></label></div>
 <label id="txCategoryField">Categoria <span class="optional-label">(opcional)</span><select id="txCategory">
 <option>Salário</option><option>Alimentação</option><option>Carro</option><option>Combustível</option><option>Casa</option><option>Contas</option><option>Ginásio</option><option>Lazer</option><option>Saúde</option><option>Compras</option><option>Poupança</option><option>Investimentos</option><option>Outros</option>
 </select></label>
@@ -538,6 +559,11 @@
 <div class="history-list" id="loanHistory"></div>
 <button class="secondary-btn full" data-close="historyDialog" type="button">Fechar</button>
 </form></dialog>
-<script src="app.js?v=23.22.0"></script>
+<dialog id="budgetSettingsDialog"><form id="budgetSettingsForm" method="dialog"><div class="dialog-head"><div><span class="eyebrow">Automáticas mensais</span><h2>Reservas do mês</h2></div><button aria-label="Fechar" class="close-btn" data-close="budgetSettingsDialog" type="button"><span>×</span></button></div><label>Mês<input id="budgetSettingsMonth" type="month" required/></label><p class="muted">Os valores reduzem o disponível, mas só são transferidos quando confirmares.</p><label>Poupança pendente (€)<input id="budgetSavingsReserve" min="0" step="0.01" type="number"/></label><label>Amortização pendente (€)<input id="budgetAmortReserve" min="0" step="0.01" type="number"/></label><label>Seguro pendente (€)<input id="budgetInsuranceReserve" min="0" step="0.01" type="number"/></label><label class="check-row"><input id="saveBudgetDefaults" type="checkbox"/><span>Usar estes valores como sugestão nos próximos meses</span></label><button class="primary-btn full" type="submit">Guardar reservas</button></form></dialog>
+<dialog id="reserveEditDialog"><form id="reserveEditForm" method="dialog"><div class="dialog-head"><div><span class="eyebrow">Reservado pendente</span><h2 id="reserveEditTitle">Editar reserva</h2></div><button aria-label="Fechar" class="close-btn" data-close="reserveEditDialog" type="button"><span>×</span></button></div><input id="reserveEditType" type="hidden"/><p class="muted" id="reserveEditCurrent">Valor atual: 0,00 €</p><label>Novo valor (€)<input id="reserveEditValue" min="0" step="0.01" type="number" required/></label><button class="primary-btn full" type="submit">Guardar novo valor</button><button class="secondary-btn full" id="settleReserveNow" type="button">Transferir agora</button><button class="danger-outline-btn full" id="cancelReserve" type="button">Cancelar reserva</button></form></dialog>
+<dialog id="insuranceDialog"><form id="insuranceForm" method="dialog"><div class="dialog-head"><div><span class="eyebrow">Reserva do seguro</span><h2>Gerir seguro anual</h2></div><button aria-label="Fechar" class="close-btn" data-close="insuranceDialog" type="button"><span>×</span></button></div><div class="dialog-highlight"><small>Guardado agora</small><strong id="insuranceDialogBalance">0,00 €</strong></div><label>Valor médio mensal (€)<input id="insuranceDefaultInput" min="0" step="0.01" type="number"/></label><div class="form-two-cols"><label>Valor a adicionar/retirar (€)<input id="insuranceAdjustAmount" min="0" step="0.01" type="number"/></label><label>Ação<select id="insuranceAdjustAction"><option value="add">Adicionar à reserva</option><option value="withdraw">Retirar para conta corrente</option></select></label></div><button class="secondary-btn full" id="adjustInsuranceReserve" type="button">Aplicar ajuste</button><hr/><label>Valor real do seguro (€)<input id="insurancePaymentAmount" min="0.01" step="0.01" type="number"/></label><label>Data do pagamento<input id="insurancePaymentDate" type="date"/></label><button class="primary-btn full" id="payInsuranceButton" type="button">Pagar seguro</button><button class="secondary-btn full" type="submit">Guardar valor mensal</button></form></dialog>
+<dialog id="txActionDialog"><form method="dialog"><div class="dialog-head"><div><span class="eyebrow">Movimento</span><h2 id="txActionTitle">Opções</h2></div><button aria-label="Fechar" class="close-btn" data-close="txActionDialog" type="button"><span>×</span></button></div><input id="txActionId" type="hidden"/><button class="secondary-btn full" id="editTxButton" type="button">Editar movimento</button><button class="danger-outline-btn full" id="deleteTxButton" type="button">Apagar movimento</button><button class="secondary-btn full" data-close="txActionDialog" type="button">Cancelar</button></form></dialog>
+<dialog id="txEditDialog"><form id="txEditForm" method="dialog"><div class="dialog-head"><div><span class="eyebrow">Corrigir histórico</span><h2>Editar movimento</h2></div><button aria-label="Fechar" class="close-btn" data-close="txEditDialog" type="button"><span>×</span></button></div><input id="txEditId" type="hidden"/><label>Descrição<input id="txEditDesc" maxlength="80" required type="text"/></label><label>Valor (€)<input id="txEditAmount" min="0.01" required step="0.01" type="number"/></label><label>Data<input id="txEditDate" required type="date"/></label><label>Categoria<select id="txEditCategory"><option>Salário</option><option>Alimentação</option><option>Carro</option><option>Combustível</option><option>Casa</option><option>Contas</option><option>Ginásio</option><option>Lazer</option><option>Saúde</option><option>Compras</option><option>Poupança</option><option>Investimentos</option><option>Outros</option></select></label><label>Mês do orçamento<input id="txEditBudgetMonth" type="month"/></label><label class="check-row"><input id="txEditCountsBudget" type="checkbox"/><span>Conta no orçamento mensal</span></label><p class="muted">A origem e o destino mantêm-se. Os totais do mês e dos meses seguintes são recalculados.</p><button class="primary-btn full" type="submit">Guardar correção</button></form></dialog>
+<script src="app.js?v=23.30.0"></script>
 </body>
 </html>
