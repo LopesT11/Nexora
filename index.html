@@ -12,7 +12,7 @@
 <title>DEALER$</title>
 <link href="manifest.json" rel="manifest"/>
 <link href="icon-192.png" rel="apple-touch-icon"/>
-<link href="style.css?v=23.31.0" rel="stylesheet"/>
+<link href="style.css?v=23.40.0" rel="stylesheet"/>
 </head>
 <body>
 <div class="app-shell" id="app">
@@ -48,6 +48,7 @@
 <div class="wealth-copy">
 <span class="card-kicker">Património total</span>
 <strong id="totalWealth">0,00 €</strong>
+<div class="wealth-inclusive-total"><span>Total com reservas</span><strong id="totalWithReserves">0,00 €</strong><small>Sem ETF e ações</small></div>
 </div>
 <div class="wealth-actions">
 <span class="status-chip" id="wealthChange">Sem alterações este mês</span>
@@ -62,6 +63,11 @@
 <div class="budget-home-grid"><div><small>Recebido</small><strong id="homeBudgetIncome">0,00 €</strong></div><div><small>Reservado pendente</small><strong id="homeBudgetReserved">0,00 €</strong></div><div><small>Já gasto</small><strong id="homeBudgetSpent">0,00 €</strong></div><div class="budget-available"><small>Disponível</small><strong id="homeBudgetAvailable">0,00 €</strong></div></div>
 <button class="home-bills-summary" id="homeBillsSummary" data-page="budget" type="button"><span class="home-bills-icon">▤</span><span><small>Despesas por pagar</small><strong id="homeBillsSummaryText">0,00 € · 0 despesas</strong></span><svg class="chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"></path></svg></button>
 <div class="progress"><span id="homeBudgetProgress"></span></div><p>Do dia 1 ao último dia do mês. Ordenado, bónus, despesas e reservas numa só visão.</p>
+</section>
+<section class="home-reserves-card uniform-card reveal delay-1" data-page="wealth" data-scroll-target="customReservesSection" role="button" tabindex="0">
+<div class="home-reserves-head"><div><span class="eyebrow">Reservas personalizadas</span><h2>Resumo das reservas</h2></div><span class="home-reserves-arrow">›</span></div>
+<div class="home-reserves-grid"><div><small>Guardado</small><strong id="homeCustomReserveTotal">0,00 €</strong></div><div><small>Pendente este mês</small><strong id="homeCustomReservePending">0,00 €</strong></div><div><small>Ativas</small><strong id="homeCustomReserveActive">0</strong></div></div>
+<button class="text-btn reserve-home-link" data-page="wealth" data-scroll-target="customReservesSection" type="button">Ver no Património</button>
 </section>
 <section aria-label="Saldos principais" class="quick-list reveal delay-1">
 <article class="quick-card current-exterior-card">
@@ -156,15 +162,14 @@
 </section>
 <!-- ORÇAMENTO -->
 <section class="page" id="page-budget">
-<section class="page-header reveal"><div><span class="eyebrow">Gestão do ordenado</span><h1>Orçamento mensal</h1><p>Do dia 1 ao último dia do mês, com salário, bónus, despesas e reservas pendentes.</p></div><button class="secondary-btn compact-action" data-open="budgetSettingsDialog" type="button" aria-label="Editar automáticas"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 7h7M15 7h5M4 12h3M11 12h9M4 17h10M18 17h2"></path><circle cx="13" cy="7" r="2"></circle><circle cx="9" cy="12" r="2"></circle><circle cx="16" cy="17" r="2"></circle></svg></button></section>
+<section class="page-header reveal"><div><span class="eyebrow">Gestão do ordenado</span><h1>Orçamento mensal</h1><p>Do dia 1 ao último dia do mês, com salário, bónus, despesas e reservas pendentes.</p></div><button class="secondary-btn compact-action" data-new-custom-reserve type="button" aria-label="Adicionar reserva"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"></path></svg></button></section>
 <section class="filter-bar budget-filter reveal delay-1"><label for="budgetMonthSelect">Mês do orçamento</label><select id="budgetMonthSelect" aria-label="Escolher mês do orçamento"></select></section>
 <section class="budget-hero reveal delay-2"><div class="budget-hero-top"><div><span class="eyebrow" id="budgetMonthEyebrow">Orçamento</span><h2 id="budgetPageTitle">Este mês</h2></div><span class="budget-status" id="budgetPageStatus">Em curso</span></div><div class="budget-hero-value"><small>Disponível para o resto do mês</small><strong id="budgetAvailable">0,00 €</strong></div><div class="budget-four-grid"><div><small>Ordenado base</small><strong id="budgetSalary">0,00 €</strong></div><div><small>Bónus recebido</small><strong id="budgetBonus">0,00 €</strong></div><div><small>Outras receitas</small><strong id="budgetOtherIncome">0,00 €</strong></div><div><small>Total recebido</small><strong id="budgetIncomeTotal">0,00 €</strong></div></div></section>
 <section class="stat-grid page-stats reveal"><article class="stat-card"><span class="stat-icon expense">↓</span><div><small>Já gasto</small><strong id="budgetSpent">0,00 €</strong><span class="metric-sub">despesas que contam</span></div></article><article class="stat-card"><span class="stat-icon neutral">◌</span><div><small>Reservado pendente</small><strong id="budgetReserved">0,00 €</strong><span class="metric-sub">ainda utilizável</span></div></article><article class="stat-card"><span class="stat-icon income">↩</span><div><small>Devolvido ao disponível</small><strong id="budgetReturns">0,00 €</strong><span class="metric-sub">sobras e cancelamentos</span></div></article><article class="stat-card"><span class="stat-icon ratio">÷</span><div><small>Disponível por dia</small><strong id="budgetDaily">0,00 €</strong><span class="metric-sub" id="budgetDaysLeft">até ao fim do mês</span></div></article></section>
-<section class="section-block reveal"><div class="section-heading"><div><span class="eyebrow">Automáticas mensais</span><h2>Reservado pendente</h2></div><button class="text-btn" data-open="budgetSettingsDialog" type="button">Editar valores</button></div><div class="pending-reserve-list" id="pendingReserveList"></div><p class="goal-note">Estas reservas reduzem o disponível, mas continuam utilizáveis até serem transferidas. A reserva do seguro fica fora do património total.</p></section>
-<section class="section-block insurance-card reveal"><div class="section-heading"><div><span class="eyebrow">Despesa anual preparada aos poucos</span><h2>Reserva do seguro</h2></div><button class="text-btn" data-open="insuranceDialog" type="button">Gerir</button></div><div class="insurance-balance"><div><small>Total guardado</small><strong id="insuranceReserveBalance">0,00 €</strong></div><div><small>Reserva média mensal</small><strong id="insuranceMonthlyDefault">0,00 €</strong></div></div><p>Não entra no património total. Quando pagares o seguro, qualquer sobra regressa ao saldo disponível.</p></section>
+<section class="section-block reveal"><div class="section-heading"><div><span class="eyebrow">Reservas do mês</span><h2>Reservado pendente</h2><p class="section-subtitle">Criadas por ti e ajustáveis em qualquer altura.</p></div><button class="primary-mini-btn" data-new-custom-reserve type="button">+ Adicionar</button></div><div class="pending-reserve-list" id="pendingReserveList"></div><p class="goal-note">O pendente reduz o disponível mensal, mas continua utilizável até ser transferido. Cada reserva decide se entra ou não no património principal.</p></section>
 <section class="section-block reveal pending-bills-card"><div class="section-heading"><div><span class="eyebrow">Controlo mensal</span><h2>Despesas por pagar</h2><p class="section-subtitle">O dia é apenas informativo. Nada é descontado até confirmares o pagamento.</p></div><button class="primary-mini-btn" id="addPendingBillButton" type="button">+ Adicionar</button></div><div class="pending-bills-summary"><span>Total por pagar</span><strong id="pendingBillsTotal">0,00 €</strong><small id="pendingBillsCount">0 despesas</small></div><div class="pending-bills-list" id="pendingBillsList"></div></section>
 <section class="section-block reveal"><div class="section-heading"><div><span class="eyebrow">Movimentos</span><h2>Movimentos do orçamento</h2></div></div><div class="transaction-list" id="budgetTransactionList"></div></section>
-<section class="budget-close-card reveal"><div><span class="eyebrow">Fecho mensal</span><h2>Confirmar o que sobrou</h2><p>Transfere o pendente da Poupança e Amortização e acumula o Seguro.</p></div><button class="primary-btn" id="closeBudgetMonth" type="button">Fechar mês</button></section>
+<section class="budget-close-card reveal"><div><span class="eyebrow">Fecho mensal</span><h2>Confirmar o que sobrou</h2><p>Transfere todas as reservas pendentes ativas para os respetivos fundos.</p></div><button class="primary-btn" id="closeBudgetMonth" type="button">Fechar mês</button></section>
 </section>
 <!-- DESPESAS -->
 <section class="page" id="page-expenses">
@@ -244,6 +249,12 @@
 </div>
 <div class="legend" id="allocationLegend"></div>
 </article>
+</section>
+<section class="section-block custom-reserves-section reveal" id="customReservesSection">
+<div class="section-heading"><div><span class="eyebrow">Reservas personalizadas</span><h2>Os teus fundos flexíveis</h2><p class="section-subtitle">Cria seguros, objetivos, fundos livres ou outras reservas temporárias.</p></div><button class="primary-mini-btn" data-new-custom-reserve type="button">+ Adicionar</button></div>
+<div class="custom-reserve-summary"><div><small>Total guardado</small><strong id="wealthCustomReserveTotal">0,00 €</strong></div><div><small>Pendente este mês</small><strong id="wealthCustomReservePending">0,00 €</strong></div><div><small>Mensal previsto</small><strong id="wealthCustomReserveMonthly">0,00 €</strong></div><div><small>Ativas</small><strong id="wealthCustomReserveActive">0</strong></div></div>
+<div class="custom-reserve-list" id="customReserveList"></div>
+<div class="custom-reserve-archived" id="customReserveArchivedWrap" hidden><span class="eyebrow">Arquivadas</span><div class="custom-reserve-list archived" id="customReserveArchivedList"></div></div>
 </section>
 <section class="section-block exterior-overview reveal">
 <div class="section-heading exterior-heading">
@@ -568,6 +579,36 @@
 <dialog id="budgetSettingsDialog"><form id="budgetSettingsForm" method="dialog"><div class="dialog-head"><div><span class="eyebrow">Automáticas mensais</span><h2>Reservas do mês</h2></div><button aria-label="Fechar" class="close-btn" data-close="budgetSettingsDialog" type="button"><span>×</span></button></div><label>Mês<input id="budgetSettingsMonth" type="month" required/></label><p class="muted">Os valores reduzem o disponível, mas só são transferidos quando confirmares.</p><label>Poupança pendente (€)<input id="budgetSavingsReserve" min="0" step="0.01" type="number"/></label><label>Amortização pendente (€)<input id="budgetAmortReserve" min="0" step="0.01" type="number"/></label><label>Seguro pendente (€)<input id="budgetInsuranceReserve" min="0" step="0.01" type="number"/></label><label class="check-row"><input id="saveBudgetDefaults" type="checkbox"/><span>Usar estes valores como sugestão nos próximos meses</span></label><button class="primary-btn full" type="submit">Guardar reservas</button></form></dialog>
 <dialog id="reserveEditDialog"><form id="reserveEditForm" method="dialog"><div class="dialog-head"><div><span class="eyebrow">Reservado pendente</span><h2 id="reserveEditTitle">Editar reserva</h2></div><button aria-label="Fechar" class="close-btn" data-close="reserveEditDialog" type="button"><span>×</span></button></div><input id="reserveEditType" type="hidden"/><p class="muted" id="reserveEditCurrent">Valor atual: 0,00 €</p><label>Novo valor (€)<input id="reserveEditValue" min="0" step="0.01" type="number" required/></label><button class="primary-btn full" type="submit">Guardar novo valor</button><button class="secondary-btn full" id="settleReserveNow" type="button">Transferir agora</button><button class="danger-outline-btn full" id="cancelReserve" type="button">Cancelar reserva</button></form></dialog>
 <dialog id="insuranceDialog"><form id="insuranceForm" method="dialog"><div class="dialog-head"><div><span class="eyebrow">Reserva do seguro</span><h2>Gerir seguro anual</h2></div><button aria-label="Fechar" class="close-btn" data-close="insuranceDialog" type="button"><span>×</span></button></div><div class="dialog-highlight"><small>Guardado agora</small><strong id="insuranceDialogBalance">0,00 €</strong></div><label>Valor médio mensal (€)<input id="insuranceDefaultInput" min="0" step="0.01" type="number"/></label><div class="form-two-cols"><label>Valor a adicionar/retirar (€)<input id="insuranceAdjustAmount" min="0" step="0.01" type="number"/></label><label>Ação<select id="insuranceAdjustAction"><option value="add">Adicionar à reserva</option><option value="withdraw">Retirar para conta corrente</option></select></label></div><button class="secondary-btn full" id="adjustInsuranceReserve" type="button">Aplicar ajuste</button><hr/><label>Valor real do seguro (€)<input id="insurancePaymentAmount" min="0.01" step="0.01" type="number"/></label><label>Data do pagamento<input id="insurancePaymentDate" type="date"/></label><button class="primary-btn full" id="payInsuranceButton" type="button">Pagar seguro</button><button class="secondary-btn full" type="submit">Guardar valor mensal</button></form></dialog>
+<dialog id="customReserveDialog"><form id="customReserveForm" method="dialog">
+<div class="dialog-head"><div><span class="eyebrow">Reserva personalizada</span><h2 id="customReserveDialogTitle">Adicionar reserva</h2></div><button aria-label="Fechar" class="close-btn" data-close="customReserveDialog" type="button"><span>×</span></button></div>
+<input id="customReserveId" type="hidden"/>
+<label>Nome da reserva<input id="customReserveName" maxlength="60" placeholder="Ex.: Seguro mota, Férias" required type="text"/></label>
+<div class="form-two-cols"><label>Ícone<select id="customReserveIcon"><option value="wallet">Carteira</option><option value="shield">Seguro</option><option value="car">Carro</option><option value="motorcycle">Mota</option><option value="holiday">Férias</option><option value="tools">Oficina</option><option value="savings">Poupança</option><option value="home">Casa</option></select></label><label>Tipo<select id="customReserveType"><option value="personalizada">Personalizada</option><option value="anual">Anual</option><option value="objetivo">Objetivo</option><option value="livre">Livre</option></select></label></div>
+<label>Valor mensal (€)<input id="customReserveMonthly" min="0" step="0.01" type="number"/></label>
+<div class="income-budget-choice"><span>Entra no património total?</span><div class="binary-choice"><button type="button" data-custom-patrimony="yes">Sim</button><button type="button" data-custom-patrimony="no">Não</button></div><input id="customReservePatrimony" type="hidden" value="yes"/></div>
+<label class="check-row"><input id="customReserveRecurring" type="checkbox" checked/><span>Criar valor pendente todos os meses</span></label>
+<label>Observações (opcional)<input id="customReserveNotes" maxlength="120" placeholder="Notas da reserva" type="text"/></label>
+<button class="primary-btn full" type="submit">Guardar reserva</button><button class="secondary-btn full" data-close="customReserveDialog" type="button">Cancelar</button>
+</form></dialog>
+<dialog id="customReserveDetailDialog"><form method="dialog">
+<div class="dialog-head"><div><span class="eyebrow">Reserva personalizada</span><h2 id="customReserveDetailTitle">Reserva</h2></div><button aria-label="Fechar" class="close-btn" data-close="customReserveDetailDialog" type="button"><span>×</span></button></div>
+<input id="customReserveDetailId" type="hidden"/>
+<div class="custom-reserve-detail-stats"><div><small>Guardado</small><strong id="customReserveDetailBalance">0,00 €</strong></div><div><small>Pendente</small><strong id="customReserveDetailPending">0,00 €</strong></div><div><small>Mensal</small><strong id="customReserveDetailMonthly">0,00 €</strong></div></div>
+<label>Valor a adicionar/retirar (€)<input id="customReserveAdjustAmount" min="0" step="0.01" type="number"/></label>
+<label>Ação<select id="customReserveAdjustAction"><option value="add">Adicionar à reserva</option><option value="withdraw">Retirar para conta corrente</option></select></label>
+<button class="secondary-btn full" id="customReserveApplyAdjust" type="button">Aplicar ajuste</button>
+<button class="primary-btn full" id="customReserveTransferPending" type="button">Transferir pendente</button>
+<button class="secondary-btn full" id="customReserveEditButton" type="button">Editar reserva</button>
+<button class="danger-outline-btn full" id="customReserveArchiveButton" type="button">Arquivar reserva</button>
+<button class="danger-outline-btn full" id="customReserveDeleteButton" type="button">Eliminar definitivamente</button>
+<div class="custom-reserve-history-wrap"><span class="eyebrow">Movimentos recentes</span><div class="custom-reserve-history" id="customReserveHistory"></div></div>
+</form></dialog>
+<dialog id="customPendingDialog"><form id="customPendingForm" method="dialog">
+<div class="dialog-head"><div><span class="eyebrow">Pendente deste mês</span><h2 id="customPendingTitle">Editar reserva</h2></div><button aria-label="Fechar" class="close-btn" data-close="customPendingDialog" type="button"><span>×</span></button></div>
+<input id="customPendingReserveId" type="hidden"/><p class="muted" id="customPendingCurrent">Valor atual: 0,00 €</p>
+<label>Novo valor (€)<input id="customPendingValue" min="0" step="0.01" required type="number"/></label>
+<button class="primary-btn full" type="submit">Guardar novo valor</button><button class="secondary-btn full" id="customPendingTransfer" type="button">Transferir agora</button><button class="danger-outline-btn full" id="customPendingCancel" type="button">Cancelar reserva deste mês</button>
+</form></dialog>
 <dialog id="pendingBillDialog"><form id="pendingBillForm" method="dialog">
 <div class="dialog-head"><div><span class="eyebrow">Despesas por pagar</span><h2 id="pendingBillDialogTitle">Adicionar despesa</h2></div><button aria-label="Fechar" class="close-btn" data-close="pendingBillDialog" type="button"><span>×</span></button></div>
 <input id="pendingBillId" type="hidden"/>
@@ -590,6 +631,6 @@
 </form></dialog>
 <dialog id="txActionDialog"><form method="dialog"><div class="dialog-head"><div><span class="eyebrow">Movimento</span><h2 id="txActionTitle">Opções</h2></div><button aria-label="Fechar" class="close-btn" data-close="txActionDialog" type="button"><span>×</span></button></div><input id="txActionId" type="hidden"/><button class="secondary-btn full" id="editTxButton" type="button">Editar movimento</button><button class="danger-outline-btn full" id="deleteTxButton" type="button">Apagar movimento</button><button class="secondary-btn full" data-close="txActionDialog" type="button">Cancelar</button></form></dialog>
 <dialog id="txEditDialog"><form id="txEditForm" method="dialog"><div class="dialog-head"><div><span class="eyebrow">Corrigir histórico</span><h2>Editar movimento</h2></div><button aria-label="Fechar" class="close-btn" data-close="txEditDialog" type="button"><span>×</span></button></div><input id="txEditId" type="hidden"/><label>Descrição<input id="txEditDesc" maxlength="80" required type="text"/></label><label>Valor (€)<input id="txEditAmount" min="0.01" required step="0.01" type="number"/></label><label>Data<input id="txEditDate" required type="date"/></label><label>Categoria<select id="txEditCategory"><option>Salário</option><option>Alimentação</option><option>Carro</option><option>Combustível</option><option>Casa</option><option>Contas</option><option>Ginásio</option><option>Lazer</option><option>Saúde</option><option>Compras</option><option>Poupança</option><option>Investimentos</option><option>Outros</option></select></label><label>Mês do orçamento<input id="txEditBudgetMonth" type="month"/></label><label class="check-row"><input id="txEditCountsBudget" type="checkbox"/><span>Conta no orçamento mensal</span></label><p class="muted">A origem e o destino mantêm-se. Os totais do mês e dos meses seguintes são recalculados.</p><button class="primary-btn full" type="submit">Guardar correção</button></form></dialog>
-<script src="app.js?v=23.31.0"></script>
+<script src="app.js?v=23.40.0"></script>
 </body>
 </html>
