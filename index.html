@@ -11,21 +11,23 @@
   <title>DEALER$</title>
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icon-192.png">
-  <link rel="stylesheet" href="style.css?v=26.0.0">
+  <link rel="stylesheet" href="style.css?v=27.0.0">
 </head>
 <body>
 <div class="app-shell" id="app">
   <header class="topbar">
-    <button class="brand" data-page="home">DEALER$</button>
+    <button class="brand-name" data-page="home" aria-label="Ir para o início">DEALER$</button>
     <div class="top-actions">
-      <button class="icon-btn" id="themeToggle" aria-label="Mudar tema">☼</button>
-      <button class="icon-btn primary" data-open="txDialog" aria-label="Adicionar">＋</button>
+      <button class="round-btn theme-toggle" id="themeToggle" type="button" aria-label="Alternar entre modo claro e escuro" title="Modo claro/escuro"><svg class="bulb-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M8.4 14.8A6 6 0 1 1 15.6 14.8c-.9.7-1.4 1.5-1.5 2.2H9.9c-.1-.7-.6-1.5-1.5-2.2Z"/><path d="M12 2V1M4.9 4.9l-.8-.8M19.1 4.9l.8-.8M3 11H2M22 11h-1"/></svg></button>
+      <button class="round-btn accent top-add" data-open="txDialog" aria-label="Adicionar movimento" title="Adicionar movimento"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
     </div>
   </header>
 
   <main>
     <section class="page active" id="page-home">
       <section class="wealth-card">
+        <div class="wealth-glow"></div>
+        <svg class="wealth-chart" viewBox="0 0 720 280" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="wealthChartFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="currentColor" stop-opacity=".20"/><stop offset="1" stop-color="currentColor" stop-opacity="0"/></linearGradient></defs><path class="wealth-chart-fill" d="M0 238 C95 244 126 212 200 218 C282 226 318 246 388 206 C452 168 474 102 530 120 C588 139 609 189 720 34 L720 280 L0 280 Z"/><path class="wealth-chart-line" d="M0 238 C95 244 126 212 200 218 C282 226 318 246 388 206 C452 168 474 102 530 120 C588 139 609 189 720 34"/><circle class="wealth-chart-point" cx="530" cy="120" r="5"/></svg>
         <span class="eyebrow light">Património disponível</span>
         <strong id="mainWealth">0,00 €</strong>
         <small id="wealthChange">Sem alterações este mês</small>
@@ -57,12 +59,12 @@
       </section>
 
       <section class="quick-list">
-        <button class="quick-card" data-open="balancesDialog"><span class="quick-icon">▣</span><span><small>Conta corrente</small><strong id="homeCurrent">0,00 €</strong><em>Exterior: <b id="homeExterior">0,00 €</b></em></span><span class="chev">›</span></button>
-        <button class="quick-card" data-page="wealth"><span class="quick-icon">◉</span><span><small>Poupança</small><strong id="homeSavings">0,00 €</strong></span><span class="chev">›</span></button>
-        <button class="quick-card" data-page="wealth"><span class="quick-icon">↗</span><span><small>Dinheiro a render</small><strong id="homeYield">0,00 €</strong></span><span class="chev">›</span></button>
-        <button class="quick-card" data-page="expenses"><span class="quick-icon expense">€</span><span><small>Despesas este mês</small><strong id="homeExpenses">0,00 €</strong></span><span class="chev">›</span></button>
-        <button class="quick-card" data-page="car"><span class="quick-icon amber">◎</span><span><small>Fundo carro</small><strong id="homeCarFund">0,00 €</strong></span><span class="chev">›</span></button>
-        <button class="quick-card" data-page="wealth"><span class="quick-icon blue">↗</span><span><small>ETF / ações</small><strong id="homePortfolio">0,00 €</strong><em>Fora do património principal</em></span><span class="chev">›</span></button>
+        <button class="quick-card" data-open="balancesDialog"><span class="quick-icon current"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 6H18a2 2 0 0 1 2 2v11H4a2 2 0 0 1-2-2V8.5A2.5 2.5 0 0 1 4.5 6Z"/><path d="M2.5 9H20"/><path d="M15.5 12.5H20v3h-4.5a1.5 1.5 0 0 1 0-3Z"/></svg></span><span><small>Conta corrente</small><strong id="homeCurrent">0,00 €</strong><em>Exterior: <b id="homeExterior">0,00 €</b></em></span><span class="chev">›</span></button>
+        <button class="quick-card" data-page="wealth"><span class="quick-icon saving"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4h8l-2 3h-4L8 4Z"/><path d="M9.5 7h5"/><path d="M9 7c-3.1 1.9-5 5-5 8.5C4 19 6.8 21 12 21s8-2 8-5.5C20 12 18.1 8.9 15 7"/><circle cx="12" cy="15" r="2.2"/></svg></span><span><small>Poupança</small><strong id="homeSavings">0,00 €</strong></span><span class="chev">›</span></button>
+        <button class="quick-card" data-page="wealth"><span class="quick-icon investing"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 17 5-5 3 3 7-8"/><path d="M15 7h4v4"/><circle cx="4" cy="17" r=".7"/><circle cx="9" cy="12" r=".7"/><circle cx="12" cy="15" r=".7"/></svg></span><span><small>Dinheiro a render</small><strong id="homeYield">0,00 €</strong></span><span class="chev">›</span></button>
+        <button class="quick-card" data-page="expenses"><span class="quick-icon expenses"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19v-7M10 19V7M15 19v-9M20 19V4"/><path d="M3 21h19"/></svg></span><span><small>Despesas este mês</small><strong id="homeExpenses">0,00 €</strong></span><span class="chev">›</span></button>
+        <button class="quick-card" data-page="car"><span class="quick-icon amber"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="12" r="3.2"/><circle cx="12" cy="12" r="3.2"/><circle cx="18" cy="12" r="3.2"/><path d="M3 12h18"/></svg></span><span><small>Fundo carro</small><strong id="homeCarFund">0,00 €</strong></span><span class="chev">›</span></button>
+        <button class="quick-card" data-page="wealth"><span class="quick-icon blue"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 17 5-5 3 3 7-8"/><path d="M15 7h4v4"/></svg></span><span><small>ETF / ações</small><strong id="homePortfolio">0,00 €</strong><em>Fora do património principal</em></span><span class="chev">›</span></button>
       </section>
 
       <section class="section-card">
@@ -111,12 +113,12 @@
   </main>
 
   <nav class="bottom-nav">
-    <button class="active" data-page="home"><span>⌂</span><small>Início</small></button>
-    <button data-page="expenses"><span>€</span><small>Despesas</small></button>
-    <button class="nav-add" data-open="txDialog" aria-label="Adicionar"><span>＋</span></button>
-    <button data-page="wealth"><span>◈</span><small>Património</small></button>
-    <button data-page="car"><span>◎</span><small>Audi</small></button>
-    <button data-page="insights"><span>↗</span><small>Insights</small></button>
+    <button class="active" data-page="home"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10.5 12 4l8 6.5V20H5v-9.5"/><path d="M9 20v-6h6v6"/></svg><span>Início</span></button>
+    <button data-page="expenses"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10v18l-2-1.5L12 21l-3-1.5L7 21V3Z"/><path d="M10 8h4M10 12h4M10 16h3"/></svg><span>Despesas</span></button>
+    <button class="nav-add" data-open="txDialog" aria-label="Adicionar"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span></button>
+    <button data-page="wealth"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V9M9.5 19V5M15 19v-7M20 19V3"/><path d="M2 21h20"/></svg><span>Património</span></button>
+    <button data-page="car"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5.5" cy="12" r="3.2"/><circle cx="10" cy="12" r="3.2"/><circle cx="14" cy="12" r="3.2"/><circle cx="18.5" cy="12" r="3.2"/></svg><span>Audi</span></button>
+    <button data-page="insights"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 17 10 12l3 3 6-8"/><path d="M15 7h4v4"/></svg><span>Insights</span></button>
   </nav>
 </div>
 
