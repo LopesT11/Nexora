@@ -7,145 +7,136 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="DEALER$">
+  <meta name="format-detection" content="telephone=no">
   <title>DEALER$</title>
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icon-192.png">
-  <link rel="stylesheet" href="style.css?v=25.0.0">
+  <link rel="stylesheet" href="style.css?v=26.0.0">
 </head>
 <body>
-  <div class="app-shell" id="app">
-    <header class="topbar">
-      <button class="brand" data-page="home">DEALER$</button>
-      <div class="top-actions">
-        <button class="icon-btn" id="themeToggle" aria-label="Mudar tema">☼</button>
-        <button class="icon-btn accent" data-open="txDialog" aria-label="Adicionar movimento">＋</button>
-      </div>
-    </header>
+<div class="app-shell" id="app">
+  <header class="topbar">
+    <button class="brand" data-page="home">DEALER$</button>
+    <div class="top-actions">
+      <button class="icon-btn" id="themeToggle" aria-label="Mudar tema">☼</button>
+      <button class="icon-btn primary" data-open="txDialog" aria-label="Adicionar">＋</button>
+    </div>
+  </header>
 
-    <main>
-      <section class="page active" id="page-home">
-        <section class="hero-card">
-          <div><span class="eyebrow">Património disponível</span><strong id="homeMainWealth">0,00 €</strong><small id="wealthChange">Sem alterações este mês</small></div>
-          <button class="ghost-btn" data-open="balancesDialog">Atualizar saldos</button>
-        </section>
-
-        <section class="triple-state">
-          <article><span>Disponível</span><strong id="stateAvailable">0,00 €</strong><small>Para usar agora</small></article>
-          <article><span>A reservar este mês</span><strong id="stateReserved">0,00 €</strong><small>Reduz o orçamento, ainda não transferido</small></article>
-          <article><span>Guardado</span><strong id="stateSaved">0,00 €</strong><small>Poupança + dinheiro a render</small></article>
-        </section>
-
-        <section class="panel">
-          <div class="section-head"><div><span class="eyebrow">Orçamento mensal</span><h2 id="budgetMonthLabel">Este mês</h2></div><button class="text-btn" data-page="budget">Abrir</button></div>
-          <div class="metrics four">
-            <article><small>Recebido</small><strong id="homeBudgetIncome">0,00 €</strong></article>
-            <article><small>Já gasto</small><strong id="homeBudgetSpent">0,00 €</strong></article>
-            <article><small>Reservado</small><strong id="homeBudgetReserved">0,00 €</strong></article>
-            <article><small>Disponível</small><strong id="homeBudgetAvailable">0,00 €</strong></article>
-          </div>
-        </section>
-
-        <section class="panel">
-          <div class="section-head"><div><span class="eyebrow">Despesas por pagar</span><h2><span id="pendingTotal">0,00 €</span> · <span id="pendingCount">0</span> despesas</h2></div><button class="text-btn" data-page="expenses">Gerir</button></div>
-          <div id="homePendingList" class="list compact-list"></div>
-        </section>
-
-        <section class="account-grid">
-          <button class="account-card" data-open="balancesDialog"><span>Conta corrente</span><strong id="homeCurrent">0,00 €</strong><small>Exterior: <b id="homeExterior">0,00 €</b></small></button>
-          <button class="account-card" data-page="wealth"><span>Poupança</span><strong id="homeSavings">0,00 €</strong><small>Guardado</small></button>
-          <button class="account-card" data-page="wealth"><span>Dinheiro a render</span><strong id="homeYield">0,00 €</strong><small id="yieldRateLabel">3% / ano</small></button>
-          <button class="account-card" data-page="car"><span>Fundo carro</span><strong id="homeCarFund">0,00 €</strong><small>Amortização</small></button>
-        </section>
-
-        <section class="panel">
-          <div class="section-head"><div><span class="eyebrow">Atividade recente</span><h2>Movimentos</h2></div><button class="text-btn" data-open="txDialog">Adicionar</button></div>
-          <div id="recentTx" class="list"></div>
-        </section>
+  <main>
+    <section class="page active" id="page-home">
+      <section class="wealth-card">
+        <span class="eyebrow light">Património disponível</span>
+        <strong id="mainWealth">0,00 €</strong>
+        <small id="wealthChange">Sem alterações este mês</small>
+        <div class="wealth-actions">
+          <span class="status-pill">Total com reservas: <b id="wealthWithReservations">0,00 €</b></span>
+          <button class="glass-btn" data-open="balancesDialog">Atualizar saldos</button>
+        </div>
       </section>
 
-      <section class="page" id="page-budget">
-        <section class="page-title"><span class="eyebrow">Planeamento</span><h1>Orçamento mensal</h1><p>Do dia 1 ao último dia do mês. “Por pagar” é apenas informativo.</p></section>
-        <section class="filter-row"><input id="budgetMonth" type="month"><button class="secondary-btn" id="closeMonthBtn">Fechar mês</button></section>
-        <section class="metrics six" id="budgetMetrics"></section>
-        <section class="panel"><div class="section-head"><div><span class="eyebrow">Reservas</span><h2>A reservar este mês</h2></div><button class="text-btn" data-open="reserveDialog">Criar reserva</button></div><div id="reserveList" class="list"></div></section>
+      <section class="state-strip">
+        <article><small>Disponível</small><strong id="stateAvailable">0,00 €</strong></article>
+        <article><small>A reservar</small><strong id="stateReserved">0,00 €</strong></article>
+        <article><small>Guardado</small><strong id="stateSaved">0,00 €</strong></article>
       </section>
 
-      <section class="page" id="page-expenses">
-        <section class="page-title"><span class="eyebrow">Controlo</span><h1>Despesas</h1><p>Separadas entre por pagar e já pagas.</p></section>
-        <section class="filter-row"><input id="expenseMonth" type="month"><button class="primary-btn" data-open="pendingDialog">＋ Por pagar</button></section>
-        <section class="metrics four" id="expenseMetrics"></section>
-        <section class="panel"><div class="section-head"><div><span class="eyebrow">Ainda não mexem no saldo</span><h2>Por pagar</h2></div></div><div id="pendingList" class="list"></div></section>
-        <section class="panel"><div class="section-head"><div><span class="eyebrow">Histórico</span><h2>Pagas e movimentos</h2></div></div><div id="expenseHistory" class="list"></div></section>
+      <section class="section-card">
+        <div class="section-head"><div><span class="eyebrow">Resumo mensal</span><h2>Este mês</h2></div><button class="text-btn" data-open="budgetDialog">Abrir orçamento</button></div>
+        <div class="metric-grid four">
+          <article><small>Recebido</small><strong id="homeIncome">0,00 €</strong></article>
+          <article><small>Já gasto</small><strong id="homeSpent">0,00 €</strong></article>
+          <article><small>Reservado</small><strong id="homeReserved">0,00 €</strong></article>
+          <article><small>Disponível</small><strong id="homeBudgetAvailable">0,00 €</strong></article>
+        </div>
       </section>
 
-      <section class="page" id="page-wealth">
-        <section class="page-title"><span class="eyebrow">Saldos</span><h1>Património</h1><p>Estável separado de ETF/ações.</p></section>
-        <section class="hero-card"><div><span class="eyebrow">Património completo</span><strong id="fullWealth">0,00 €</strong><small>Inclui ETF e ações</small></div><button class="ghost-btn" data-open="balancesDialog">Editar</button></section>
-        <section class="account-grid wide" id="wealthAccounts"></section>
-        <section class="panel"><div class="section-head"><div><span class="eyebrow">Meta anual</span><h2>Poupança + dinheiro a render</h2></div><button class="text-btn" data-open="goalDialog">Editar meta</button></div><div class="progress"><span id="goalProgress"></span></div><div class="progress-row"><b id="goalSaved">0,00 €</b><span id="goalPct">0%</span><b id="goalTarget">7.000,00 €</b></div></section>
-        <section class="panel"><div class="section-head"><div><span class="eyebrow">Transferências próprias</span><h2>Mover dinheiro</h2></div><button class="primary-btn" data-open="transferDialog">Transferir</button></div><p class="muted">Transferências entre os teus saldos não contam como receita nem despesa.</p></section>
-        <section class="panel"><div class="section-head"><div><span class="eyebrow">Reserva do seguro</span><h2 id="insuranceBalance">0,00 €</h2></div><button class="text-btn" data-open="insuranceDialog">Gerir</button></div><small class="muted">Fica visível, mas fora do património principal.</small></section>
+      <section class="section-card pending-home">
+        <div class="section-head"><div><span class="eyebrow">Despesas por pagar</span><h2><span id="pendingCount">0</span> pendentes</h2></div><button class="text-btn" data-page="expenses">Ver despesas</button></div>
+        <div class="pending-summary"><strong id="pendingTotal">0,00 €</strong><small>Informativo — ainda não reduz saldo nem orçamento</small></div>
       </section>
 
-      <section class="page" id="page-car">
-        <section class="page-title"><span class="eyebrow">Audi</span><h1>Crédito automóvel</h1><p>Gestão de prestações, fundo e amortizações.</p></section>
-        <section class="hero-card car"><div><span class="eyebrow">Capital em dívida</span><strong id="loanBalance">0,00 €</strong><small id="loanProjection">—</small></div><button class="ghost-btn" data-open="loanDialog">Editar crédito</button></section>
-        <section class="metrics four" id="loanMetrics"></section>
-        <section class="panel"><div class="section-head"><div><span class="eyebrow">Ações</span><h2>Gerir crédito</h2></div></div><div class="button-grid"><button class="primary-btn" data-open="paymentDialog">Registar prestação</button><button class="secondary-btn" data-open="extraDialog">Amortização extra</button></div></section>
-        <section class="panel"><div class="section-head"><div><span class="eyebrow">Histórico</span><h2>Últimos pagamentos</h2></div></div><div id="loanHistory" class="list"></div></section>
+      <section class="quick-list">
+        <button class="quick-card" data-open="balancesDialog"><span class="quick-icon">▣</span><span><small>Conta corrente</small><strong id="homeCurrent">0,00 €</strong><em>Exterior: <b id="homeExterior">0,00 €</b></em></span><span class="chev">›</span></button>
+        <button class="quick-card" data-page="wealth"><span class="quick-icon">◉</span><span><small>Poupança</small><strong id="homeSavings">0,00 €</strong></span><span class="chev">›</span></button>
+        <button class="quick-card" data-page="wealth"><span class="quick-icon">↗</span><span><small>Dinheiro a render</small><strong id="homeYield">0,00 €</strong></span><span class="chev">›</span></button>
+        <button class="quick-card" data-page="expenses"><span class="quick-icon expense">€</span><span><small>Despesas este mês</small><strong id="homeExpenses">0,00 €</strong></span><span class="chev">›</span></button>
+        <button class="quick-card" data-page="car"><span class="quick-icon amber">◎</span><span><small>Fundo carro</small><strong id="homeCarFund">0,00 €</strong></span><span class="chev">›</span></button>
+        <button class="quick-card" data-page="wealth"><span class="quick-icon blue">↗</span><span><small>ETF / ações</small><strong id="homePortfolio">0,00 €</strong><em>Fora do património principal</em></span><span class="chev">›</span></button>
       </section>
 
-      <section class="page" id="page-annual">
-        <section class="page-title"><span class="eyebrow">Arquivo</span><h1>Histórico anual</h1><p>Fechos manuais guardados por ano.</p></section>
-        <button class="primary-btn full" id="closeYearBtn">Fechar ano agora</button>
-        <section class="panel"><div id="annualList" class="list"></div></section>
+      <section class="section-card">
+        <div class="section-head"><div><span class="eyebrow">Movimentos</span><h2>Atividade recente</h2></div><button class="text-btn" data-open="txDialog">Adicionar</button></div>
+        <div id="recentTransactions" class="list"></div>
       </section>
+    </section>
 
-      <section class="page" id="page-insights">
-        <section class="page-title"><span class="eyebrow">Leitura dos teus dados</span><h1>Insights</h1><p>Sem aconselhamento financeiro inventado — apenas cálculos do que registaste.</p></section>
-        <section id="insightGrid" class="insight-grid"></section>
+    <section class="page" id="page-expenses">
+      <div class="page-head"><div><span class="eyebrow">Gestão mensal</span><h1>Despesas</h1><p>Por pagar é apenas informativo até confirmares o pagamento.</p></div></div>
+      <section class="section-card"><div class="section-head"><div><span class="eyebrow">Por pagar</span><h2 id="expensePendingTitle">0,00 €</h2></div><button class="primary-btn small" data-open="pendingDialog">+ Adicionar</button></div><div id="pendingList" class="list"></div></section>
+      <section class="section-card"><div class="section-head"><div><span class="eyebrow">Pagas</span><h2>Histórico do mês</h2></div></div><div id="paidExpenseList" class="list"></div></section>
+      <section class="section-card"><div class="section-head"><div><span class="eyebrow">Categorias</span><h2>Resumo</h2></div></div><div id="categoryList" class="category-list"></div></section>
+    </section>
+
+    <section class="page" id="page-wealth">
+      <div class="page-head"><div><span class="eyebrow">Contas e objetivos</span><h1>Património</h1><p>A mesma área de património, agora com as reservas separadas.</p></div><button class="secondary-btn" data-open="balancesDialog">Atualizar</button></div>
+      <section class="metric-grid two page-metrics">
+        <article><small>Património principal</small><strong id="wealthMain">0,00 €</strong></article>
+        <article><small>Património completo</small><strong id="wealthComplete">0,00 €</strong></article>
       </section>
-    </main>
+      <section class="section-card"><div class="section-head"><div><span class="eyebrow">Saldos</span><h2>Onde está o dinheiro</h2></div></div><div id="accountList" class="list"></div></section>
+      <section class="section-card"><div class="section-head"><div><span class="eyebrow">Meta anual</span><h2>Poupança + dinheiro a render</h2></div><button class="text-btn" data-open="goalDialog">Editar</button></div><div class="progress"><span id="savingGoalBar"></span></div><div class="progress-labels"><b id="savingGoalNow">0,00 €</b><span id="savingGoalPct">0%</span><b id="savingGoalTarget">7.000,00 €</b></div></section>
+      <section class="section-card"><div class="section-head"><div><span class="eyebrow">Reservas</span><h2>A reservar este mês</h2></div><button class="primary-btn small" data-open="reserveDialog">+ Reserva</button></div><div id="reserveList" class="list"></div></section>
+      <section class="section-card"><div class="section-head"><div><span class="eyebrow">ETF / ações</span><h2>Portefólio</h2></div><button class="text-btn" data-open="portfolioDialog">Editar</button></div><div class="metric-grid two"><article><small>Investido</small><strong id="portfolioInvested">0,00 €</strong></article><article><small>Valor de mercado</small><strong id="portfolioMarket">0,00 €</strong></article></div></section>
+    </section>
 
-    <nav class="bottom-nav">
-      <button class="active" data-page="home"><span>⌂</span><small>Início</small></button>
-      <button data-page="budget"><span>◫</span><small>Orçamento</small></button>
-      <button data-page="expenses"><span>€</span><small>Despesas</small></button>
-      <button data-page="wealth"><span>◇</span><small>Património</small></button>
-      <button data-page="car"><span>◎</span><small>Audi</small></button>
-      <button data-page="insights"><span>↗</span><small>Insights</small></button>
-    </nav>
-  </div>
+    <section class="page" id="page-car">
+      <div class="page-head"><div><span class="eyebrow">Audi</span><h1>Carro</h1><p>Crédito, prestação e fundo de amortização como na app anterior.</p></div></div>
+      <section class="loan-card">
+        <div><span class="eyebrow light">Dívida automóvel</span><strong id="loanBalance">0,00 €</strong><small id="loanSub">Dados editáveis</small></div><span class="audi-rings">◎◎</span>
+        <div class="progress light"><span id="loanProgress"></span></div>
+      </section>
+      <section class="metric-grid two page-metrics"><article><small>Próxima prestação</small><strong id="loanPayment">0,00 €</strong><em id="loanDay">Dia 3</em></article><article><small>Fundo carro</small><strong id="carFundValue">0,00 €</strong></article></section>
+      <section class="section-card"><div class="section-head"><div><span class="eyebrow">Meta carro</span><h2>Fundo para amortização</h2></div><button class="text-btn" data-open="carDialog">Editar crédito</button></div><div class="progress amber"><span id="carFundBar"></span></div><div class="progress-labels"><b id="carFundNow">0,00 €</b><span id="carFundPct">0%</span><b id="carFundGoal">2.000,00 €</b></div></section>
+      <section class="action-grid"><button class="primary-btn" data-open="loanPaymentDialog">Registar prestação</button><button class="secondary-btn" data-open="extraPaymentDialog">Amortização extra</button></section>
+      <section class="section-card"><div class="section-head"><div><span class="eyebrow">Movimentos</span><h2>Histórico do carro</h2></div></div><div id="carHistory" class="list"></div></section>
+    </section>
 
-  <dialog id="txDialog"><form id="txForm" method="dialog"><div class="dialog-head"><h2>Novo movimento</h2><button type="button" data-close>×</button></div>
-    <label>Tipo<select id="txType"><option value="income">Receita</option><option value="expense">Despesa</option><option value="transfer">Transferência</option></select></label>
-    <label>Descrição<input id="txDesc" required maxlength="80"></label><label>Valor (€)<input id="txAmount" type="number" min="0.01" step="0.01" required></label><label>Data<input id="txDate" type="date" required></label>
-    <label>Categoria<select id="txCategory"><option>Salário</option><option>Alimentação</option><option>Carro</option><option>Combustível</option><option>Casa</option><option>Contas</option><option>Ginásio</option><option>Lazer</option><option>Saúde</option><option>Compras</option><option>Poupança</option><option>Investimentos</option><option>Amortização</option><option>Outros</option></select></label>
-    <label id="txFromWrap">Sai de<select id="txFrom"></select></label><label id="txToWrap">Entra em<select id="txTo"></select></label>
-    <label id="incomeTypeWrap">Tipo de receita<select id="incomeType"><option>Ordenado</option><option>Bónus do ordenado</option><option>Outra receita</option><option>Reembolso</option><option>Receita exterior</option></select></label>
-    <label id="budgetToggleWrap" class="check"><input id="txBudget" type="checkbox" checked> Adicionar ao orçamento mensal</label><label id="budgetMonthWrap">Mês do orçamento<input id="txBudgetMonth" type="month"></label>
-    <button class="primary-btn full" type="submit">Guardar movimento</button></form></dialog>
+    <section class="page" id="page-insights">
+      <div class="page-head"><div><span class="eyebrow">Resumo automático</span><h1>Insights</h1><p>Apenas cálculos feitos com os teus próprios dados.</p></div></div>
+      <section id="insightGrid" class="insight-grid"></section>
+      <section class="section-card"><div class="section-head"><div><span class="eyebrow">Histórico anual</span><h2>Fechos guardados</h2></div><button class="primary-btn small" id="closeYearBtn">Fechar ano</button></div><div id="yearClosures" class="list"></div></section>
+      <section class="section-card"><div class="section-head"><div><span class="eyebrow">Dados</span><h2>Cópia de segurança</h2></div></div><div class="action-grid"><button class="secondary-btn" id="exportBtn">Exportar</button><label class="secondary-btn file-btn">Importar<input id="importInput" type="file" accept="application/json" hidden></label></div></section>
+    </section>
+  </main>
 
-  <dialog id="balancesDialog"><form id="balancesForm" method="dialog"><div class="dialog-head"><h2>Atualizar saldos</h2><button type="button" data-close>×</button></div><div id="balanceFields"></div><label>ETF / ações<input id="balPortfolio" type="number" step="0.01"></label><label>Taxa dinheiro a render (%)<input id="annualRate" type="number" min="0" max="100" step="0.01"></label><button class="primary-btn full" type="submit">Guardar</button></form></dialog>
+  <nav class="bottom-nav">
+    <button class="active" data-page="home"><span>⌂</span><small>Início</small></button>
+    <button data-page="expenses"><span>€</span><small>Despesas</small></button>
+    <button class="nav-add" data-open="txDialog" aria-label="Adicionar"><span>＋</span></button>
+    <button data-page="wealth"><span>◈</span><small>Património</small></button>
+    <button data-page="car"><span>◎</span><small>Audi</small></button>
+    <button data-page="insights"><span>↗</span><small>Insights</small></button>
+  </nav>
+</div>
 
-  <dialog id="pendingDialog"><form id="pendingForm" method="dialog"><div class="dialog-head"><h2>Despesa por pagar</h2><button type="button" data-close>×</button></div><input id="pendingEditId" type="hidden"><label>Nome<input id="pendingName" required></label><label>Valor previsto (€)<input id="pendingAmount" type="number" min="0.01" step="0.01" required></label><label>Categoria<select id="pendingCategory"><option>Contas</option><option>Carro</option><option>Combustível</option><option>Casa</option><option>Ginásio</option><option>Saúde</option><option>Outros</option></select></label><label>Dia previsto<input id="pendingDay" type="number" min="1" max="31"></label><label>Mês<input id="pendingMonth" type="month" required></label><label>Recorrência<select id="pendingRecurring"><option value="once">Apenas este mês</option><option value="monthly">Todos os meses</option></select></label><button class="primary-btn full" type="submit">Guardar</button></form></dialog>
+<dialog id="txDialog"><form id="txForm"><div class="dialog-head"><div><span class="eyebrow">Movimento</span><h2>Adicionar</h2></div><button type="button" class="close" data-close="txDialog">×</button></div><label>Tipo<select id="txType"><option value="income">Receita</option><option value="expense">Despesa</option><option value="transfer">Transferência</option></select></label><label>Descrição<input id="txDesc" required maxlength="80"></label><label>Valor (€)<input id="txAmount" type="number" min="0.01" step="0.01" required></label><label>Data<input id="txDate" type="date" required></label><label>Origem<select id="txFrom"></select></label><label>Destino<select id="txTo"></select></label><label>Categoria<select id="txCategory"><option>Salário</option><option>Alimentação</option><option>Carro</option><option>Combustível</option><option>Casa</option><option>Contas</option><option>Ginásio</option><option>Lazer</option><option>Saúde</option><option>Compras</option><option>Seguro</option><option>Outros</option></select></label><label class="check"><input id="txBudget" type="checkbox" checked> Contar no orçamento mensal</label><button class="primary-btn full" type="submit">Guardar movimento</button></form></dialog>
 
-  <dialog id="payPendingDialog"><form id="payPendingForm" method="dialog"><div class="dialog-head"><h2>Pagar despesa</h2><button type="button" data-close>×</button></div><input id="payPendingId" type="hidden"><label>Valor realmente pago (€)<input id="payAmount" type="number" min="0.01" step="0.01" required></label><label>Data do pagamento<input id="payDate" type="date" required></label><label>Origem do dinheiro<select id="payFrom"></select></label><button class="primary-btn full" type="submit">Confirmar pagamento</button></form></dialog>
+<dialog id="balancesDialog"><form id="balancesForm"><div class="dialog-head"><div><span class="eyebrow">Património</span><h2>Atualizar saldos</h2></div><button type="button" class="close" data-close="balancesDialog">×</button></div><label>Conta corrente<input id="balCurrent" type="number" step="0.01"></label><label>Poupança<input id="balSavings" type="number" step="0.01"></label><label>Dinheiro a render<input id="balYield" type="number" step="0.01"></label><label>Fundo carro<input id="balCarFund" type="number" step="0.01"></label><label>Exterior<input id="balExterior" type="number" step="0.01"></label><label>Reserva do seguro<input id="balInsurance" type="number" step="0.01"></label><button class="primary-btn full" type="submit">Guardar saldos</button></form></dialog>
 
-  <dialog id="reserveDialog"><form id="reserveForm" method="dialog"><div class="dialog-head"><h2>Nova reserva</h2><button type="button" data-close>×</button></div><label>Tipo<select id="reserveType"><option value="savings">Poupança pendente</option><option value="carFund">Amortização pendente</option><option value="insurance">Seguro pendente</option></select></label><label>Valor (€)<input id="reserveAmount" type="number" min="0.01" step="0.01" required></label><label>Mês<input id="reserveMonth" type="month" required></label><button class="primary-btn full" type="submit">Criar reserva</button></form></dialog>
+<dialog id="pendingDialog"><form id="pendingForm"><div class="dialog-head"><div><span class="eyebrow">Despesas</span><h2>Nova por pagar</h2></div><button type="button" class="close" data-close="pendingDialog">×</button></div><input id="pendingEditId" type="hidden"><label>Nome<input id="pendingName" required></label><label>Valor (€)<input id="pendingAmount" type="number" min="0.01" step="0.01" required></label><label>Dia do mês<input id="pendingDay" type="number" min="1" max="31" required></label><label>Categoria<select id="pendingCategory"><option>Casa</option><option>Contas</option><option>Carro</option><option>Combustível</option><option>Ginásio</option><option>Seguro</option><option>Outros</option></select></label><button class="primary-btn full" type="submit">Guardar</button></form></dialog>
 
-  <dialog id="transferDialog"><form id="transferForm" method="dialog"><div class="dialog-head"><h2>Transferir dinheiro</h2><button type="button" data-close>×</button></div><label>Origem<select id="transferFrom"></select></label><label>Destino<select id="transferTo"></select></label><label>Valor (€)<input id="transferAmount" type="number" min="0.01" step="0.01" required></label><label>Data<input id="transferDate" type="date" required></label><button class="primary-btn full" type="submit">Transferir</button></form></dialog>
+<dialog id="payPendingDialog"><form id="payPendingForm"><div class="dialog-head"><div><span class="eyebrow">Confirmar</span><h2>Pagar despesa</h2></div><button type="button" class="close" data-close="payPendingDialog">×</button></div><input id="payPendingId" type="hidden"><label>Valor (€)<input id="payPendingAmount" type="number" min="0.01" step="0.01" required></label><label>Data<input id="payPendingDate" type="date" required></label><label>Origem<select id="payPendingFrom"></select></label><button class="primary-btn full" type="submit">Pagar agora</button></form></dialog>
 
-  <dialog id="goalDialog"><form id="goalForm" method="dialog"><div class="dialog-head"><h2>Meta anual</h2><button type="button" data-close>×</button></div><label>Meta (€)<input id="goalInput" type="number" min="0" step="1"></label><button class="primary-btn full" type="submit">Guardar</button></form></dialog>
+<dialog id="reserveDialog"><form id="reserveForm"><div class="dialog-head"><div><span class="eyebrow">Reserva</span><h2>A reservar este mês</h2></div><button type="button" class="close" data-close="reserveDialog">×</button></div><label>Tipo<select id="reserveType"><option value="savings">Poupança</option><option value="carFund">Amortização</option><option value="insurance">Seguro</option></select></label><label>Valor (€)<input id="reserveAmount" type="number" min="0.01" step="0.01" required></label><button class="primary-btn full" type="submit">Criar reserva</button></form></dialog>
 
-  <dialog id="insuranceDialog"><form id="insuranceForm" method="dialog"><div class="dialog-head"><h2>Reserva do seguro</h2><button type="button" data-close>×</button></div><label>Valor médio mensal (€)<input id="insuranceMonthly" type="number" min="0" step="0.01"></label><label>Ação<select id="insuranceAction"><option value="add">Adicionar à reserva</option><option value="withdraw">Retirar para conta corrente</option><option value="pay">Pagar seguro</option></select></label><label>Valor (€)<input id="insuranceAmount" type="number" min="0" step="0.01"></label><label>Conta para diferença (se faltar)<select id="insuranceFallback"></select></label><button class="primary-btn full" type="submit">Confirmar</button></form></dialog>
+<dialog id="budgetDialog"><form method="dialog"><div class="dialog-head"><div><span class="eyebrow">Orçamento</span><h2>Este mês</h2></div><button type="button" class="close" data-close="budgetDialog">×</button></div><div class="metric-grid two"><article><small>Total recebido</small><strong id="budgetIncome">0,00 €</strong></article><article><small>Já gasto</small><strong id="budgetSpent">0,00 €</strong></article><article><small>Reservado pendente</small><strong id="budgetReserved">0,00 €</strong></article><article><small>Disponível atual</small><strong id="budgetAvailable">0,00 €</strong></article><article><small>Dias restantes</small><strong id="budgetDays">0</strong></article><article><small>Disponível / dia</small><strong id="budgetPerDay">0,00 €</strong></article></div></form></dialog>
 
-  <dialog id="loanDialog"><form id="loanForm" method="dialog"><div class="dialog-head"><h2>Editar crédito</h2><button type="button" data-close>×</button></div><label>Capital em dívida (€)<input id="loanBalanceInput" type="number" min="0" step="0.01"></label><label>Prestação (€)<input id="loanPaymentInput" type="number" min="0" step="0.01"></label><label>TAN (%)<input id="loanRateInput" type="number" min="0" step="0.01"></label><label>Próxima prestação<input id="loanNextDate" type="date"></label><button class="primary-btn full" type="submit">Guardar crédito</button></form></dialog>
+<dialog id="goalDialog"><form id="goalForm"><div class="dialog-head"><div><span class="eyebrow">Meta anual</span><h2>Poupança</h2></div><button type="button" class="close" data-close="goalDialog">×</button></div><label>Meta (€)<input id="savingGoalInput" type="number" min="0" step="0.01"></label><button class="primary-btn full">Guardar</button></form></dialog>
+<dialog id="portfolioDialog"><form id="portfolioForm"><div class="dialog-head"><div><span class="eyebrow">ETF / ações</span><h2>Portefólio</h2></div><button type="button" class="close" data-close="portfolioDialog">×</button></div><label>Total investido<input id="portfolioInvestedInput" type="number" step="0.01"></label><label>Valor de mercado<input id="portfolioMarketInput" type="number" step="0.01"></label><button class="primary-btn full">Guardar</button></form></dialog>
+<dialog id="carDialog"><form id="carForm"><div class="dialog-head"><div><span class="eyebrow">Audi</span><h2>Editar crédito</h2></div><button type="button" class="close" data-close="carDialog">×</button></div><label>Capital atual<input id="carBalanceInput" type="number" min="0" step="0.01"></label><label>Capital inicial<input id="carInitialInput" type="number" min="0" step="0.01"></label><label>Prestação mensal<input id="carPaymentInput" type="number" min="0" step="0.01"></label><label>Dia do débito<input id="carDayInput" type="number" min="1" max="31"></label><label>Meta fundo carro<input id="carGoalInput" type="number" min="0" step="0.01"></label><button class="primary-btn full">Guardar</button></form></dialog>
+<dialog id="loanPaymentDialog"><form id="loanPaymentForm"><div class="dialog-head"><div><span class="eyebrow">Audi</span><h2>Registar prestação</h2></div><button type="button" class="close" data-close="loanPaymentDialog">×</button></div><label>Valor pago<input id="loanPaidAmount" type="number" min="0.01" step="0.01"></label><label>Capital abatido<input id="loanCapitalAmount" type="number" min="0" step="0.01"></label><label>Data<input id="loanPaidDate" type="date"></label><label>Origem<select id="loanPaidFrom"></select></label><button class="primary-btn full">Registar</button></form></dialog>
+<dialog id="extraPaymentDialog"><form id="extraPaymentForm"><div class="dialog-head"><div><span class="eyebrow">Audi</span><h2>Amortização extra</h2></div><button type="button" class="close" data-close="extraPaymentDialog">×</button></div><label>Valor amortizado<input id="extraAmount" type="number" min="0.01" step="0.01"></label><label>Data<input id="extraDate" type="date"></label><label>Origem<select id="extraFrom"></select></label><button class="primary-btn full">Registar amortização</button></form></dialog>
 
-  <dialog id="paymentDialog"><form id="paymentForm" method="dialog"><div class="dialog-head"><h2>Registar prestação</h2><button type="button" data-close>×</button></div><label>Valor total (€)<input id="paymentAmount" type="number" min="0.01" step="0.01"></label><label>Data<input id="paymentDate" type="date"></label><label>Origem<select id="paymentFrom"></select></label><button class="primary-btn full" type="submit">Registar</button></form></dialog>
-
-  <dialog id="extraDialog"><form id="extraForm" method="dialog"><div class="dialog-head"><h2>Amortização extra</h2><button type="button" data-close>×</button></div><label>Valor (€)<input id="extraAmount" type="number" min="0.01" step="0.01"></label><label>Data<input id="extraDate" type="date"></label><label>Origem<select id="extraFrom"></select></label><button class="primary-btn full" type="submit">Amortizar</button></form></dialog>
-
-  <script src="app.js?v=25.0.0"></script>
-</body>
-</html>
+<script src="app.js?v=26.0.0"></script>
+</body></html>
