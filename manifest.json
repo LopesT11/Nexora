@@ -1,18 +1,3 @@
 {
-  "name": "DEALER$ — Central Financeira",
-  "short_name": "DEALER$",
-  "description": "Aplicação pessoal para gerir património, despesas, poupanças, investimentos e crédito automóvel.",
-  "id": "./",
-  "start_url": "./",
-  "scope": "./",
-  "display": "standalone",
-  "background_color": "#081310",
-  "theme_color": "#081310",
-  "lang": "pt-PT",
-  "orientation": "portrait-primary",
-  "categories": ["finance", "productivity"],
-  "icons": [
-    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
-  ]
+  "name":"DEALER$","short_name":"DEALER$","start_url":"./","display":"standalone","background_color":"#07110f","theme_color":"#071713","lang":"pt-PT","icons":[{"src":"icon-192.png","sizes":"192x192","type":"image/png"},{"src":"icon-512.png","sizes":"512x512","type":"image/png"}]
 }
