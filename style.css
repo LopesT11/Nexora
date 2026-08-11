@@ -885,8 +885,8 @@ button,input,select,textarea{-webkit-tap-highlight-color:transparent;}
   .wealth-actions .status-chip{font-size:9.5px}
 }
 
-/* DEALER$ 23.50 — reservas personalizadas, mantendo a identidade visual existente */
-.custom-reserve-actions{display:flex;gap:8px;align-items:center;justify-content:flex-end;flex-wrap:wrap}
-.danger-text{color:var(--danger,#ff6b6b)}
-.custom-reserve-row{grid-template-columns:auto 1fr auto auto}
-@media(max-width:640px){.custom-reserve-row{grid-template-columns:auto 1fr auto}.custom-reserve-actions{grid-column:2 / -1;justify-content:flex-start}}
+.section-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.budget-month-quick{display:flex;gap:8px;margin-top:8px}
+.budget-month-quick button{flex:1;border:1px solid rgba(54,226,195,.28);background:transparent;color:inherit;border-radius:12px;padding:10px 12px;font:inherit;cursor:pointer}
+.custom-reserve-row{align-items:center}
+.custom-reserve-row .text-btn{white-space:nowrap}

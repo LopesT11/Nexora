@@ -1821,7 +1821,7 @@ function init() {
   });
 
   render();
-  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=23.50.0').catch(console.error);
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=23.31.0').catch(console.error);
 }
 
 /* ===== DEALER$ 23.30 — orçamento mensal, reservas e histórico editável ===== */
@@ -1845,7 +1845,6 @@ function ensureBudget(monthKey = currentMonthKey()) {
         insurance: safeNumber(vault.budgetDefaults.insurance)
       },
       committed: { savings: 0, amortization: 0, insurance: 0 },
-      customReservations: [],
       closed: false,
       createdAt: new Date().toISOString()
     };
@@ -1854,7 +1853,6 @@ function ensureBudget(monthKey = currentMonthKey()) {
   const budget = vault.monthlyBudgets[monthKey];
   budget.reserves = { savings: 0, amortization: 0, insurance: 0, ...(budget.reserves || {}) };
   budget.committed = { savings: 0, amortization: 0, insurance: 0, ...(budget.committed || {}) };
-  budget.customReservations = Array.isArray(budget.customReservations) ? budget.customReservations : [];
   return budget;
 }
 function assignedBudgetMonth(transaction) {
@@ -1864,19 +1862,17 @@ function budgetStats(monthKey = selectedBudgetMonth) {
   const budget = ensureBudget(monthKey);
   const incomeTransactions = vault.transactions.filter(transaction => transaction.type === 'income' && transaction.countsInBudget !== false && assignedBudgetMonth(transaction) === monthKey);
   const expenseTransactions = vault.transactions.filter(transaction => transaction.type === 'expense' && transaction.countsInBudget !== false && assignedBudgetMonth(transaction) === monthKey);
-  const returnTransactions = [];
+  const returnTransactions = vault.transactions.filter(transaction => transaction.budgetReturn && assignedBudgetMonth(transaction) === monthKey);
   const sum = items => round2(items.reduce((total, item) => total + Number(item.amount || 0), 0));
   const salary = sum(incomeTransactions.filter(item => item.incomeKind === 'salary' || (!item.incomeKind && item.category === 'Salário')));
   const bonus = sum(incomeTransactions.filter(item => item.incomeKind === 'bonus'));
   const other = round2(sum(incomeTransactions) - salary - bonus);
   const income = round2(salary + bonus + other);
   const expense = round2(expenseTransactions.reduce((total, item) => total + Number(item.budgetImpact ?? item.amount ?? 0), 0));
-  const returned = 0;
-  const automaticReserved = round2(Object.values(budget.reserves).reduce((total, value) => total + Number(value || 0), 0));
-  const customReserved = round2(budget.customReservations.filter(item => item.active !== false).reduce((total, item) => total + Number(item.amount || 0), 0));
-  const reserved = round2(automaticReserved + customReserved);
-  const available = round2(income - expense - reserved);
-  return { budget, salary, bonus, other, income, expense, returned, reserved, automaticReserved, customReserved, available, incomeTransactions, expenseTransactions, returnTransactions };
+  const returned = sum(returnTransactions);
+  const reserved = round2(Object.values(budget.reserves).reduce((total, value) => total + Number(value || 0), 0));
+  const available = round2(income + returned - expense - reserved);
+  return { budget, salary, bonus, other, income, expense, returned, reserved, available, incomeTransactions, expenseTransactions, returnTransactions };
 }
 function renderBudgetMonthOptions() {
   const select = $('budgetMonthSelect');
@@ -1902,7 +1898,7 @@ function renderBudgetFeatures() {
   const isCurrent = month === currentMonthKey();
   const day = new Date().getDate();
   const daysLeft = isCurrent ? Math.max(1, daysInMonth(month) - day + 1) : 1;
-  const usedBase = Math.max(0, stats.income);
+  const usedBase = Math.max(0, stats.income + stats.returned);
   const usedPct = usedBase > 0 ? Math.min(100, ((stats.expense + stats.reserved) / usedBase) * 100) : 0;
   setText('homeBudgetTitle', monthLabel(currentMonthKey()));
   const homeStats = budgetStats(currentMonthKey());
@@ -1919,14 +1915,14 @@ function renderBudgetFeatures() {
   setText('budgetMonthEyebrow', `1 a ${daysInMonth(month)} de ${monthLabel(month)}`);
   setText('budgetPageStatus', stats.budget.closed ? 'Fechado' : (isCurrent ? 'Em curso' : 'Aberto'));
   setText('budgetAvailable', euro(stats.available));
-  setText('budgetAvailableStat', euro(stats.available));
   setText('budgetSalary', euro(stats.salary));
   setText('budgetBonus', euro(stats.bonus));
   setText('budgetOtherIncome', euro(stats.other));
   setText('budgetIncomeTotal', euro(stats.income));
   setText('budgetSpent', euro(stats.expense));
   setText('budgetReserved', euro(stats.reserved));
-    setText('budgetDaily', euro(stats.available > 0 ? stats.available / daysLeft : 0));
+  setText('budgetReturns', euro(stats.returned));
+  setText('budgetDaily', euro(stats.available > 0 ? stats.available / daysLeft : 0));
   setText('budgetDaysLeft', isCurrent ? `${daysLeft} dias restantes` : 'mês concluído');
 
   const list = $('pendingReserveList');
@@ -1936,22 +1932,13 @@ function renderBudgetFeatures() {
     return `<article class="pending-reserve-row"><span class="pending-icon">${reserveIcon(type)}</span><div><strong>${reserveLabel(type)} pendente</strong><small>${committed > 0 ? `${euro(committed)} já transferidos este mês` : 'Ainda utilizável'}</small></div><strong>${euro(value)}</strong><button class="text-btn" data-edit-reserve="${type}" type="button">Editar</button></article>`;
   }).join('');
 
-  const customList = $('customReserveList');
-  if (customList) {
-    const customItems = stats.budget.customReservations.filter(item => item.active !== false);
-    customList.innerHTML = customItems.length ? customItems.map(item => {
-      const dateText = item.targetDate ? `até ${datePT(item.targetDate)}` : 'sem data';
-      return `<article class="pending-reserve-row custom-reserve-row"><span class="pending-icon">${ICONS.check_wallet}</span><div><strong>${escapeHtml(item.name)}</strong><small>${escapeHtml(accountLabel(item.destination))} · ${dateText}</small></div><strong>${euro(item.amount)}</strong><div class="custom-reserve-actions"><button class="text-btn" data-custom-edit="${escapeHtml(item.id)}" type="button">Editar</button><button class="text-btn" data-custom-transfer="${escapeHtml(item.id)}" type="button">Transferir</button><button class="text-btn danger-text" data-custom-cancel="${escapeHtml(item.id)}" type="button">Cancelar</button></div></article>`;
-    }).join('') : '<div class="empty-state"><span>◎</span>Ainda não tens reservas personalizadas.</div>';
-  }
-
   const insurance = vault.insuranceReserve || { balance: 0, monthlyDefault: 0 };
   setText('insuranceReserveBalance', euro(insurance.balance));
   setText('insuranceMonthlyDefault', euro(insurance.monthlyDefault || vault.budgetDefaults?.insurance || 0));
 
   const budgetList = $('budgetTransactionList');
   if (budgetList) {
-    const items = [...stats.incomeTransactions, ...stats.expenseTransactions]
+    const items = [...stats.incomeTransactions, ...stats.expenseTransactions, ...stats.returnTransactions]
       .sort((a, b) => `${b.date || ''}${b.id || ''}`.localeCompare(`${a.date || ''}${a.id || ''}`));
     budgetList.innerHTML = items.length ? items.map((item, index) => transactionRowHtml(item, index, true)).join('') : '<div class="empty-state"><span>◎</span>Ainda não há movimentos atribuídos a este orçamento.</div>';
   }
@@ -1968,10 +1955,7 @@ function updateBudgetMonthSuggestion() {
   const kind = $('txIncomeKind')?.value || 'salary';
   if ($('txExpenseBudgetMonth') && movementMode === 'expense') $('txExpenseBudgetMonth').value = dateMonth;
   if ($('txBudgetMonth') && movementMode === 'income') {
-    let suggested = dateMonth;
-    if (kind === 'salary') suggested = (day >= 20 || day <= 5) ? nextMonthKey(dateMonth) : dateMonth;
-    else if (kind === 'bonus') suggested = day <= 20 ? dateMonth : nextMonthKey(dateMonth);
-    $('txBudgetMonth').value = suggested;
+    $('txBudgetMonth').value = kind === 'salary' && day >= 20 ? nextMonthKey(dateMonth) : dateMonth;
   }
 }
 
@@ -2299,58 +2283,6 @@ function prepareBudgetSettings() {
   const month = selectedBudgetMonth || currentMonthKey(); const budget = ensureBudget(month);
   $('budgetSettingsMonth').value = month; $('budgetSavingsReserve').value = Number(budget.reserves.savings || 0); $('budgetAmortReserve').value = Number(budget.reserves.amortization || 0); $('budgetInsuranceReserve').value = Number(budget.reserves.insurance || 0); $('saveBudgetDefaults').checked = false;
 }
-function customReserveById(id, monthKey = selectedBudgetMonth) {
-  return ensureBudget(monthKey).customReservations.find(item => item.id === id);
-}
-function openCustomReserveDialog(id = '') {
-  const item = id ? customReserveById(id) : null;
-  $('customReserveId').value = item?.id || '';
-  $('customReserveName').value = item?.name || '';
-  $('customReserveAmount').value = item ? Number(item.amount || 0) : '';
-  $('customReserveDestination').value = item?.destination || 'savings';
-  $('customReserveDate').value = item?.targetDate || '';
-  setText('customReserveDialogTitle', item ? 'Editar reserva' : 'Criar reserva');
-  openDialog('customReserveDialog');
-}
-function openCustomReserveTransfer(id) {
-  const item = customReserveById(id);
-  if (!item) return;
-  $('customReserveTransferId').value = id;
-  setText('customReserveTransferSummary', `${item.name} · ${accountLabel(item.destination)}`);
-  setText('customReserveTransferAmount', euro(item.amount));
-  $('customReserveTransferDestination').value = item.destination || 'savings';
-  openDialog('customReserveTransferDialog');
-}
-function transferCustomReserve(id, destination) {
-  const item = customReserveById(id);
-  if (!item) return;
-  const amount = safeNumber(item.amount);
-  if (!(amount > 0)) return alert('Esta reserva não tem valor pendente.');
-  if (amount > Number(vault.balances.current || 0)) return alert('A conta corrente não tem saldo suficiente para transferir esta reserva.');
-  const destinationLabel = accountLabel(destination);
-  if (!confirm(`Transferir ${euro(amount)} da reserva “${item.name}” para ${destinationLabel}?`)) return;
-  vault.balances.current = round2(Number(vault.balances.current || 0) - amount);
-  const key = BALANCE_KEY_BY_ACCOUNT[destination];
-  if (!key) return alert('Destino inválido.');
-  vault.balances[key] = round2(Number(vault.balances[key] || 0) + amount);
-  item.active = false;
-  item.transferredAt = todayISO();
-  item.transferDestination = destination;
-  vault.transactions.push({ id: makeId(), type: 'transfer', from: 'current', to: destination, description: `Reserva — ${item.name}`, amount, category: destination === 'carFund' ? 'Amortização' : destination === 'investments' ? 'Investimentos' : 'Poupança', date: todayISO(), budgetMonth: selectedBudgetMonth, countsInBudget: false, reserveSettlement: 'custom', locked: true });
-  save();
-  $('customReserveTransferDialog')?.close();
-  render();
-}
-function cancelCustomReserve(id) {
-  const item = customReserveById(id);
-  if (!item) return;
-  const amount = safeNumber(item.amount);
-  if (!confirm(`Cancelar a reserva “${item.name}”${amount ? ` (${euro(amount)})` : ''}? O valor volta a ficar disponível no orçamento.`)) return;
-  item.active = false;
-  item.cancelledAt = todayISO();
-  save();
-  render();
-}
 function prepareInsuranceDialog() {
   setText('insuranceDialogBalance', euro(vault.insuranceReserve.balance)); $('insuranceDefaultInput').value = Number(vault.insuranceReserve.monthlyDefault || vault.budgetDefaults.insurance || 0); $('insuranceAdjustAmount').value = ''; $('insurancePaymentAmount').value = ''; $('insurancePaymentDate').value = todayISO();
 }
@@ -2366,12 +2298,6 @@ function initBudgetFeatureListeners() {
     const payBill = event.target.closest('[data-bill-pay]'); if (payBill) { event.preventDefault(); openPendingBillPayment(payBill.dataset.billPay, payBill.dataset.billMonth); return; }
     const editBill = event.target.closest('[data-bill-edit]'); if (editBill) { event.preventDefault(); openPendingBillEditor(editBill.dataset.billEdit, editBill.dataset.billMonth); return; }
     const deleteBill = event.target.closest('[data-bill-delete]'); if (deleteBill) { event.preventDefault(); deletePendingBill(deleteBill.dataset.billDelete, deleteBill.dataset.billMonth); }
-    const customEdit = event.target.closest('[data-custom-edit]');
-    if (customEdit) { event.preventDefault(); openCustomReserveDialog(customEdit.dataset.customEdit); return; }
-    const customTransfer = event.target.closest('[data-custom-transfer]');
-    if (customTransfer) { event.preventDefault(); openCustomReserveTransfer(customTransfer.dataset.customTransfer); return; }
-    const customCancel = event.target.closest('[data-custom-cancel]');
-    if (customCancel) { event.preventDefault(); cancelCustomReserve(customCancel.dataset.customCancel); return; }
   });
   $('budgetSettingsForm')?.addEventListener('submit', event => {
     if (event.submitter?.value === 'cancel') return; event.preventDefault();
@@ -2386,28 +2312,9 @@ function initBudgetFeatureListeners() {
   $('reserveEditForm')?.addEventListener('submit', event => {
     event.preventDefault(); const type = $('reserveEditType').value; ensureBudget(selectedBudgetMonth).reserves[type] = safeNumber($('reserveEditValue').value); save(); $('reserveEditDialog').close(); render();
   });
-  $('settleReserveNow')?.addEventListener('click', () => { const type = $('reserveEditType').value; const budget = ensureBudget(selectedBudgetMonth); const amount = safeNumber(budget.reserves[type]); if (!(amount > 0)) return alert('Esta reserva não tem valor a transferir.'); if (!confirm(`Transferir ${euro(amount)} de ${reserveLabel(type)} para ${type === 'savings' ? 'Poupança' : type === 'amortization' ? 'Fundo carro' : 'Reserva do seguro'}?`)) return; if (settleReserve(type, selectedBudgetMonth)) $('reserveEditDialog').close(); });
-  $('cancelReserve')?.addEventListener('click', () => { const type = $('reserveEditType').value; const budget = ensureBudget(selectedBudgetMonth); const amount = safeNumber(budget.reserves[type]); if (!confirm(`Cancelar a reserva de ${reserveLabel(type)}${amount ? ` (${euro(amount)})` : ''}? O valor volta a ficar disponível no orçamento.`)) return; budget.reserves[type] = 0; save(); $('reserveEditDialog').close(); render(); });
+  $('settleReserveNow')?.addEventListener('click', () => { const type = $('reserveEditType').value; if (settleReserve(type, selectedBudgetMonth)) $('reserveEditDialog').close(); });
+  $('cancelReserve')?.addEventListener('click', () => { const type = $('reserveEditType').value; ensureBudget(selectedBudgetMonth).reserves[type] = 0; save(); $('reserveEditDialog').close(); render(); });
   $('closeBudgetMonth')?.addEventListener('click', () => closeBudgetMonth(selectedBudgetMonth));
-  $('addCustomReserveButton')?.addEventListener('click', () => openCustomReserveDialog());
-  $('customReserveCancelButton')?.addEventListener('click', () => $('customReserveDialog')?.close());
-  $('customReserveForm')?.addEventListener('submit', event => {
-    event.preventDefault();
-    const month = selectedBudgetMonth || currentMonthKey();
-    const budget = ensureBudget(month);
-    const id = $('customReserveId').value || makeId();
-    const name = $('customReserveName').value.trim();
-    const amount = safeNumber($('customReserveAmount').value);
-    const destination = $('customReserveDestination').value;
-    const targetDate = $('customReserveDate').value || '';
-    if (!name || !(amount > 0)) return alert('Indica um nome e um valor válido.');
-    const existing = budget.customReservations.find(item => item.id === id);
-    const item = { id, name, amount, destination, targetDate, active: true, createdAt: existing?.createdAt || new Date().toISOString() };
-    if (existing) Object.assign(existing, item);
-    else budget.customReservations.push(item);
-    save(); $('customReserveDialog').close(); render();
-  });
-  $('confirmCustomReserveTransfer')?.addEventListener('click', () => transferCustomReserve($('customReserveTransferId').value, $('customReserveTransferDestination').value));
   $('editTxButton')?.addEventListener('click', () => openTransactionEditor($('txActionId').value));
   $('deleteTxButton')?.addEventListener('click', () => deleteTransaction($('txActionId').value));
   $('txEditForm')?.addEventListener('submit', event => {
