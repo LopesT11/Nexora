@@ -1821,7 +1821,11 @@ function init() {
   });
 
   render();
-  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=23.31.0').catch(console.error);
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then(registrations => {
+      return Promise.all(registrations.map(reg => reg.unregister()));
+    }).then(() => navigator.serviceWorker.register('sw.js?v=23.60.0')).catch(console.error);
+  }
 }
 
 /* ===== DEALER$ 23.30 — orçamento mensal, reservas e histórico editável ===== */
@@ -1921,7 +1925,6 @@ function renderBudgetFeatures() {
   setText('budgetIncomeTotal', euro(stats.income));
   setText('budgetSpent', euro(stats.expense));
   setText('budgetReserved', euro(stats.reserved));
-  setText('budgetReturns', euro(stats.returned));
   setText('budgetDaily', euro(stats.available > 0 ? stats.available / daysLeft : 0));
   setText('budgetDaysLeft', isCurrent ? `${daysLeft} dias restantes` : 'mês concluído');
 
