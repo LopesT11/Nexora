@@ -1,0 +1,34 @@
+DEALER$ v24.0.0
+================
+Esta versão foi criada para eliminar o problema de ficares a ver a versão antiga.
+
+Ficheiros:
+- index.html
+- style.css
+- app.js
+- sw.js
+- manifest.json
+
+IMPORTANTE:
+1. Substitui os 5 ficheiros no repositório.
+2. Mantém icon-192.png e icon-512.png.
+3. Faz commit/push dos 5 ficheiros.
+4. Abre a página do GitHub Pages numa janela privada.
+5. Se a PWA instalada continuar antiga, remove a app DEALER$ do ecrã inicial e instala novamente.
+
+A versão usa:
+- style.css?v=24.0.0
+- app.js?v=24.0.0
+- cache DEALER$ v24.0.0
+
+Regras incluídas:
+- estados Disponível / A reservar este mês / Guardado
+- total com reservas separado do disponível
+- despesas por pagar não descontam até Pagar
+- reservas reduzem o orçamento imediatamente mas só transferem quando confirmadas
+- ordenado dia 20 ou depois -> mês seguinte
+- bónus dia 1 a 20 -> mês atual
+- receita manual permite escolher mês atual/próximo
+- transferências não contam como receita/despesa
+- ETF/ações separados da meta anual
+- Audi/crédito com prestação e amortização extra
