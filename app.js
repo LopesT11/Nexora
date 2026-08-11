@@ -1933,7 +1933,7 @@ function init() {
   });
 
   render();
-  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=23.42.0').catch(console.error);
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=23.41.0').catch(console.error);
 }
 
 /* ===== DEALER$ 23.30 — orçamento mensal, reservas e histórico editável ===== */
