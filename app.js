@@ -1385,6 +1385,7 @@ const MOVEMENT_MODE_META = Object.freeze({
 });
 
 let movementMode = 'expense';
+let reserveTransferContext = null;
 
 function movementModeForPreset(type) {
   if (type === 'income') return 'income';
@@ -1592,6 +1593,9 @@ function init() {
   $('txIncomeKind')?.addEventListener('change', updateBudgetMonthSuggestion);
   document.querySelectorAll('[data-income-budget-choice]').forEach(button => {
     button.addEventListener('click', () => setIncomeBudgetChoice(button.dataset.incomeBudgetChoice));
+  });
+  document.querySelectorAll('[data-budget-month-choice]').forEach(button => {
+    button.addEventListener('click', () => setBudgetMonthChoice(button.dataset.budgetMonthChoice));
   });
   $('expenseMonthSelect').addEventListener('change', event => {
     selectedExpenseMonth = event.target.value;
@@ -1929,7 +1933,7 @@ function init() {
   });
 
   render();
-  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=23.40.0').catch(console.error);
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=23.41.0').catch(console.error);
 }
 
 /* ===== DEALER$ 23.30 — orçamento mensal, reservas e histórico editável ===== */
@@ -1979,20 +1983,18 @@ function budgetStats(monthKey = selectedBudgetMonth) {
   const budget = ensureBudget(monthKey);
   const incomeTransactions = vault.transactions.filter(transaction => transaction.type === 'income' && transaction.countsInBudget !== false && assignedBudgetMonth(transaction) === monthKey);
   const expenseTransactions = vault.transactions.filter(transaction => transaction.type === 'expense' && transaction.countsInBudget !== false && assignedBudgetMonth(transaction) === monthKey);
-  const returnTransactions = vault.transactions.filter(transaction => transaction.budgetReturn && assignedBudgetMonth(transaction) === monthKey);
   const sum = items => round2(items.reduce((total, item) => total + Number(item.amount || 0), 0));
   const salary = sum(incomeTransactions.filter(item => item.incomeKind === 'salary' || (!item.incomeKind && item.category === 'Salário')));
   const bonus = sum(incomeTransactions.filter(item => item.incomeKind === 'bonus'));
   const other = round2(sum(incomeTransactions) - salary - bonus);
   const income = round2(salary + bonus + other);
   const expense = round2(expenseTransactions.reduce((total, item) => total + Number(item.budgetImpact ?? item.amount ?? 0), 0));
-  const returned = sum(returnTransactions);
   const reserved = round2(
     Object.values(budget.customReserves || {}).reduce((total, value) => total + Number(value || 0), 0)
     + Object.values(budget.customCommitted || {}).reduce((total, value) => total + Number(value || 0), 0)
   );
-  const available = round2(income + returned - expense - reserved);
-  return { budget, salary, bonus, other, income, expense, returned, reserved, available, incomeTransactions, expenseTransactions, returnTransactions };
+  const available = round2(income - expense - reserved);
+  return { budget, salary, bonus, other, income, expense, reserved, available, incomeTransactions, expenseTransactions };
 }
 function renderBudgetMonthOptions() {
   const select = $('budgetMonthSelect');
@@ -2056,7 +2058,7 @@ function renderBudgetFeatures() {
   const isCurrent = month === currentMonthKey();
   const day = new Date().getDate();
   const daysLeft = isCurrent ? Math.max(1, daysInMonth(month) - day + 1) : 1;
-  const usedBase = Math.max(0, stats.income + stats.returned);
+  const usedBase = Math.max(0, stats.income);
   const usedPct = usedBase > 0 ? Math.min(100, ((stats.expense + stats.reserved) / usedBase) * 100) : 0;
   setText('homeBudgetTitle', monthLabel(currentMonthKey()));
   const homeStats = budgetStats(currentMonthKey());
@@ -2079,7 +2081,7 @@ function renderBudgetFeatures() {
   setText('budgetIncomeTotal', euro(stats.income));
   setText('budgetSpent', euro(stats.expense));
   setText('budgetReserved', euro(stats.reserved));
-  setText('budgetReturns', euro(stats.returned));
+  setText('budgetCurrentAvailable', euro(stats.available));
   setText('budgetDaily', euro(stats.available > 0 ? stats.available / daysLeft : 0));
   setText('budgetDaysLeft', isCurrent ? `${daysLeft} dias restantes` : 'mês concluído');
 
@@ -2095,7 +2097,7 @@ function renderBudgetFeatures() {
 
   const budgetList = $('budgetTransactionList');
   if (budgetList) {
-    const items = [...stats.incomeTransactions, ...stats.expenseTransactions, ...stats.returnTransactions]
+    const items = [...stats.incomeTransactions, ...stats.expenseTransactions]
       .sort((a, b) => `${b.date || ''}${b.id || ''}`.localeCompare(`${a.date || ''}${a.id || ''}`));
     budgetList.innerHTML = items.length ? items.map((item, index) => transactionRowHtml(item, index, true)).join('') : '<div class="empty-state"><span>◎</span>Ainda não há movimentos atribuídos a este orçamento.</div>';
   }
@@ -2105,6 +2107,34 @@ function renderBudgetFeatures() {
     closeButton.textContent = stats.budget.closed ? 'Mês fechado' : 'Fechar mês';
   }
 }
+function automaticBudgetMonthForIncome(date, kind) {
+  const dateMonth = monthKeyFromDate(date);
+  const day = Number(String(date).slice(8, 10)) || 1;
+  if (kind === 'salary') {
+    // Ciclo salarial: dia 20 do mês até dia 5 do mês seguinte -> mês seguinte.
+    return (day >= 20 || day <= 5) ? nextMonthKey(dateMonth) : dateMonth;
+  }
+  if (kind === 'bonus') {
+    // Bónus: dia 1 a 20 -> mês em que é recebido; depois disso -> mês seguinte.
+    return day <= 20 ? dateMonth : nextMonthKey(dateMonth);
+  }
+  return dateMonth;
+}
+
+function setBudgetMonthChoice(choice = 'current') {
+  const selected = choice === 'next' ? 'next' : 'current';
+  const date = $('txDate')?.value || todayISO();
+  const dateMonth = monthKeyFromDate(date);
+  const target = selected === 'next' ? nextMonthKey(dateMonth) : dateMonth;
+  if ($('txBudgetMonthMode')) $('txBudgetMonthMode').value = selected;
+  if ($('txBudgetMonth')) $('txBudgetMonth').value = target;
+  document.querySelectorAll('[data-budget-month-choice]').forEach(button => {
+    const active = button.dataset.budgetMonthChoice === selected;
+    button.classList.toggle('active', active);
+    button.setAttribute('aria-pressed', active ? 'true' : 'false');
+  });
+}
+
 function updateBudgetMonthSuggestion() {
   const date = $('txDate')?.value || todayISO();
   const dateMonth = monthKeyFromDate(date);
@@ -2112,7 +2142,17 @@ function updateBudgetMonthSuggestion() {
   const kind = $('txIncomeKind')?.value || 'salary';
   if ($('txExpenseBudgetMonth') && movementMode === 'expense') $('txExpenseBudgetMonth').value = dateMonth;
   if ($('txBudgetMonth') && movementMode === 'income') {
-    $('txBudgetMonth').value = kind === 'salary' && day >= 20 ? nextMonthKey(dateMonth) : dateMonth;
+    const automatic = automaticBudgetMonthForIncome(date, kind);
+    const current = dateMonth;
+    const next = nextMonthKey(dateMonth);
+    const automaticChoice = automatic === next ? 'next' : 'current';
+    setBudgetMonthChoice(automaticChoice);
+    const hint = $('txBudgetRuleHint');
+    if (hint) {
+      if (kind === 'salary') hint.textContent = `Regra do ordenado: dia 20 a 31 e dia 1 a 5 entram no orçamento do mês seguinte.`;
+      else if (kind === 'bonus') hint.textContent = `Regra do bónus: dia 1 a 20 entra neste mês; depois do dia 20 passa para o próximo.`;
+      else hint.textContent = `Podes escolher manualmente entre ${monthLabel(current)} e ${monthLabel(next)}.`;
+    }
   }
 }
 
@@ -2283,6 +2323,110 @@ function syncBillPaymentFromTransaction(transaction) {
     source: transaction.from,
     description: transaction.description
   };
+}
+
+function reserveDestinationLabel(key) {
+  return ({
+    savings: 'Poupança',
+    investments: 'Dinheiro a render',
+    carFund: 'Fundo carro',
+    insuranceReserve: 'Reserva do seguro',
+    external: 'Exterior'
+  })[key] || 'Destino';
+}
+
+function reserveDestinationKeyFor(item) {
+  const destination = String(item?.destination || '');
+  if (['savings', 'investments', 'carFund', 'insuranceReserve', 'external'].includes(destination)) return destination;
+  if (item?.icon === 'car' || item?.type === 'objetivo' && /carro|amortiza/i.test(String(item?.name || ''))) return 'carFund';
+  if (item?.icon === 'shield' || /seguro/i.test(String(item?.name || ''))) return 'insuranceReserve';
+  return 'savings';
+}
+
+function openReserveTransfer(id, monthKey = selectedBudgetMonth) {
+  const reserve = customReserveById(id);
+  if (!reserve) return;
+  const budget = ensureBudget(monthKey);
+  const amount = safeNumber(budget.customReserves?.[id]);
+  if (!(amount > 0)) return alert('Esta reserva não tem valor pendente.');
+  if (amount > Number(vault.balances.current || 0)) return alert('A conta corrente não tem saldo suficiente para transferir esta reserva.');
+  reserveTransferContext = { id, monthKey, amount, destination: reserveDestinationKeyFor(reserve) };
+  $('reserveTransferId').value = id;
+  $('reserveTransferMonth').value = monthKey;
+  $('reserveTransferAmount').textContent = euro(amount);
+  $('reserveTransferDestination').value = reserveTransferContext.destination;
+  $('reserveTransferHint').textContent = 'Escolhe onde queres colocar o dinheiro. Nada é transferido até confirmares.';
+  openDialog('reserveTransferDialog');
+}
+
+function openReserveTransferConfirmation() {
+  if (!reserveTransferContext) return;
+  const destination = $('reserveTransferDestination').value;
+  reserveTransferContext.destination = destination;
+  const reserve = customReserveById(reserveTransferContext.id);
+  $('reserveTransferConfirmAmount').textContent = euro(reserveTransferContext.amount);
+  $('reserveTransferConfirmRoute').textContent = `${reserve?.name || 'Reserva'} → ${reserveDestinationLabel(destination)}`;
+  $('reserveTransferDialog')?.close();
+  openDialog('reserveTransferConfirmDialog');
+}
+
+function confirmReserveTransfer() {
+  const ctx = reserveTransferContext;
+  if (!ctx) return;
+  const reserve = customReserveById(ctx.id);
+  const budget = ensureBudget(ctx.monthKey);
+  const amount = safeNumber(budget.customReserves?.[ctx.id]);
+  if (!reserve || !(amount > 0)) {
+    alert('Esta reserva já não tem valor pendente.');
+    $('reserveTransferConfirmDialog')?.close();
+    reserveTransferContext = null;
+    render();
+    return;
+  }
+  if (amount > Number(vault.balances.current || 0)) {
+    alert('A conta corrente não tem saldo suficiente.');
+    return;
+  }
+
+  const destination = ctx.destination;
+  vault.balances.current = round2(Number(vault.balances.current || 0) - amount);
+
+  if (destination === 'savings') {
+    vault.balances.savings = round2(Number(vault.balances.savings || 0) + amount);
+  } else if (destination === 'investments') {
+    vault.balances.investments = round2(Number(vault.balances.investments || 0) + amount);
+  } else if (destination === 'carFund') {
+    vault.balances.carFund = round2(Number(vault.balances.carFund || 0) + amount);
+  } else if (destination === 'insuranceReserve') {
+    vault.insuranceReserve.balance = round2(Number(vault.insuranceReserve.balance || 0) + amount);
+    vault.insuranceReserve.history ||= [];
+    vault.insuranceReserve.history.push({ id: makeId(), type: 'deposit', amount, date: todayISO(), month: ctx.monthKey });
+  }
+
+  const settlementDate = ctx.monthKey === currentMonthKey() ? todayISO() : monthEndDate(ctx.monthKey);
+  budget.customCommitted[ctx.id] = round2(Number(budget.customCommitted?.[ctx.id] || 0) + amount);
+  budget.customReserves[ctx.id] = 0;
+
+  vault.transactions.push({
+    id: makeId(),
+    type: 'transfer',
+    from: 'current',
+    to: destination,
+    customReserveId: ctx.id,
+    description: `Reserva mensal — ${reserve.name}`,
+    amount,
+    category: reserve.type === 'anual' ? 'Contas' : reserve.type === 'objetivo' ? 'Poupança' : 'Outros',
+    date: settlementDate,
+    budgetMonth: ctx.monthKey,
+    countsInBudget: false,
+    customReserveSettlement: true,
+    locked: true
+  });
+
+  save();
+  $('reserveTransferConfirmDialog')?.close();
+  reserveTransferContext = null;
+  render();
 }
 
 function settleCustomReserve(reserveId, monthKey = selectedBudgetMonth, silent = false) {
@@ -2568,6 +2712,9 @@ function initBudgetFeatureListeners() {
     $('customReserveDialog').close();
     render();
   });
+  $('reserveTransferContinue')?.addEventListener('click', openReserveTransferConfirmation);
+  $('reserveTransferConfirm')?.addEventListener('click', confirmReserveTransfer);
+
   $('customPendingForm')?.addEventListener('submit', event => {
     event.preventDefault();
     const id = $('customPendingReserveId').value;
@@ -2577,10 +2724,14 @@ function initBudgetFeatureListeners() {
   });
   $('customPendingTransfer')?.addEventListener('click', () => {
     const id = $('customPendingReserveId').value;
-    if (settleCustomReserve(id, selectedBudgetMonth)) $('customPendingDialog').close();
+    $('customPendingDialog')?.close();
+    openReserveTransfer(id, selectedBudgetMonth);
   });
   $('customPendingCancel')?.addEventListener('click', () => {
     const id = $('customPendingReserveId').value;
+    const reserve = customReserveById(id);
+    const amount = safeNumber(ensureBudget(selectedBudgetMonth).customReserves[id]);
+    if (!confirm(`Cancelar a reserva de ${reserve?.name || 'reserva'}${amount ? ` (${euro(amount)})` : ''}? O valor volta a ficar disponível no orçamento.`)) return;
     ensureBudget(selectedBudgetMonth).customReserves[id] = 0;
     save(); $('customPendingDialog').close(); render();
   });
@@ -2590,6 +2741,8 @@ function initBudgetFeatureListeners() {
     const amount = safeNumber($('customReserveAdjustAmount').value);
     if (!(amount > 0)) return alert('Introduz um valor válido.');
     const action = $('customReserveAdjustAction').value;
+    const actionLabel = action === 'add' ? 'adicionar' : 'retirar';
+    if (!confirm(`Confirmar ${actionLabel} ${euro(amount)} ${action === 'add' ? 'da conta corrente para' : 'da reserva para a conta corrente'}?`)) return;
     if (action === 'add') {
       if (amount > Number(vault.balances.current || 0)) return alert('Saldo insuficiente na conta corrente.');
       vault.balances.current = round2(Number(vault.balances.current || 0) - amount);
@@ -2606,7 +2759,8 @@ function initBudgetFeatureListeners() {
   });
   $('customReserveTransferPending')?.addEventListener('click', () => {
     const id = $('customReserveDetailId').value;
-    if (settleCustomReserve(id, selectedBudgetMonth)) { $('customReserveDetailDialog').close(); render(); }
+    $('customReserveDetailDialog')?.close();
+    openReserveTransfer(id, selectedBudgetMonth);
   });
   $('customReserveEditButton')?.addEventListener('click', () => openCustomReserveEditor($('customReserveDetailId').value));
   $('customReserveArchiveButton')?.addEventListener('click', () => {

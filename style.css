@@ -1034,3 +1034,12 @@ button,input,select,textarea{-webkit-tap-highlight-color:transparent;}
 .custom-reserve-history span small{color:var(--muted);font-size:10px;margin-top:3px}
 .custom-reserve-history>div>strong{white-space:nowrap}
 .custom-reserve-history .muted{padding:12px;margin:0}
+
+/* DEALER$ v24 — regras do orçamento mensal, sem alterar o layout base */
+.budget-month-choice{display:grid;gap:8px}
+.choice-label{font-size:13px;color:var(--muted);font-weight:700}
+.budget-target-choice{display:grid!important;grid-template-columns:1fr 1fr;gap:8px}
+.budget-target-choice button{min-height:48px;border:1px solid var(--line);border-radius:14px;background:var(--card-2);color:var(--muted);font:inherit;font-weight:750}
+.budget-target-choice button.active{background:color-mix(in srgb,var(--brand) 12%,var(--card));border-color:color-mix(in srgb,var(--brand) 48%,var(--line));color:var(--brand)}
+.budget-rule-hint{margin:0;color:var(--muted);font-size:11px;line-height:1.4}
+#txBudgetMonth[hidden]{display:none!important}
