@@ -1,34 +1,29 @@
-DEALER$ v24.0.0
-================
-Esta versão foi criada para eliminar o problema de ficares a ver a versão antiga.
+DEALER$ — ATUALIZAÇÃO
+========================
+Versão: 28.0.0
 
-Ficheiros:
+Ficheiros incluídos:
 - index.html
 - style.css
 - app.js
-- sw.js
 - manifest.json
+- sw.js
+- icon-192.png
+- icon-512.png
 
-IMPORTANTE:
-1. Substitui os 5 ficheiros no repositório.
-2. Mantém icon-192.png e icon-512.png.
-3. Faz commit/push dos 5 ficheiros.
-4. Abre a página do GitHub Pages numa janela privada.
-5. Se a PWA instalada continuar antiga, remove a app DEALER$ do ecrã inicial e instala novamente.
+Instalação:
+1. Extrair tudo.
+2. Substituir os ficheiros existentes no repositório pela versão desta pasta.
+3. Fazer commit/push para o GitHub Pages.
+4. Se o telemóvel mostrar a versão antiga, fechar a PWA e atualizar a página uma vez para renovar o Service Worker.
 
-A versão usa:
-- style.css?v=24.0.0
-- app.js?v=24.0.0
-- cache DEALER$ v24.0.0
-
-Regras incluídas:
-- estados Disponível / A reservar este mês / Guardado
-- total com reservas separado do disponível
-- despesas por pagar não descontam até Pagar
-- reservas reduzem o orçamento imediatamente mas só transferem quando confirmadas
-- ordenado dia 20 ou depois -> mês seguinte
-- bónus dia 1 a 20 -> mês atual
-- receita manual permite escolher mês atual/próximo
-- transferências não contam como receita/despesa
-- ETF/ações separados da meta anual
-- Audi/crédito com prestação e amortização extra
+Alterações principais desta versão:
+- Dashboard reorganizado segundo o layout confirmado.
+- Estados Recebido / Já gasto / A reservar / Devolvido / Disponível.
+- Reservas com Criar, Editar, Retirar, Transferir, Confirmar e Cancelar.
+- Transferência de reserva para Poupança, Dinheiro a render, Fundo carro, Seguro, Exterior ou Conta corrente.
+- Despesas por pagar permanecem informativas até serem pagas.
+- Ao pagar uma despesa, escolhe-se valor, data e origem do dinheiro.
+- Receita manual permite escolher mês atual, próximo mês ou automático pelas regras de ordenado/bónus.
+- Tema claro/escuro.
+- Service Worker atualizado para limpar a cache anterior.
