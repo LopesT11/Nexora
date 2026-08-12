@@ -27,3 +27,6 @@ Alterações principais desta versão:
 - Receita manual permite escolher mês atual, próximo mês ou automático pelas regras de ordenado/bónus.
 - Tema claro/escuro.
 - Service Worker atualizado para limpar a cache anterior.
+
+
+Esta versão lê os dados existentes em `dealers_data_v2` para não abrir a app vazia nem apagar os dados da versão anterior.

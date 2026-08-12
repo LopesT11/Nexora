@@ -1,7 +1,8 @@
 (() => {
 "use strict";
 const $=id=>document.getElementById(id);
-const KEY="DEALERS_V23";
+const KEY="dealers_ui_v28";
+const CANONICAL_KEY="dealers_data_v2";
 const euro=n=>new Intl.NumberFormat("pt-PT",{style:"currency",currency:"EUR"}).format(Number(n)||0);
 const round=n=>Math.round((Number(n)||0)*100)/100;
 const iso=()=>new Date().toISOString().slice(0,10);
@@ -17,18 +18,52 @@ let db=load(); let selectedMonth=month(); let activeReserveId=null; let activeTr
 
 function load(){
  try{
-  const raw=JSON.parse(localStorage.getItem(KEY)||"null");
-  const d={...defaultData(),...(raw||{})};
-  d.balances={...defaultData().balances,...(d.balances||{})};
-  d.transactions=Array.isArray(d.transactions)?d.transactions:[];
-  d.reserves=Array.isArray(d.reserves)?d.reserves:[];
-  d.bills=Array.isArray(d.bills)?d.bills:[];
-  d.monthlyBudgets=d.monthlyBudgets&&typeof d.monthlyBudgets==="object"?d.monthlyBudgets:{};
-  d.loan={...defaultData().loan,...(d.loan||{})};
-  return d;
+  const existing=JSON.parse(localStorage.getItem(KEY)||"null");
+  if(existing){
+   const d={...defaultData(),...existing};
+   d.balances={...defaultData().balances,...(d.balances||{})};
+   d.transactions=Array.isArray(d.transactions)?d.transactions:[];
+   d.reserves=Array.isArray(d.reserves)?d.reserves:[];
+   d.bills=Array.isArray(d.bills)?d.bills:[];
+   d.monthlyBudgets=d.monthlyBudgets&&typeof d.monthlyBudgets==="object"?d.monthlyBudgets:{};
+   d.loan={...defaultData().loan,...(d.loan||{})};
+   return d;
+  }
+  const canonical=JSON.parse(localStorage.getItem(CANONICAL_KEY)||"null");
+  if(canonical && typeof canonical==="object"){
+   const b=canonical.balances||{};
+   const budgets=canonical.monthlyBudgets||{};
+   const custom=Array.isArray(canonical.customReserves)?canonical.customReserves:[];
+   const reserves=[];
+   for(const [m,budget] of Object.entries(budgets)){
+    for(const [id,val] of Object.entries(budget?.customReserves||{})){
+     const c=custom.find(x=>x.id===id);
+     if(Number(val)>0) reserves.push({
+      id:`${id}-${m}`,name:c?.name||"Reserva",amount:Number(val)||0,month:m,
+      type:c?.type==="objetivo"?"goal":c?.icon==="car"?"car":c?.icon==="shield"?"insurance":"savings",
+      destination:c?.destination==="investments"?"yield":c?.destination==="carFund"?"carFund":c?.destination==="insuranceReserve"?"insurance":"savings",
+      period:c?.recurring===false?"once":"monthly",date:m+"-01",transferred:false,cancelled:false
+     });
+    }
+   }
+   const transactions=(canonical.transactions||[]).map(t=>({
+    id:t.id||crypto.randomUUID(),type:t.type,description:t.description,amount:Number(t.amount)||0,date:t.date,
+    category:t.category,budgetMonth:t.budgetMonth||String(t.date||"").slice(0,7),
+    countsBudget:t.countsInBudget!==false
+   }));
+   const bills=(canonical.bills||[]).map(b=>({
+    id:b.id||crypto.randomUUID(),description:b.description,amount:Number(b.amount)||0,dueDay:Number(b.dueDay)||null,
+    category:b.category||"Outros",recurring:b.recurring?"monthly":"once",month:b.startMonth||b.month||month(),payments:b.payments||{}
+   }));
+   return {...defaultData(),
+    balances:{current:Number(b.current)||0,savings:Number(b.savings)||0,yield:Number(b.investments)||0,carFund:Number(b.carFund)||0},
+    transactions,reserves,bills,monthlyBudgets:budgets,
+    loan:{initial:Number(canonical.loan?.originalBalance)||0,balance:Number(canonical.loan?.balance)||0,payment:Number(canonical.loan?.payment)||0,rate:Number(canonical.loan?.annualRate||0)*100,next:canonical.loan?.nextDate||"",history:canonical.loan?.history||[]}
+   };
+  }
+  return defaultData();
  }catch{return defaultData()}
 }
-function save(){localStorage.setItem(KEY,JSON.stringify(db))}
 function addTx(t){db.transactions.push({id:crypto.randomUUID(),...t});save()}
 function txForMonth(k){return db.transactions.filter(t=>String(t.date||"").slice(0,7)===k)}
 function incomeForMonth(k){return db.transactions.filter(t=>t.type==="income"&&t.budgetMonth===k&&t.countsBudget!==false).reduce((s,t)=>s+Number(t.amount||0),0)}
