@@ -610,6 +610,27 @@ function categoryMeta(category, index = 0) {
   return CATEGORY_META[category] || { icon: ICONS.dots, color: FALLBACK_COLORS[index % FALLBACK_COLORS.length] };
 }
 
+function renderHomeRecent() {
+  const target = $('homeRecentList');
+  if (!target) return;
+  const items = [...vault.transactions]
+    .sort((a,b)=>`${b.date||''}${b.id||''}`.localeCompare(`${a.date||''}${a.id||''}`))
+    .slice(0, 3);
+  if (!items.length) {
+    target.innerHTML = '<div class="home-recent-empty">Ainda não existem movimentos recentes.</div>';
+    return;
+  }
+  const typeLabels = { income:'Receita', expense:'Despesa', transfer:'Transferência', saving:'Poupança', investment:'Investimento', carfund:'Fundo carro' };
+  target.innerHTML = items.map((item,index)=>{
+    const meta=categoryMeta(item.category||'Outros',index);
+    const sign=item.type==='income'?'+':item.type==='expense'?'−':'';
+    const route=isExteriorIncome(item)?'Receita exterior':isExteriorExpense(item)?'Despesa exterior':item.from&&item.to?`${accountLabel(item.from)} → ${accountLabel(item.to)}`:(item.category||typeLabels[item.type]||'Movimento');
+    const icon=item.type==='income'?'↓':item.type==='expense'?'↑':'↗';
+    const cls=item.type==='income'?'positive':item.type==='expense'?'negative':'';
+    return `<div class="home-recent-row"><span class="home-recent-icon" style="color:${meta.color};background:${meta.color}20">${icon}</span><div class="home-recent-main"><strong>${escapeHtml(item.description||typeLabels[item.type]||'Movimento')}</strong><small>${escapeHtml(datePT(item.date))}</small></div><div class="home-recent-amount"><strong class="${cls}">${sign}${euro(item.amount)}</strong><small>${escapeHtml(route)}</small></div><svg class="chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"></path></svg></div>`;
+  }).join('');
+}
+
 function renderTransactions() {
   const target = $('txList');
   if (!target) return;
@@ -1224,6 +1245,7 @@ function render() {
   if ($('loanLastDateInput')) $('loanLastDateInput').value = vault.loan.officialLastDate || '';
 
   renderTransactions();
+  renderHomeRecent();
   renderExpenseMonthOptions();
   renderExpenses();
   renderLoanHistory();
@@ -1913,6 +1935,12 @@ function renderBudgetFeatures() {
   setText('homeBudgetStatus', homeStats.budget.closed ? 'Fechado' : 'Em curso');
   setWidth('homeBudgetProgress', homeStats.income > 0 ? Math.min(100, ((homeStats.expense + homeStats.reserved) / homeStats.income) * 100) : 0);
   setText('homeExterior', euro(exteriorBalance()));
+  setText('homeExteriorLine', `Exterior: ${euro(exteriorBalance())}`);
+  const reserveStats = budgetStats(currentMonthKey());
+  setText('homeTotalWithReserves', euro(round2(total + reserveStats.reserved)));
+  const pctUsed = reserveStats.income > 0 ? Math.min(100, ((reserveStats.expense + reserveStats.reserved) / reserveStats.income) * 100) : 0;
+  setText('homeBudgetProgressLabel', `${pctUsed.toFixed(0)}%`);
+  renderHomeRecent();
   renderPendingBills(month);
 
   setText('budgetPageTitle', monthLabel(month));
