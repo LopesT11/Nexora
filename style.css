@@ -909,3 +909,37 @@ button,input,select,textarea{-webkit-tap-highlight-color:transparent;}
 .home-balance-row{width:100%;min-height:86px;border:0;border-bottom:1px solid color-mix(in srgb,var(--line) 70%,transparent);background:transparent;color:var(--text);display:grid;grid-template-columns:48px minmax(0,1fr) auto 20px;align-items:center;gap:14px;padding:13px 18px;text-align:left}.home-balance-row:last-child{border-bottom:0}.home-balance-row:hover{background:color-mix(in srgb,var(--brand) 4%,var(--card))}.home-balance-row>span:nth-child(2){min-width:0}.home-balance-row>span:nth-child(2)>strong{display:block;font-size:15px;font-weight:780}.home-balance-row>span:nth-child(2)>small{display:block;color:var(--muted);font-size:11px;margin-top:3px}.home-balance-row>strong:nth-child(3){font-size:15px;white-space:nowrap}.home-balance-row .quick-icon{width:48px;height:48px;border-radius:15px}.home-balance-row .quick-icon svg{width:25px;height:25px}.home-balance-row .quick-icon.car{color:#8b73ef;background:rgba(115,91,220,.13)}.home-balance-row .quick-icon.market{color:var(--brand);background:rgba(18,170,155,.12)}.home-expense-row>strong:nth-child(3){color:var(--red)}
 .home-recent-card{margin-top:16px;border:1px solid var(--line);border-radius:25px;background:var(--card);padding:20px 18px;box-shadow:var(--shadow-sm)}.home-section-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}.home-section-heading .text-btn{font-size:12px;color:var(--brand)}.home-recent-list{display:grid}.home-recent-row{display:grid;grid-template-columns:48px minmax(0,1fr) auto 18px;align-items:center;gap:13px;min-height:78px}.home-recent-row+.home-recent-row{border-top:1px solid var(--line)}.home-recent-icon{width:48px;height:48px;border-radius:16px;display:grid;place-items:center;background:rgba(31,190,104,.13);color:#2ed17e;font-size:25px}.home-recent-main{min-width:0}.home-recent-main strong{display:block;font-size:15px}.home-recent-main small{display:block;color:var(--muted);font-size:11px;margin-top:3px}.home-recent-amount{text-align:right}.home-recent-amount strong{display:block;font-size:15px;color:var(--green)}.home-recent-amount small{display:block;color:var(--muted);font-size:11px;margin-top:3px}.home-recent-empty{padding:18px 4px;color:var(--muted);font-size:13px}
 @media(max-width:680px){.home-wealth-card{min-height:275px;padding:22px 20px 18px}.home-wealth-card .wealth-copy{max-width:100%}.home-wealth-card .wealth-chart{width:72%;height:62%;opacity:.65}.home-wealth-card .wealth-copy>strong{font-size:clamp(39px,10vw,54px)}.home-wealth-reserves{font-size:13px}.home-wealth-change{font-size:10px;padding:8px 10px}.budget-home-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.home-balance-row{grid-template-columns:45px minmax(0,1fr) auto 16px;padding:12px 14px;gap:10px}.home-balance-row .quick-icon{width:45px;height:45px}.home-balance-row>span:nth-child(2)>strong{font-size:14px}.home-balance-row>strong:nth-child(3){font-size:13px}.home-recent-row{grid-template-columns:45px minmax(0,1fr) auto 14px;gap:10px}.home-recent-icon{width:45px;height:45px}}
+
+/* v23.52 — Home final visual alignment */
+.home-wealth-card{position:relative;overflow:hidden;min-height:300px;padding:28px 28px 22px}
+.home-wealth-card .wealth-chart{right:-2%;bottom:-1%;width:62%;height:86%;opacity:.82;z-index:1}
+.home-wealth-card .wealth-chart-line{stroke-width:2.4}
+.home-wealth-card .wealth-chart-fill{opacity:.55}
+.home-wealth-card .wealth-copy{max-width:58%;position:relative;z-index:3}
+.home-wealth-reserves{white-space:nowrap;font-size:15px;line-height:1.35}
+.home-wealth-reserves strong{white-space:nowrap}
+.home-wealth-card .wealth-actions{position:relative;z-index:4;margin-top:22px}
+.home-wealth-card .glass-btn{min-height:48px;padding:10px 16px;gap:10px;font-size:14px}
+.home-wealth-card .glass-btn svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+@media(max-width:680px){
+ .home-wealth-card{min-height:310px;padding:24px 20px 18px}
+ .home-wealth-card .wealth-copy{max-width:60%}
+ .home-wealth-card .wealth-copy>strong{font-size:clamp(42px,11vw,56px);white-space:nowrap}
+ .home-wealth-reserves{font-size:14px;white-space:nowrap}
+ .home-wealth-note{font-size:13px}
+ .home-wealth-card .wealth-chart{width:67%;height:72%;right:-3%;bottom:0;opacity:.78}
+ .home-wealth-card .wealth-actions{margin-top:18px}
+ .home-wealth-card .glass-btn{min-height:48px;font-size:13px;padding:10px 15px}
+}
+@media(max-width:390px){
+ .home-wealth-card{min-height:300px}
+ .home-wealth-card .wealth-copy{max-width:64%}
+ .home-wealth-reserves{font-size:12.5px}
+ .home-wealth-card .wealth-chart{width:70%;height:68%}
+}
+
+/* v23.52.1 — reserve line spans the card like the approved reference */
+.home-wealth-top{display:block;position:relative}
+.home-wealth-card .wealth-copy{max-width:100%}
+.home-wealth-change{position:absolute;right:0;top:0;z-index:4}
+@media(max-width:680px){.home-wealth-change{right:0;top:0}.home-wealth-card .wealth-copy{max-width:100%}.home-wealth-reserves{max-width:100%;overflow:visible}}

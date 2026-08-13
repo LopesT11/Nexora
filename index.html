@@ -12,7 +12,7 @@
 <title>DEALER$</title>
 <link href="manifest.json" rel="manifest"/>
 <link href="icon-192.png" rel="apple-touch-icon"/>
-<link href="style.css?v=23.51.0" rel="stylesheet"/>
+<link href="style.css?v=23.52.1" rel="stylesheet"/>
 </head>
 <body>
 <div class="app-shell" id="app">
@@ -48,7 +48,7 @@
     <span class="status-chip home-wealth-change" id="wealthChange">Sem alterações este mês</span>
   </div>
   <div class="wealth-actions">
-    <button class="glass-btn" data-open="balancesDialog" type="button"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"></path></svg>Atualizar saldos</button>
+    <button class="glass-btn" data-open="balancesDialog" type="button"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-13.7-5.7L4 7.6M4 4v3.6h3.6"></path><path d="M4 13a8 8 0 0 0 13.7 5.7L20 16.4M20 20v-3.6h-3.6"></path></svg>Atualizar saldos</button>
   </div>
 </section>
 
@@ -542,6 +542,6 @@
 </form></dialog>
 <dialog id="txActionDialog"><form method="dialog"><div class="dialog-head"><div><span class="eyebrow">Movimento</span><h2 id="txActionTitle">Opções</h2></div><button aria-label="Fechar" class="close-btn" data-close="txActionDialog" type="button"><span>×</span></button></div><input id="txActionId" type="hidden"/><button class="secondary-btn full" id="editTxButton" type="button">Editar movimento</button><button class="danger-outline-btn full" id="deleteTxButton" type="button">Apagar movimento</button><button class="secondary-btn full" data-close="txActionDialog" type="button">Cancelar</button></form></dialog>
 <dialog id="txEditDialog"><form id="txEditForm" method="dialog"><div class="dialog-head"><div><span class="eyebrow">Corrigir histórico</span><h2>Editar movimento</h2></div><button aria-label="Fechar" class="close-btn" data-close="txEditDialog" type="button"><span>×</span></button></div><input id="txEditId" type="hidden"/><label>Descrição<input id="txEditDesc" maxlength="80" required type="text"/></label><label>Valor (€)<input id="txEditAmount" min="0.01" required step="0.01" type="number"/></label><label>Data<input id="txEditDate" required type="date"/></label><label>Categoria<select id="txEditCategory"><option>Salário</option><option>Alimentação</option><option>Carro</option><option>Combustível</option><option>Casa</option><option>Contas</option><option>Ginásio</option><option>Lazer</option><option>Saúde</option><option>Compras</option><option>Poupança</option><option>Investimentos</option><option>Outros</option></select></label><label>Mês do orçamento<input id="txEditBudgetMonth" type="month"/></label><label class="check-row"><input id="txEditCountsBudget" type="checkbox"/><span>Conta no orçamento mensal</span></label><p class="muted">A origem e o destino mantêm-se. Os totais do mês e dos meses seguintes são recalculados.</p><button class="primary-btn full" type="submit">Guardar correção</button></form></dialog>
-<script src="app.js?v=23.51.0"></script>
+<script src="app.js?v=23.52.1"></script>
 </body>
 </html>
